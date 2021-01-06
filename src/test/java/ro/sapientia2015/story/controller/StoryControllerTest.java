@@ -1,9 +1,23 @@
 package ro.sapientia2015.story.controller;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.MutablePropertyValues;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
@@ -12,57 +26,36 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.validation.support.BindingAwareModelMap;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import ro.sapientia2015.story.CommonTestUtil;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
-import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.StoryService;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Kiss Tibor
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {UnitTestContext.class})
-public class StoryControllerTest {
+public class StoryControllerTest extends ControllerTestBase {
 
-    private static final String FEEDBACK_MESSAGE = "feedbackMessage";
     private static final String FIELD_DESCRIPTION = "description";
     private static final String FIELD_TITLE = "title";
 
     private StoryController controller;
 
-    private MessageSource messageSourceMock;
-
     private StoryService serviceMock;
-
-    @Resource
-    private Validator validator;
 
     @Before
     public void setUp() {
+    	super.setUp();
+    	
         controller = new StoryController();
 
-        messageSourceMock = mock(MessageSource.class);
         ReflectionTestUtils.setField(controller, "messageSource", messageSourceMock);
 
         serviceMock = mock(StoryService.class);
@@ -104,12 +97,12 @@ public class StoryControllerTest {
         verify(serviceMock, times(1)).add(formObject);
         verifyNoMoreInteractions(serviceMock);
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        String expectedView = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
         assertEquals(expectedView, view);
 
         assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
 
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
+        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED, ControllerBase.FLASH_MESSAGE_KEY_FEEDBACK);
     }
 
     @Test
@@ -163,9 +156,9 @@ public class StoryControllerTest {
         verify(serviceMock, times(1)).deleteById(StoryTestUtil.ID);
         verifyNoMoreInteractions(serviceMock);
 
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
+        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_DELETED, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
+        String expectedView = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
         assertEquals(expectedView, view);
     }
 
@@ -283,12 +276,12 @@ public class StoryControllerTest {
         verify(serviceMock, times(1)).update(formObject);
         verifyNoMoreInteractions(serviceMock);
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        String expectedView = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
         assertEquals(expectedView, view);
 
         assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
-
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_UPDATED);
+        
+        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_UPDATED, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
     }
 
     @Test
@@ -346,38 +339,11 @@ public class StoryControllerTest {
         verifyZeroInteractions(messageSourceMock);
     }
 
-    private void assertFeedbackMessage(RedirectAttributes attributes, String messageCode) {
-        assertFlashMessages(attributes, messageCode, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
-    }
-
     private void assertFieldErrors(BindingResult result, String... fieldNames) {
         assertEquals(fieldNames.length, result.getFieldErrorCount());
         for (String fieldName : fieldNames) {
             assertNotNull(result.getFieldError(fieldName));
         }
     }
-
-    private void assertFlashMessages(RedirectAttributes attributes, String messageCode, String flashMessageParameterName) {
-        Map<String, ?> flashMessages = attributes.getFlashAttributes();
-        Object message = flashMessages.get(flashMessageParameterName);
-
-        assertNotNull(message);
-        flashMessages.remove(message);
-        assertTrue(flashMessages.isEmpty());
-
-        verify(messageSourceMock, times(1)).getMessage(eq(messageCode), any(Object[].class), any(Locale.class));
-        verifyNoMoreInteractions(messageSourceMock);
-    }
-
-    private BindingResult bindAndValidate(HttpServletRequest request, Object formObject) {
-        WebDataBinder binder = new WebDataBinder(formObject);
-        binder.setValidator(validator);
-        binder.bind(new MutablePropertyValues(request.getParameterMap()));
-        binder.getValidator().validate(binder.getTarget(), binder.getBindingResult());
-        return binder.getBindingResult();
-    }
-
-    private void initMessageSourceForFeedbackMessage(String feedbackMessageCode) {
-        when(messageSourceMock.getMessage(eq(feedbackMessageCode), any(Object[].class), any(Locale.class))).thenReturn(FEEDBACK_MESSAGE);
-    }
+    
 }

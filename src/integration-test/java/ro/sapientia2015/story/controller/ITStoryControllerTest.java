@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import ro.sapientia2015.common.controller.ErrorController;
 import ro.sapientia2015.config.ExampleApplicationContext;
 import ro.sapientia2015.context.WebContextLoader;
+import ro.sapientia2015.story.CommonTestUtil;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
@@ -126,7 +127,7 @@ public class ITStoryControllerTest {
     @Test
     @ExpectedDatabase(value="storyData-add-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
     public void add() throws Exception {
-        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        String expectedRedirectViewPath = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
 
         mockMvc.perform(post("/story/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -188,7 +189,7 @@ public class ITStoryControllerTest {
     @Test
     @ExpectedDatabase("storyData-delete-expected.xml")
     public void deleteById() throws Exception {
-        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
+        String expectedRedirectViewPath = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
         mockMvc.perform(get("/story/delete/{id}", 2L))
                 .andExpect(status().isOk())
                 .andExpect(view().name(expectedRedirectViewPath))
@@ -268,7 +269,7 @@ public class ITStoryControllerTest {
     @Test
     @ExpectedDatabase(value="storyData-update-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
     public void update() throws Exception {
-        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        String expectedRedirectViewPath = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
 
         mockMvc.perform(post("/story/update")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)

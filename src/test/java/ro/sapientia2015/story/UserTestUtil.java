@@ -1,6 +1,9 @@
 package ro.sapientia2015.story;
 
+import org.springframework.test.util.ReflectionTestUtils;
+
 import ro.sapientia2015.story.dto.UserDTO;
+import ro.sapientia2015.story.model.User;
 
 public class UserTestUtil {
 
@@ -17,6 +20,16 @@ public class UserTestUtil {
         dto.setPassword(password);
 
         return dto;
+    }
+    
+    public static User createModel(Long id, String username, String password) {
+    	User model = User.getBuilder(username)
+    			.password(password)
+    			.build();
+    	
+    	ReflectionTestUtils.setField(model, "id", id);
+    	
+    	return model;
     }
     
 }

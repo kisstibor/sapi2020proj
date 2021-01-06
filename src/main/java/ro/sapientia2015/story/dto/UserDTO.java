@@ -10,6 +10,7 @@ public class UserDTO {
 	
 	private Long id;
 
+	@NotEmpty
     @Length(max = User.MAX_LENGTH_USERNAME)
     private String username;
 

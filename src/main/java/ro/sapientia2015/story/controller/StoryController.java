@@ -24,14 +24,11 @@ import java.util.Locale;
  */
 @Controller
 @SessionAttributes("story")
-public class StoryController {
+public class StoryController extends ControllerBase {
 
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.story.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";
     protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.story.deleted";
-
-    protected static final String FLASH_MESSAGE_KEY_ERROR = "errorMessage";
-    protected static final String FLASH_MESSAGE_KEY_FEEDBACK = "feedbackMessage";
 
     protected static final String MODEL_ATTRIBUTE = "story";
     protected static final String MODEL_ATTRIBUTE_LIST = "stories";
@@ -48,9 +45,6 @@ public class StoryController {
 
     @Resource
     private StoryService service;
-
-    @Resource
-    private MessageSource messageSource;
 
     @RequestMapping(value = "/story/add", method = RequestMethod.GET)
     public String showAddForm(Model model) {
@@ -125,22 +119,5 @@ public class StoryController {
 
         return dto;
     }
-
-    private void addFeedbackMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
-        String localizedFeedbackMessage = getMessage(messageCode, messageParameters);
-        attributes.addFlashAttribute(FLASH_MESSAGE_KEY_FEEDBACK, localizedFeedbackMessage);
-    }
-
-    private String getMessage(String messageCode, Object... messageParameters) {
-        Locale current = LocaleContextHolder.getLocale();
-        return messageSource.getMessage(messageCode, messageParameters, current);
-    }
-
-
-    private String createRedirectViewPath(String requestMapping) {
-        StringBuilder redirectViewPath = new StringBuilder();
-        redirectViewPath.append("redirect:");
-        redirectViewPath.append(requestMapping);
-        return redirectViewPath.toString();
-    }
+    
 }
