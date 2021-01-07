@@ -14,9 +14,6 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-/**
- * @author Kiss Tibor
- */
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "ro.sapientia2015.story.repository")

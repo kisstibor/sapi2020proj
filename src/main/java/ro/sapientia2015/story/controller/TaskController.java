@@ -39,7 +39,7 @@ public class TaskController {
 
     protected static final String PARAMETER_ID = "id";
 
-    protected static final String REQUEST_MAPPING_LIST = "/";
+    protected static final String REQUEST_MAPPING_LIST = "/task";
     protected static final String REQUEST_MAPPING_VIEW = "/task/{id}";
 
     protected static final String VIEW_ADD = "task/add";

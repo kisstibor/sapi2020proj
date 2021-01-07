@@ -1,5 +1,8 @@
 package ro.sapientia2015.story.repository;
 
-public class TaskRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import ro.sapientia2015.story.model.Task;
+
+public interface TaskRepository extends JpaRepository<Task, Long> {
 }
