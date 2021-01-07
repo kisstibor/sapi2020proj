@@ -71,7 +71,7 @@ public class TaskController {
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());
 
-        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+        return createRedirectViewPath(REQUEST_MAPPING_LIST);
     }
 
     @RequestMapping(value = "/task/delete/{id}", method = RequestMethod.GET)

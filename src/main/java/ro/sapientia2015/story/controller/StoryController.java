@@ -35,7 +35,7 @@ public class StoryController {
 
     protected static final String PARAMETER_ID = "id";
 
-    protected static final String REQUEST_MAPPING_LIST = "/";
+    protected static final String REQUEST_MAPPING_LIST = "/story";
     protected static final String REQUEST_MAPPING_VIEW = "/story/{id}";
 
     protected static final String VIEW_ADD = "story/add";

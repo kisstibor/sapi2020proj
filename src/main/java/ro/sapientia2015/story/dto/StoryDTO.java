@@ -6,9 +6,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import ro.sapientia2015.story.model.Story;
 
-/**
- * @author Kiss Tibor
- */
 public class StoryDTO {
 
     private Long id;
