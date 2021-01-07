@@ -119,7 +119,7 @@ public class StoryControllerTest extends ControllerTestBase {
         verifyZeroInteractions(serviceMock, messageSourceMock);
 
         assertEquals(StoryController.VIEW_ADD, view);
-        assertFieldErrors(result, FIELD_TITLE);
+        CommonTestUtil.assertFieldErrors(result, FIELD_TITLE);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class StoryControllerTest extends ControllerTestBase {
         verifyZeroInteractions(serviceMock, messageSourceMock);
 
         assertEquals(StoryController.VIEW_ADD, view);
-        assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
+        CommonTestUtil.assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
     }
 
     @Test
@@ -298,7 +298,7 @@ public class StoryControllerTest extends ControllerTestBase {
         verifyZeroInteractions(messageSourceMock, serviceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
-        assertFieldErrors(result, FIELD_TITLE);
+        CommonTestUtil.assertFieldErrors(result, FIELD_TITLE);
     }
 
     @Test
@@ -318,7 +318,7 @@ public class StoryControllerTest extends ControllerTestBase {
         verifyZeroInteractions(messageSourceMock, serviceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
-        assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
+        CommonTestUtil.assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
     }
 
     @Test(expected = NotFoundException.class)
@@ -339,11 +339,6 @@ public class StoryControllerTest extends ControllerTestBase {
         verifyZeroInteractions(messageSourceMock);
     }
 
-    private void assertFieldErrors(BindingResult result, String... fieldNames) {
-        assertEquals(fieldNames.length, result.getFieldErrorCount());
-        for (String fieldName : fieldNames) {
-            assertNotNull(result.getFieldError(fieldName));
-        }
-    }
+    
     
 }

@@ -1,5 +1,10 @@
 package ro.sapientia2015.story;
 
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+
+import org.springframework.validation.BindingResult;
+
 public class CommonTestUtil {
 	
 	private static final String CHARACTER = "a";
@@ -28,6 +33,13 @@ public class CommonTestUtil {
         }
 
         return builder.toString();
+    }
+	
+	public static void assertFieldErrors(BindingResult result, String... fieldNames) {
+        assertEquals(fieldNames.length, result.getFieldErrorCount());
+        for (String fieldName : fieldNames) {
+            assertNotNull(result.getFieldError(fieldName));
+        }
     }
 
 }

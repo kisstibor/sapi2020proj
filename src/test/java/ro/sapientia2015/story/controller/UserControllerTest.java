@@ -2,7 +2,6 @@ package ro.sapientia2015.story.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
 
 import javax.annotation.Resource;
 
@@ -23,14 +22,20 @@ import ro.sapientia2015.story.service.UserService;
 import static org.mockito.Mockito.*;
 
 import ro.sapientia2015.story.CommonTestUtil;
+import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.UserTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
+import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.dto.UserDTO;
+import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.model.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {UnitTestContext.class})
 public class UserControllerTest extends ControllerTestBase {
+	
+	private static final String FIELD_USERNAME = "username";
+    private static final String FIELD_PASSWORD = "password";
 	
 	private UserController controller;
 	
@@ -91,7 +96,7 @@ public class UserControllerTest extends ControllerTestBase {
 	}
 	
 	@Test
-	public void add_withEmptyUsername_returnsAddPage() {
+	public void addWithEmptyUsername() {
 		UserDTO formObject = UserTestUtil.createFormObject(null, null, UserTestUtil.PASSWORD);
 		
 		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/user/add");
@@ -102,11 +107,14 @@ public class UserControllerTest extends ControllerTestBase {
 		String view = controller.add(formObject, result, attributes);
 		
 		verifyNoMoreInteractions(serviceMock, messageSourceMock);
+		
 		assertEquals(UserController.VIEW_ADD, view);
+		
+		CommonTestUtil.assertFieldErrors(result, FIELD_USERNAME);
 	}
 	
 	@Test
-	public void add_withEmptyPassword_returnsAddPage() {
+	public void addWithEmptyPassword() {
 		UserDTO formObject = UserTestUtil.createFormObject(null, UserTestUtil.USERNAME, null);
 		
 		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/user/add");
@@ -117,7 +125,30 @@ public class UserControllerTest extends ControllerTestBase {
 		String view = controller.add(formObject, result, attributes);
 		
 		verifyNoMoreInteractions(serviceMock, messageSourceMock);
+		
 		assertEquals(UserController.VIEW_ADD, view);
+		
+		CommonTestUtil.assertFieldErrors(result, FIELD_PASSWORD);
 	}
 	
+	@Test
+    public void addWithTooLongUsernameAndPassword() {
+        String username = CommonTestUtil.createStringWithLength(User.MAX_LENGTH_USERNAME + 1);
+        String password = CommonTestUtil.createStringWithLength(User.MAX_LENGTH_PASSWORD + 1);
+
+        UserDTO formObject = UserTestUtil.createFormObject(null, username, password);
+
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/user/add");
+        BindingResult result = bindAndValidate(mockRequest, formObject);
+
+        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+        String view = controller.add(formObject, result, attributes);
+
+        verifyZeroInteractions(serviceMock, messageSourceMock);
+
+        assertEquals(UserController.VIEW_ADD, view);
+        
+        CommonTestUtil.assertFieldErrors(result, FIELD_USERNAME, FIELD_PASSWORD);
+    }
 }
