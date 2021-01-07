@@ -1,29 +1,8 @@
 package ro.sapientia2015.story;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.context.MessageSource;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Validator;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import ro.sapientia2015.story.controller.StoryController;
-
 public class CommonTestUtil {
+	
+	private static final String CHARACTER = "a";
 
 	public static void pause(long timeInMillis) {
         try {
@@ -39,6 +18,16 @@ public class CommonTestUtil {
         redirectViewPath.append("redirect:");
         redirectViewPath.append(path);
         return redirectViewPath.toString();
+    }
+	
+	public static String createStringWithLength(int length) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int index = 0; index < length; index++) {
+            builder.append(CHARACTER);
+        }
+
+        return builder.toString();
     }
 
 }

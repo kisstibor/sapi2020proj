@@ -101,8 +101,7 @@ public class UserControllerTest extends ControllerTestBase {
 		
 		String view = controller.add(formObject, result, attributes);
 		
-		verifyNoMoreInteractions(serviceMock);
-		verifyNoMoreInteractions(messageSourceMock);
+		verifyNoMoreInteractions(serviceMock, messageSourceMock);
 		assertEquals(UserController.VIEW_ADD, view);
 	}
 	
@@ -117,8 +116,7 @@ public class UserControllerTest extends ControllerTestBase {
 		
 		String view = controller.add(formObject, result, attributes);
 		
-		verifyNoMoreInteractions(serviceMock);
-		verifyNoMoreInteractions(messageSourceMock);
+		verifyNoMoreInteractions(serviceMock, messageSourceMock);
 		assertEquals(UserController.VIEW_ADD, view);
 	}
 	

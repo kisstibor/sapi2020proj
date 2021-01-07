@@ -124,8 +124,8 @@ public class StoryControllerTest extends ControllerTestBase {
 
     @Test
     public void addWithTooLongDescriptionAndTitle() {
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+        String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
 
         StoryDTO formObject = StoryTestUtil.createFormObject(null, description, title);
 
@@ -303,8 +303,8 @@ public class StoryControllerTest extends ControllerTestBase {
 
     @Test
     public void updateWhenDescriptionAndTitleAreTooLong() throws NotFoundException {
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+        String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
 
         StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, description, title);
 

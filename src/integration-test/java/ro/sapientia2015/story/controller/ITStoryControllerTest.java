@@ -105,8 +105,8 @@ public class ITStoryControllerTest {
     @Test
     @ExpectedDatabase("storyData.xml")
     public void addWhenTitleAndDescriptionAreTooLong() throws Exception {
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+        String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
 
         mockMvc.perform(post("/story/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -246,8 +246,8 @@ public class ITStoryControllerTest {
     @Test
     @ExpectedDatabase("storyData.xml")
     public void updateWhenTitleAndDescriptionAreTooLong() throws Exception {
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+        String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
 
         mockMvc.perform(post("/story/update")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)

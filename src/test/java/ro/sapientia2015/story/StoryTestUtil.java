@@ -13,8 +13,6 @@ public class StoryTestUtil {
     public static final String TITLE = "title";
     public static final String TITLE_UPDATED = "updatedTitle";
 
-    private static final String CHARACTER = "a";
-
     public static StoryDTO createFormObject(Long id, String description, String title) {
         StoryDTO dto = new StoryDTO();
 
@@ -35,13 +33,4 @@ public class StoryTestUtil {
         return model;
     }
 
-    public static String createStringWithLength(int length) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int index = 0; index < length; index++) {
-            builder.append(CHARACTER);
-        }
-
-        return builder.toString();
-    }
 }
