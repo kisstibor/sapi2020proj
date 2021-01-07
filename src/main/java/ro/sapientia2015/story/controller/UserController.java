@@ -29,7 +29,7 @@ public class UserController extends ControllerBase {
 	
 	protected static final String VIEW_ADD = "user/add";
 	
-	protected static final String REQUEST_MAPPING_VIEW = "/story/list";
+	protected static final String REQUEST_MAPPING_VIEW = "/";
 	
 	@Resource
     private UserService service;
