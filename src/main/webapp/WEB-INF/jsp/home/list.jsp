@@ -9,15 +9,33 @@
 <body>
     <h1><spring:message code="label.scrum.page.title"/></h1>
     
+    
     <div id="story-list" class="page-content">
+    <h2><spring:message code="label.story.list.page.title"/></h2>
         <c:choose>
             <c:when test="${empty stories}">
                 <p><spring:message code="label.story.list.empty"/></p>
             </c:when>
             <c:otherwise>
-                <c:forEach items="${ stories}" var="task">
+                <c:forEach items="${ stories}" var="story">
                     <div class="well well-small">
-                        <a href="/task/${story.id}"><c:out value="${story.title}"/></a>
+                        <a href="/story/${story.id}"><c:out value="${story.title}"/></a>
+                    </div>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+    </div>
+    
+    <div id="task-list" class="page-content">
+    <h2><spring:message code="label.task.list.page.title"/></h2>
+        <c:choose>
+            <c:when test="${empty tasks}">
+                <p><spring:message code="label.task.list.empty"/></p>
+            </c:when>
+            <c:otherwise>
+                <c:forEach items="${ tasks}" var="task">
+                    <div class="well well-small">
+                        <a href="/task/${task.id}"><c:out value="${task.title}"/></a>
                     </div>
                 </c:forEach>
             </c:otherwise>
