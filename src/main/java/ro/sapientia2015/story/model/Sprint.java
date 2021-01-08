@@ -8,9 +8,7 @@ import org.joda.time.DateTime;
 
 import javax.persistence.*;
 
-/**
- * @author Kiss Tibor
- */
+
 @Entity
 @Table(name="sprint")
 public class Sprint {
@@ -43,6 +41,10 @@ public class Sprint {
     @OneToMany
     private List<Story> stories;
 
+    @Column(name = "task")
+    @OneToMany
+    private List<Task> tasks;
+    
     public Sprint() {
 
     }
@@ -58,9 +60,17 @@ public class Sprint {
     public List<Story> getStories() {
 		return stories;
 	}
+    
+    public List<Task> getTasks() {
+		return tasks;
+	}
 
 	public void setStories(List<Story> stories) {
 		this.stories = stories;
+	}
+	
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
 	}
 
 	public void setId(Long id) {
