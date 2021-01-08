@@ -10,6 +10,7 @@ import ro.sapientia2015.story.repository.StoryRepository;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,6 +46,31 @@ public class RepositoryStoryService implements StoryService {
     public List<Story> findAll() {
        return repository.findAll();
     }
+    
+	@Transactional(readOnly = true, rollbackFor = {NotFoundException.class})
+	@Override
+	public List<Story> findByTitle(String text) throws NotFoundException {
+		if (text == null) {
+			throw new NotFoundException("No entry found for: " + text);
+		} else {
+			List<Story> allStories = repository.findAll();
+			String lowercaseText = text.toLowerCase();
+
+			ArrayList<Story> filtered = new ArrayList<Story>();
+			for (Story item : allStories) {
+				if (item.getTitle().toLowerCase().contains(lowercaseText)) {
+					filtered.add(item);
+				}
+			}
+			
+			if (filtered.isEmpty()) {
+				throw new NotFoundException("No entry found for: " + text);
+			}
+			else {
+				return filtered;
+			}
+		}
+	}
 
     @Transactional(readOnly = true, rollbackFor = {NotFoundException.class})
     @Override

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.StoryListDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.StoryService;
@@ -29,11 +30,13 @@ public class StoryController extends ControllerBase {
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.story.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";
     protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.story.deleted";
+    protected static final String FEEDBACK_MESSAGE_KEY_NO_RESULTS = "feedback.message.story.noResults";
 
     protected static final String MODEL_ATTRIBUTE = "story";
-    protected static final String MODEL_ATTRIBUTE_LIST = "stories";
+    protected static final String MODEL_ATTRIBUTE_STORY_LIST = "storyList";
 
     protected static final String PARAMETER_ID = "id";
+    protected static final String PARAMETER_QUERY = "query";
 
     protected static final String REQUEST_MAPPING_LIST = "/";
     protected static final String REQUEST_MAPPING_VIEW = "/story/{id}";
@@ -76,9 +79,25 @@ public class StoryController extends ControllerBase {
 
     @RequestMapping(value = REQUEST_MAPPING_LIST, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<Story> models = service.findAll();
-        model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
+        StoryListDTO dto = new StoryListDTO();
+        dto.setStories(service.findAll());
+        model.addAttribute(MODEL_ATTRIBUTE_STORY_LIST, dto);
         return VIEW_LIST;
+    }
+    
+    @RequestMapping(value = "/stories", method = RequestMethod.GET)
+    public String findByTitle(@RequestParam(value = PARAMETER_QUERY, required = false) String query, Model model, RedirectAttributes attributes) {
+    	try {
+    		StoryListDTO dto = new StoryListDTO();
+			dto.setStories(service.findByTitle(query));
+			dto.setQuery(query);
+			model.addAttribute(MODEL_ATTRIBUTE_STORY_LIST, dto);
+    	}
+    	catch (NotFoundException ex) {
+    		addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_NO_RESULTS, query);
+    		return createRedirectViewPath(REQUEST_MAPPING_LIST);
+    	}
+    	return VIEW_LIST;
     }
 
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)

@@ -12,6 +12,7 @@ public class StoryTestUtil {
     public static final String DESCRIPTION_UPDATED = "updatedDescription";
     public static final String TITLE = "title";
     public static final String TITLE_UPDATED = "updatedTitle";
+    public static final String QUERY_TEXT = "query";
 
     public static StoryDTO createFormObject(Long id, String description, String title) {
         StoryDTO dto = new StoryDTO();

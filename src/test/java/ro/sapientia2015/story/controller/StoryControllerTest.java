@@ -32,6 +32,7 @@ import ro.sapientia2015.story.CommonTestUtil;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
 import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.StoryListDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.StoryService;
@@ -189,7 +190,44 @@ public class StoryControllerTest extends ControllerTestBase {
         verifyZeroInteractions(messageSourceMock);
 
         assertEquals(StoryController.VIEW_LIST, view);
-        assertEquals(models, model.asMap().get(StoryController.MODEL_ATTRIBUTE_LIST));
+        StoryListDTO dto = (StoryListDTO)model.asMap().get(StoryController.MODEL_ATTRIBUTE_STORY_LIST);
+        assertEquals(models, dto.getStories());
+    }
+    
+    @Test
+    public void findByTitle() throws NotFoundException {
+    	BindingAwareModelMap model = new BindingAwareModelMap();
+    	RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+    	
+    	List<Story> models = new ArrayList<Story>();
+    	when(serviceMock.findByTitle(StoryTestUtil.QUERY_TEXT)).thenReturn(models);
+    	
+    	String view = controller.findByTitle(StoryTestUtil.QUERY_TEXT, model, attributes);
+    	
+    	verify(serviceMock, times(1)).findByTitle(StoryTestUtil.QUERY_TEXT);
+    	verifyNoMoreInteractions(serviceMock);
+    	verifyZeroInteractions(messageSourceMock);
+    	
+    	assertEquals(StoryController.VIEW_LIST, view);
+    	StoryListDTO dto = (StoryListDTO)model.asMap().get(StoryController.MODEL_ATTRIBUTE_STORY_LIST);
+    	assertEquals(models, dto.getStories());
+    	assertEquals(StoryTestUtil.QUERY_TEXT, dto.getQuery());
+    }
+    
+    @Test
+    public void findByTitleWhenIsNotFound() throws NotFoundException {
+    	BindingAwareModelMap model = new BindingAwareModelMap();
+    	RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+    	
+    	when(serviceMock.findByTitle(StoryTestUtil.QUERY_TEXT)).thenThrow(new NotFoundException(""));
+    	initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_NO_RESULTS);
+    	
+    	String view = controller.findByTitle(StoryTestUtil.QUERY_TEXT, model, attributes);
+    	
+    	verify(serviceMock, times(1)).findByTitle(StoryTestUtil.QUERY_TEXT);
+    	verifyNoMoreInteractions(serviceMock);
+    	
+    	assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_NO_RESULTS, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
     }
 
     @Test

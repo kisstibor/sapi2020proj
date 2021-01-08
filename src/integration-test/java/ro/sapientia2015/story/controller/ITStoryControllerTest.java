@@ -148,21 +148,48 @@ public class ITStoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name(StoryController.VIEW_LIST))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/list.jsp"))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasSize(2)))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasItem(
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasSize(2))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasItem(
                         allOf(
                                 hasProperty("id", is(1L)),
                                 hasProperty("description", is("Lorem ipsum")),
                                 hasProperty("title", is("Foo"))
                         )
-                )))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasItem(
+                ))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasItem(
                         allOf(
                                 hasProperty("id", is(2L)),
                                 hasProperty("description", is("Lorem ipsum")),
                                 hasProperty("title", is("Bar"))
                         )
-                )));
+                ))));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void findByTitle() throws Exception {
+        mockMvc.perform(get("/stories").param(StoryController.PARAMETER_QUERY, "foo"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(StoryController.VIEW_LIST))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/story/list.jsp"))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasSize(1))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasItem(
+                        allOf(
+                                hasProperty("id", is(1L)),
+                                hasProperty("description", is("Lorem ipsum")),
+                                hasProperty("title", is("Foo"))
+                        )
+                ))));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void findByTitleWhenIsNotFound() throws Exception {
+    	String expectedRedirectViewPath = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
+        mockMvc.perform(get("/stories").param(StoryController.PARAMETER_QUERY, "missing"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(expectedRedirectViewPath))
+                .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("No stories found matching query: missing")));
     }
 
     @Test

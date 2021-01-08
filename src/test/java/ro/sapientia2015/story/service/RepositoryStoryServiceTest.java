@@ -13,6 +13,7 @@ import ro.sapientia2015.story.repository.StoryRepository;
 import ro.sapientia2015.story.service.RepositoryStoryService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -88,6 +89,57 @@ public class RepositoryStoryServiceTest {
         verifyNoMoreInteractions(repositoryMock);
 
         assertEquals(models, actual);
+    }
+    
+    @Test(expected = NotFoundException.class)
+    public void findByTitleNullText() throws NotFoundException {
+    	List<Story> models = new ArrayList<Story>();
+    	when(repositoryMock.findAll()).thenReturn(models);
+    	
+    	try {
+    		service.findByTitle(null);
+    	}
+    	catch (NotFoundException exception) {
+    		throw exception;
+    	}
+    	finally {
+    		verifyNoMoreInteractions(repositoryMock);
+    	}
+    }
+    
+    @Test
+    public void findByTitleWhenFound() throws NotFoundException {
+    	List<Story> models = new ArrayList<Story>();
+    	Story matching = StoryTestUtil.createModel(2l, null, "Second story");
+    	models.add(StoryTestUtil.createModel(1l, null, "First story"));
+    	models.add(matching);
+    	when(repositoryMock.findAll()).thenReturn(models);
+    	
+    	List<Story> expected = Arrays.asList(matching);
+    	
+    	List<Story> actual = service.findByTitle("second");
+    	
+    	verify(repositoryMock, times(1)).findAll();
+    	verifyNoMoreInteractions(repositoryMock);
+    	
+    	assertEquals(expected, actual);
+    }
+    
+    @Test(expected = NotFoundException.class)
+    public void findByTitleWhenNotFound() throws NotFoundException {
+    	List<Story> models = new ArrayList<Story>();
+    	when(repositoryMock.findAll()).thenReturn(models);
+
+    	try {
+    		service.findByTitle("third");
+    	}
+		catch (NotFoundException exception) {
+    		throw exception;
+    	}
+    	finally {
+	    	verify(repositoryMock, times(1)).findAll();
+	    	verifyNoMoreInteractions(repositoryMock);
+    	}
     }
 
     @Test
