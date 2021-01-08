@@ -19,6 +19,14 @@
                     <form:errors id="error-title" path="title" cssClass="help-inline"/>
                 </div>
             </div>
+            <div id="control-group-title" class="control-group">
+                <label for="story-dueDate"><spring:message code="label.story.title"/>:</label>
+
+                <div class="controls">
+                    <form:input type="date" id="story-dueDate" path="dueDate"/>
+                    <form:errors id="error-dueDate" path="dueDate" cssClass="help-inline"/>
+                </div>
+            </div>
             <div id="control-group-description" class="control-group">
                 <label for="story-description"><spring:message code="label.story.description"/>:</label>
 

@@ -54,7 +54,7 @@
     </profiles>
 
     <build>
-        <finalName>scrumsapientia</finalName>
+        <finalName>/</finalName>
         <filters>
             <filter>profiles/${build.profile.id}/config.properties</filter>
         </filters>
@@ -363,13 +363,15 @@
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.spi</artifactId>
-            <version>3.0.0.CR3</version>
+            <version>3.1.0.GA</version>
+            <!--<version>3.0.0.CR3</version>-->
         </dependency>
 
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
-            <version>3.0.0.CR3</version>
+            <version>3.1.0.GA</version>
+            <!--<version>3.0.0.CR3</version>-->
         </dependency>
      
         <!-- TESTING DEPENDENCIES -->

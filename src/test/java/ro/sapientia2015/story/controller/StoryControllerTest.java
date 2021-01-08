@@ -22,6 +22,7 @@ import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.StoryStatus;
 import ro.sapientia2015.story.service.StoryService;
 
 import javax.annotation.Resource;
@@ -79,7 +80,8 @@ public class StoryControllerTest {
         assertEquals(StoryController.VIEW_ADD, view);
 
         StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
-
+        
+        assertNull(formObject.getDueDate());
         assertNull(formObject.getId());
         assertNull(formObject.getDescription());
         assertNull(formObject.getTitle());
@@ -87,9 +89,9 @@ public class StoryControllerTest {
 
     @Test
     public void add() {
-        StoryDTO formObject = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        StoryDTO formObject = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE, StoryTestUtil.STATUS);
 
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE,StoryTestUtil.DUEDATE);
         when(serviceMock.add(formObject)).thenReturn(model);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
@@ -99,7 +101,7 @@ public class StoryControllerTest {
 
         initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
 
-        String view = controller.add(formObject, result, attributes);
+        String view = controller.add(formObject, StoryTestUtil.DUEDATE.toLocalDate(), result, attributes);
 
         verify(serviceMock, times(1)).add(formObject);
         verifyNoMoreInteractions(serviceMock);
@@ -114,14 +116,14 @@ public class StoryControllerTest {
 
     @Test
     public void addEmptyStory() {
-        StoryDTO formObject = StoryTestUtil.createFormObject(null, "", "");
+        StoryDTO formObject = StoryTestUtil.createFormObject(null, "", "", null, StoryStatus.TODO);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
 
         RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        String view = controller.add(formObject, result, attributes);
+        String view = controller.add(formObject,null , result, attributes);
 
         verifyZeroInteractions(serviceMock, messageSourceMock);
 
@@ -134,14 +136,14 @@ public class StoryControllerTest {
         String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
         String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
 
-        StoryDTO formObject = StoryTestUtil.createFormObject(null, description, title);
+        StoryDTO formObject = StoryTestUtil.createFormObject(null, description, title, StoryTestUtil.DUEDATE, StoryTestUtil.STATUS);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
 
         RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        String view = controller.add(formObject, result, attributes);
+        String view = controller.add(formObject,StoryTestUtil.DUEDATE.toLocalDate(), result, attributes);
 
         verifyZeroInteractions(serviceMock, messageSourceMock);
 
@@ -153,7 +155,7 @@ public class StoryControllerTest {
     public void deleteById() throws NotFoundException {
         RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE);
         when(serviceMock.deleteById(StoryTestUtil.ID)).thenReturn(model);
 
         initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
@@ -203,7 +205,7 @@ public class StoryControllerTest {
     public void findById() throws NotFoundException {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
-        Story found = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story found = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE);
         when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(found);
 
         String view = controller.findById(StoryTestUtil.ID, model);
@@ -233,7 +235,7 @@ public class StoryControllerTest {
     public void showUpdateStoryForm() throws NotFoundException {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
-        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE);
         when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
 
         String view = controller.showUpdateForm(StoryTestUtil.ID, model);
@@ -266,9 +268,10 @@ public class StoryControllerTest {
 
     @Test
     public void update() throws NotFoundException {
-        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
+        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED, StoryTestUtil.DUEDATE, StoryTestUtil.STATUS_UPDATED_1);
 
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED, StoryTestUtil.DUEDATE);
+        model.setStatus(StoryTestUtil.STATUS_UPDATED_1);
         when(serviceMock.update(formObject)).thenReturn(model);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
@@ -293,7 +296,7 @@ public class StoryControllerTest {
 
     @Test
     public void updateEmpty() throws NotFoundException {
-        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, "", "");
+        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, "", "", null, StoryStatus.TODO);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
@@ -313,7 +316,7 @@ public class StoryControllerTest {
         String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
         String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
 
-        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, description, title);
+        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, description, title, StoryTestUtil.DUEDATE, StoryTestUtil.STATUS);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
@@ -330,7 +333,7 @@ public class StoryControllerTest {
 
     @Test(expected = NotFoundException.class)
     public void updateWhenIsNotFound() throws NotFoundException {
-        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
+        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED, StoryTestUtil.DUEDATE, StoryTestUtil.STATUS_UPDATED_1);
 
         when(serviceMock.update(formObject)).thenThrow(new NotFoundException(""));
 

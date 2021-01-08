@@ -1,7 +1,9 @@
 package ro.sapientia2015.story.controller;
 
+import org.joda.time.LocalDate;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,11 +13,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.StoryStatus;
 import ro.sapientia2015.story.service.StoryService;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,11 +66,11 @@ public class StoryController {
     }
 
     @RequestMapping(value = "/story/add", method = RequestMethod.POST)
-    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) {
+    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto,@RequestParam(value="dueDate") @DateTimeFormat(pattern ="yyyy-MM-dd") LocalDate date, BindingResult result, RedirectAttributes attributes) {
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
-
+        dto.setDueDate(date.toDate());
         Story added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());
@@ -90,6 +95,7 @@ public class StoryController {
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
         Story found = service.findById(id);
+        //System.out.println("CRISTIAN -- Size:"+found.getComments().size());
         model.addAttribute(MODEL_ATTRIBUTE, found);
         return VIEW_VIEW;
     }
@@ -99,7 +105,7 @@ public class StoryController {
         Story updated = service.findById(id);
         StoryDTO formObject = constructFormObjectForUpdateForm(updated);
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
-
+        model.addAttribute("StatusEnum", new ArrayList<StoryStatus>(Arrays.asList(StoryStatus.values())));
         return VIEW_UPDATE;
     }
 
@@ -122,6 +128,7 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        dto.setStatus(updated.getStatus());
 
         return dto;
     }

@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -13,11 +14,10 @@ import javax.persistence.Version;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
-import ro.sapientia2015.story.model.Story.Builder;
+import org.joda.time.format.DateTimeFormat;
 
 @Entity
-@Table(name="story")
+@Table(name="comment")
 public class Comment {
 
     public static final int MAX_LENGTH_DESCRIPTION = 500;
@@ -37,6 +37,7 @@ public class Comment {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modificationTime;
 
+    @ManyToOne private Story story;
 
     @Version
     private long version;
@@ -57,18 +58,26 @@ public class Comment {
         return creationTime;
     }
 
-    public String getDescription() {
+    public String getMessage() {
         return message;
     }
 
-    public DateTime getModificationTime() {
-        return modificationTime;
+    public String getModificationTime() {
+        return modificationTime.toString(DateTimeFormat.forPattern("dd MMMM yyyy, HH:mm"));
     }
 
     public long getVersion() {
         return version;
     }
+    
+    public Story getStory() {
+        return story;
+    }
 
+    public void setStory(Story story) {
+        this.story = story;
+    }
+    
     @PrePersist
     public void prePersist() {
         DateTime now = DateTime.now();
@@ -97,7 +106,7 @@ public class Comment {
             return built;
         }
 
-        public Builder description(String message) {
+        public Builder message(String message) {
             built.message = message;
             return this;
         }
