@@ -33,6 +33,9 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    @Column(name = "progress")
+    private Integer progress;
 
     @Version
     private long version;
@@ -68,6 +71,10 @@ public class Story {
     public long getVersion() {
         return version;
     }
+    
+    public Integer getProgress() {
+        return progress;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -101,6 +108,11 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder progress(Integer progress) {
+            built.progress = progress;
             return this;
         }
     }

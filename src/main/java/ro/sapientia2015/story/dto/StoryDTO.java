@@ -19,7 +19,10 @@ public class StoryDTO {
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
+    
+    private String progress;
 
+    
     public StoryDTO() {
 
     }
@@ -48,7 +51,15 @@ public class StoryDTO {
         this.title = title;
     }
 
-    @Override
+    public String getProgress() {
+		return progress;
+	}
+
+	public void setProgress(String progress) {
+		this.progress = progress;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
