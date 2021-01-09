@@ -32,6 +32,7 @@
                     <div class="nav-collapse">
                         <ul class="nav">
                             <li><a href="/"><spring:message code="label.navigation.homepage.link"/></a></li>
+                            <li><a href="/user/add"><spring:message code="label.navigation.adduser.link"/></a></li>
                         </ul>
                     </div>
                 </div>
