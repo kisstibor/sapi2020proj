@@ -21,9 +21,6 @@ public class HomeController {
     protected static final String REQUEST_MAPPING_LIST = "/";
 
     protected static final String VIEW_LIST = "home/list";
-    
-    
-
 
     @Resource
     private StoryService storyService;
@@ -34,9 +31,9 @@ public class HomeController {
 
     @RequestMapping(value = REQUEST_MAPPING_LIST, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<Story> models = storyService.findAll();
+        List<Story> storyModels = storyService.findAll();
         List<Task> taskModels = taskService.findAll();
-        model.addAttribute(MODEL_ATTRIBUTE_LIST_STORY, models);
+        model.addAttribute(MODEL_ATTRIBUTE_LIST_STORY, storyModels);
         model.addAttribute(MODEL_ATTRIBUTE_LIST_TASK, taskModels);
         return VIEW_LIST;
     }
