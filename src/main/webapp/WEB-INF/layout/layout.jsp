@@ -31,7 +31,8 @@
 
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li><a href="/"><spring:message code="label.navigation.homepage.link"/></a></li>
+                            <li><a href="/"><spring:message code="label.navigation.homepage.link"/></a></li>    
+                            <li><a href="/daily/list"><spring:message code="label.navigation.daily.link"/></a></li>                      
                         </ul>
                     </div>
                 </div>

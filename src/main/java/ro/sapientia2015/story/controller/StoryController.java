@@ -45,6 +45,7 @@ public class StoryController {
     protected static final String VIEW_LIST = "story/list";
     protected static final String VIEW_UPDATE = "story/update";
     protected static final String VIEW_VIEW = "story/view";
+    
 
     @Resource
     private StoryService service;
