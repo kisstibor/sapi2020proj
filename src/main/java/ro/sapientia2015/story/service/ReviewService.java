@@ -13,4 +13,6 @@ public interface ReviewService {
 	public Review findReviewById(Long id) throws NotFoundException;
 	
 	public Review findReviewByStoryId(Long id) throws NotFoundException;
+	
+	public Review update(ReviewDTO updated) throws NotFoundException;
 }

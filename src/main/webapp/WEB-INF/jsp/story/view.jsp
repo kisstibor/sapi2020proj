@@ -28,7 +28,6 @@
 	            </c:when>
 	            <c:otherwise>
 	                 <a href="/story/review/${story.id}" class="btn btn-primary"><spring:message code="label.review.update.story.link"/></a>
-	                 <a href="/story/review/remove/${review.id}" class="btn btn-primary" style="background:red"><spring:message code="label.review.remove.story.link"/></a>
 	            </c:otherwise>
         	</c:choose>
         	

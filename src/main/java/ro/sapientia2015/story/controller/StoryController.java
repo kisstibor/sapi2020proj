@@ -33,6 +33,7 @@ public class StoryController {
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";
     protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.story.deleted";
     protected static final String FEEDBACK_MESSAGE_KEY_REVIEWED = "feedback.message.story.reviewed";
+    protected static final String FEEDBACK_MESSAGE_KEY_REVIEW_MODIFIED = "feedback.message.story.review.modified";
     protected static final String FEEDBACK_MESSAGE_KEY_REVIEW_REMOVED = "feedback.message.review.removed";
     
     protected static final String ERROR_MESSAGE_KEY_EMPTY_REVIEW = "error.message.story.empty.review";
@@ -104,26 +105,33 @@ public class StoryController {
         }
 
         try {
-        	reviewService.add(dto);
-        	//Story modified = service.update(dto);
-        	addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_REVIEWED);
+        	
+        	Review existingReview = reviewService.findReviewByStoryId(storyId);
+        	if(existingReview == null) {
+        		reviewService.add(dto);
+            	addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_REVIEWED);
+        	}else {
+        		reviewService.update(dto);
+        		addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_REVIEW_MODIFIED);
+        	}
         }
         catch(Exception ex)
         {
         	addFeedbackErrorMessage(attributes, ERROR_MESSAGE_KEY_INVALID_REVIEW);
         }
         
-    	attributes.addAttribute(PARAMETER_ID, dto.getId());
+    	attributes.addAttribute(PARAMETER_ID, storyId);
     	
-        return createRedirectViewPath("/");
+    	 return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+       //return createRedirectViewPath("/");
     }
     
         
     @RequestMapping(value = "/story/review/remove/{id}", method = RequestMethod.GET)
     public String removeReviewById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
         Review deleted = reviewService.deleteReviewById(id);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED);
-        return createRedirectViewPath(REQUEST_MAPPING_LIST);
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_REVIEW_REMOVED);
+        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
     
 
@@ -161,9 +169,16 @@ public class StoryController {
     
     @RequestMapping(value = "/story/review/{id}", method = RequestMethod.GET)
     public String showReviewForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
+    	Review review = reviewService.findReviewByStoryId(id);
+    	
     	ReviewDTO reviewDTO = new ReviewDTO();
-        reviewDTO.setStoryId(id);
-        model.addAttribute(PARAMETER_STORY_ID, id);
+    	if (review == null) {
+    		reviewDTO.setStoryId(id);
+    	}else {
+    		reviewDTO = constructFromObjectForReviewUpdateForm(review);
+    	}
+    	
+        model.addAttribute(PARAMETER_STORY_ID, reviewDTO.getStoryId());
         model.addAttribute(MODEL_ATTRIBUTE_REVIEW, reviewDTO);
  
         return VIEW_REVIEW;
@@ -178,6 +193,16 @@ public class StoryController {
         dto.setReview(updated.getReview());
 
         return dto;
+    }
+    
+    private ReviewDTO constructFromObjectForReviewUpdateForm(Review review) {
+    	ReviewDTO dto = new ReviewDTO();
+    	
+    	dto.setId(review.getId());
+    	dto.setStoryId(review.getStoryId());
+    	dto.setReview(review.getReview());
+    	
+    	return dto;
     }
 
     private void addFeedbackMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ro.sapientia2015.story.dto.ReviewDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Review;
+import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.repository.ReviewRepository;
 
 import javax.annotation.Resource;
@@ -33,17 +34,20 @@ public class RepositoryReviewService implements ReviewService{
     @Transactional(rollbackFor = {NotFoundException.class})
    	@Override
 	public Review deleteReviewById(Long id) throws NotFoundException {
-    	Review deleted = findReviewById(id);
+    	Review deleted = findReviewByStoryId(id);
     	repository.delete(deleted);
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Transactional(readOnly = true, rollbackFor = {NotFoundException.class})
 	@Override
 	public Review findReviewById(Long id) throws NotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		Review found = repository.findOne(id);
+        if (found == null) {
+            throw new NotFoundException("No entry found with id: " + id);
+        }
+
+		return found;
 	}
 
 	@Override
@@ -55,9 +59,16 @@ public class RepositoryReviewService implements ReviewService{
 				return review;
 			}
 		}
-		//Review review = repository.findReviewByStoryId(id).get(0);
-		// TODO Auto-generated method stub
+
 		return null;
+	}
+
+    @Transactional(rollbackFor = {NotFoundException.class})
+	@Override
+	public Review update(ReviewDTO updated) throws NotFoundException {
+    	Review review = findReviewById(updated.getId());
+    	review.update(updated.getReview());
+		return review;
 	}
 
 }
