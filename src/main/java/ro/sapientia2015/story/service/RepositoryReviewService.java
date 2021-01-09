@@ -26,6 +26,7 @@ public class RepositoryReviewService implements ReviewService{
 
         Review model = Review.getBuilder(added.getId())
                 .review(added.getReview())
+                .storyId(added.getStoryId())
                 .build();
 
         return repository.save(model);
@@ -36,7 +37,7 @@ public class RepositoryReviewService implements ReviewService{
 	public Review deleteReviewById(Long id) throws NotFoundException {
     	Review deleted = findReviewByStoryId(id);
     	repository.delete(deleted);
-		return null;
+		return deleted;
 	}
 
 	@Transactional(readOnly = true, rollbackFor = {NotFoundException.class})

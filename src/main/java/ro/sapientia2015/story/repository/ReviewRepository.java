@@ -9,4 +9,5 @@ import org.springframework.data.repository.query.Param;
 import ro.sapientia2015.story.model.Review;
 
 public interface ReviewRepository extends JpaRepository<Review, Long>{
+
 }

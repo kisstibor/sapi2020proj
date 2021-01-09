@@ -22,6 +22,7 @@ import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.service.ReviewService;
 import ro.sapientia2015.story.service.StoryService;
 
 import javax.annotation.Resource;
@@ -38,9 +39,6 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-/**
- * @author Kiss Tibor
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {UnitTestContext.class})
 public class StoryControllerTest {
@@ -53,7 +51,9 @@ public class StoryControllerTest {
 
     private MessageSource messageSourceMock;
 
-    private StoryService serviceMock;
+    private StoryService storyServiceMock;
+    
+    private ReviewService reviewServiceMock;
 
     @Resource
     private Validator validator;
@@ -65,8 +65,11 @@ public class StoryControllerTest {
         messageSourceMock = mock(MessageSource.class);
         ReflectionTestUtils.setField(controller, "messageSource", messageSourceMock);
 
-        serviceMock = mock(StoryService.class);
-        ReflectionTestUtils.setField(controller, "service", serviceMock);
+        storyServiceMock = mock(StoryService.class);
+        ReflectionTestUtils.setField(controller, "service", storyServiceMock);
+        
+        reviewServiceMock = mock(ReviewService.class);
+        ReflectionTestUtils.setField(controller, "reviewService", reviewServiceMock);
     }
 
     @Test
@@ -75,7 +78,7 @@ public class StoryControllerTest {
 
         String view = controller.showAddForm(model);
 
-        verifyZeroInteractions(messageSourceMock, serviceMock);
+        verifyZeroInteractions(messageSourceMock, storyServiceMock);
         assertEquals(StoryController.VIEW_ADD, view);
 
         StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
@@ -90,7 +93,7 @@ public class StoryControllerTest {
         StoryDTO formObject = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
 
         Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
-        when(serviceMock.add(formObject)).thenReturn(model);
+        when(storyServiceMock.add(formObject)).thenReturn(model);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
@@ -101,8 +104,8 @@ public class StoryControllerTest {
 
         String view = controller.add(formObject, result, attributes);
 
-        verify(serviceMock, times(1)).add(formObject);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).add(formObject);
+        verifyNoMoreInteractions(storyServiceMock);
 
         String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
         assertEquals(expectedView, view);
@@ -123,7 +126,7 @@ public class StoryControllerTest {
 
         String view = controller.add(formObject, result, attributes);
 
-        verifyZeroInteractions(serviceMock, messageSourceMock);
+        verifyZeroInteractions(storyServiceMock, messageSourceMock);
 
         assertEquals(StoryController.VIEW_ADD, view);
         assertFieldErrors(result, FIELD_TITLE);
@@ -143,7 +146,7 @@ public class StoryControllerTest {
 
         String view = controller.add(formObject, result, attributes);
 
-        verifyZeroInteractions(serviceMock, messageSourceMock);
+        verifyZeroInteractions(storyServiceMock, messageSourceMock);
 
         assertEquals(StoryController.VIEW_ADD, view);
         assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
@@ -154,14 +157,14 @@ public class StoryControllerTest {
         RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
         Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
-        when(serviceMock.deleteById(StoryTestUtil.ID)).thenReturn(model);
+        when(storyServiceMock.deleteById(StoryTestUtil.ID)).thenReturn(model);
 
         initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
 
         String view = controller.deleteById(StoryTestUtil.ID, attributes);
 
-        verify(serviceMock, times(1)).deleteById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).deleteById(StoryTestUtil.ID);
+        verifyNoMoreInteractions(storyServiceMock);
 
         assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
 
@@ -173,12 +176,12 @@ public class StoryControllerTest {
     public void deleteByIdWhenIsNotFound() throws NotFoundException {
         RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        when(serviceMock.deleteById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
+        when(storyServiceMock.deleteById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
 
         controller.deleteById(StoryTestUtil.ID, attributes);
 
-        verify(serviceMock, times(1)).deleteById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).deleteById(StoryTestUtil.ID);
+        verifyNoMoreInteractions(storyServiceMock);
         verifyZeroInteractions(messageSourceMock);
     }
 
@@ -187,12 +190,12 @@ public class StoryControllerTest {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
         List<Story> models = new ArrayList<Story>();
-        when(serviceMock.findAll()).thenReturn(models);
+        when(storyServiceMock.findAll()).thenReturn(models);
 
         String view = controller.findAll(model);
 
-        verify(serviceMock, times(1)).findAll();
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(storyServiceMock);
         verifyZeroInteractions(messageSourceMock);
 
         assertEquals(StoryController.VIEW_LIST, view);
@@ -204,12 +207,12 @@ public class StoryControllerTest {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
         Story found = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
-        when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(found);
+        when(storyServiceMock.findById(StoryTestUtil.ID)).thenReturn(found);
 
         String view = controller.findById(StoryTestUtil.ID, model);
 
-        verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
+        verifyNoMoreInteractions(storyServiceMock);
         verifyZeroInteractions(messageSourceMock);
 
         assertEquals(StoryController.VIEW_VIEW, view);
@@ -220,12 +223,12 @@ public class StoryControllerTest {
     public void findByIdWhenIsNotFound() throws NotFoundException {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
-        when(serviceMock.findById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
+        when(storyServiceMock.findById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
 
         controller.findById(StoryTestUtil.ID, model);
 
-        verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
+        verifyNoMoreInteractions(storyServiceMock);
         verifyZeroInteractions(messageSourceMock);
     }
 
@@ -234,12 +237,12 @@ public class StoryControllerTest {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
         Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
-        when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
+        when(storyServiceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
 
         String view = controller.showUpdateForm(StoryTestUtil.ID, model);
 
-        verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
+        verifyNoMoreInteractions(storyServiceMock);
         verifyZeroInteractions(messageSourceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
@@ -255,12 +258,12 @@ public class StoryControllerTest {
     public void showUpdateStoryFormWhenIsNotFound() throws NotFoundException {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
-        when(serviceMock.findById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
+        when(storyServiceMock.findById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
 
         controller.showUpdateForm(StoryTestUtil.ID, model);
 
-        verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
+        verifyNoMoreInteractions(storyServiceMock);
         verifyZeroInteractions(messageSourceMock);
     }
 
@@ -269,7 +272,7 @@ public class StoryControllerTest {
         StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
 
         Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
-        when(serviceMock.update(formObject)).thenReturn(model);
+        when(storyServiceMock.update(formObject)).thenReturn(model);
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
@@ -280,8 +283,8 @@ public class StoryControllerTest {
 
         String view = controller.update(formObject, result, attributes);
 
-        verify(serviceMock, times(1)).update(formObject);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).update(formObject);
+        verifyNoMoreInteractions(storyServiceMock);
 
         String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
         assertEquals(expectedView, view);
@@ -302,7 +305,7 @@ public class StoryControllerTest {
 
         String view = controller.update(formObject, result, attributes);
 
-        verifyZeroInteractions(messageSourceMock, serviceMock);
+        verifyZeroInteractions(messageSourceMock, storyServiceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
         assertFieldErrors(result, FIELD_TITLE);
@@ -322,7 +325,7 @@ public class StoryControllerTest {
 
         String view = controller.update(formObject, result, attributes);
 
-        verifyZeroInteractions(messageSourceMock, serviceMock);
+        verifyZeroInteractions(messageSourceMock, storyServiceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
         assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
@@ -332,7 +335,7 @@ public class StoryControllerTest {
     public void updateWhenIsNotFound() throws NotFoundException {
         StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
 
-        when(serviceMock.update(formObject)).thenThrow(new NotFoundException(""));
+        when(storyServiceMock.update(formObject)).thenThrow(new NotFoundException(""));
 
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
@@ -341,8 +344,8 @@ public class StoryControllerTest {
 
         controller.update(formObject, result, attributes);
 
-        verify(serviceMock, times(1)).update(formObject);
-        verifyNoMoreInteractions(serviceMock);
+        verify(storyServiceMock, times(1)).update(formObject);
+        verifyNoMoreInteractions(storyServiceMock);
         verifyZeroInteractions(messageSourceMock);
     }
 

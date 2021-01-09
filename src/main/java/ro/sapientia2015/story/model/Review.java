@@ -49,10 +49,20 @@ public class Review {
     	
     }
     
+    public Review(Long id, String review, Long storyId) {
+    	this.id = id;
+    	this.review = review;
+    	this.storyId = storyId;
+    }
+    
     public static Builder getBuilder(Long storyId) {
         return new Builder(storyId);
     }
-
+    
+    public static Builder getBuilder(Long storyId, String review) {
+        return new Builder(storyId, review);
+    }
+    
     public Long getId() {
         return id;
     }
@@ -99,19 +109,30 @@ public class Review {
 
         private Review built;
 
+        public Builder(Long storyId, String review) {
+            built = new Review();
+            built.storyId = storyId;
+            built.review = review;
+        }
+        
         public Builder(Long storyId) {
             built = new Review();
             built.storyId = storyId;
         }
-
+        
         public Review build() {
             return built;
         }
-        
-        public Builder review(String review) {
-        	built.review = review;
-        	return this;
-        }
+
+		public Builder review(String review) {
+			built.review = review;
+			return this;
+		}
+		
+		public Builder storyId(Long storyId) {
+			built.storyId = storyId;
+			return this;
+		}
     }
 
     @Override

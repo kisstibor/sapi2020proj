@@ -35,16 +35,13 @@ public class Story {
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
     
-    @Column(name = "review", nullable = true, length = MAX_LENGTH_REVIEW)
-    private String review;
-
     @Version
     private long version;
 
     public Story() {
 
     }
-
+    
     public static Builder getBuilder(String title) {
         return new Builder(title);
     }
@@ -69,10 +66,6 @@ public class Story {
         return title;
     }
     
-    public String getReview() {
-    	return review;
-    }
-
     public long getVersion() {
         return version;
     }
@@ -94,12 +87,6 @@ public class Story {
         this.title = title;
     }
     
-    public void update(String description, String title, String review) {
-        this.description = description;
-        this.title = title;
-        this.review = review;
-    }
-
     public static class Builder {
 
         private Story built;
@@ -117,11 +104,7 @@ public class Story {
             built.description = description;
             return this;
         }
-        
-        public Builder review(String review) {
-        	built.review = review;
-        	return this;
-        }
+       
     }
 
     @Override

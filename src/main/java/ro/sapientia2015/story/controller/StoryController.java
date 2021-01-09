@@ -202,8 +202,7 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
-        dto.setReview(updated.getReview());
-
+        
         return dto;
     }
     
