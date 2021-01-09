@@ -8,9 +8,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ro.sapientia2015.story.dto.ReviewDTO;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Review;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.service.ReviewService;
 import ro.sapientia2015.story.service.StoryService;
 
 import javax.annotation.Resource;
@@ -29,26 +32,39 @@ public class StoryController {
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.story.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";
     protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.story.deleted";
-
+    protected static final String FEEDBACK_MESSAGE_KEY_REVIEWED = "feedback.message.story.reviewed";
+    protected static final String FEEDBACK_MESSAGE_KEY_REVIEW_REMOVED = "feedback.message.review.removed";
+    
+    protected static final String ERROR_MESSAGE_KEY_EMPTY_REVIEW = "error.message.story.empty.review";
+    protected static final String ERROR_MESSAGE_KEY_INVALID_REVIEW = "error.message.story.invalid.review";
+    
     protected static final String FLASH_MESSAGE_KEY_ERROR = "errorMessage";
     protected static final String FLASH_MESSAGE_KEY_FEEDBACK = "feedbackMessage";
 
+    protected static final String MODEL_ATTRIBUTE_REVIEW = "review";
     protected static final String MODEL_ATTRIBUTE = "story";
     protected static final String MODEL_ATTRIBUTE_LIST = "stories";
 
     protected static final String PARAMETER_ID = "id";
+    protected static final String PARAMETER_STORY_ID = "storyId";
 
     protected static final String REQUEST_MAPPING_LIST = "/";
     protected static final String REQUEST_MAPPING_VIEW = "/story/{id}";
+    protected static final String REQUEST_MAPPING_REVIEW = "/story/review/{id}";
+    
 
     protected static final String VIEW_ADD = "story/add";
     protected static final String VIEW_LIST = "story/list";
     protected static final String VIEW_UPDATE = "story/update";
+    protected static final String VIEW_REVIEW = "story/review";
     protected static final String VIEW_VIEW = "story/view";
 
     @Resource
     private StoryService service;
 
+    @Resource 
+    private ReviewService reviewService;
+    
     @Resource
     private MessageSource messageSource;
 
@@ -72,6 +88,44 @@ public class StoryController {
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
+    
+    
+    @RequestMapping(value = "/story/review/{id}", method = RequestMethod.POST)
+    public String addReview(@Valid @ModelAttribute(MODEL_ATTRIBUTE_REVIEW) ReviewDTO dto, @PathVariable("id") Long storyId, BindingResult result, RedirectAttributes attributes) {
+    	if (result.hasErrors()) {
+            return VIEW_REVIEW;
+        }
+        
+    	dto.setStoryId(storyId);
+        if(dto.getReview() == "" ) {
+        	addFeedbackErrorMessage(attributes, ERROR_MESSAGE_KEY_EMPTY_REVIEW);
+        	attributes.addAttribute(PARAMETER_ID, dto.getId());
+        	return createRedirectViewPath(REQUEST_MAPPING_REVIEW);
+        }
+
+        try {
+        	reviewService.add(dto);
+        	//Story modified = service.update(dto);
+        	addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_REVIEWED);
+        }
+        catch(Exception ex)
+        {
+        	addFeedbackErrorMessage(attributes, ERROR_MESSAGE_KEY_INVALID_REVIEW);
+        }
+        
+    	attributes.addAttribute(PARAMETER_ID, dto.getId());
+    	
+        return createRedirectViewPath("/");
+    }
+    
+        
+    @RequestMapping(value = "/story/review/remove/{id}", method = RequestMethod.GET)
+    public String removeReviewById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
+        Review deleted = reviewService.deleteReviewById(id);
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED);
+        return createRedirectViewPath(REQUEST_MAPPING_LIST);
+    }
+    
 
     @RequestMapping(value = "/story/delete/{id}", method = RequestMethod.GET)
     public String deleteById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
@@ -90,7 +144,9 @@ public class StoryController {
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
         Story found = service.findById(id);
+        Review review = reviewService.findReviewByStoryId(id);
         model.addAttribute(MODEL_ATTRIBUTE, found);
+        model.addAttribute(MODEL_ATTRIBUTE_REVIEW, review);
         return VIEW_VIEW;
     }
 
@@ -102,18 +158,15 @@ public class StoryController {
 
         return VIEW_UPDATE;
     }
-
-    @RequestMapping(value = "/story/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
-        if (result.hasErrors()) {
-            return VIEW_UPDATE;
-        }
-
-        Story updated = service.update(dto);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
-        attributes.addAttribute(PARAMETER_ID, updated.getId());
-
-        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+    
+    @RequestMapping(value = "/story/review/{id}", method = RequestMethod.GET)
+    public String showReviewForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
+    	ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setStoryId(id);
+        model.addAttribute(PARAMETER_STORY_ID, id);
+        model.addAttribute(MODEL_ATTRIBUTE_REVIEW, reviewDTO);
+ 
+        return VIEW_REVIEW;
     }
 
     private StoryDTO constructFormObjectForUpdateForm(Story updated) {
@@ -122,6 +175,7 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        dto.setReview(updated.getReview());
 
         return dto;
     }
@@ -129,6 +183,11 @@ public class StoryController {
     private void addFeedbackMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
         String localizedFeedbackMessage = getMessage(messageCode, messageParameters);
         attributes.addFlashAttribute(FLASH_MESSAGE_KEY_FEEDBACK, localizedFeedbackMessage);
+    }
+    
+    private void addFeedbackErrorMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
+        String localizedFeedbackMessage = getMessage(messageCode, messageParameters);
+        attributes.addFlashAttribute(FLASH_MESSAGE_KEY_ERROR, localizedFeedbackMessage);
     }
 
     private String getMessage(String messageCode, Object... messageParameters) {

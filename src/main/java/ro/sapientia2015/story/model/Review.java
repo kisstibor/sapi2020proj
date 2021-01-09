@@ -1,21 +1,27 @@
 package ro.sapientia2015.story.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import ro.sapientia2015.story.model.Story.Builder;
 
-/**
- * @author Kiss Tibor
- */
 @Entity
-@Table(name="story")
-public class Story {
+@Table(name="review")
+public class Review {
 
-    public static final int MAX_LENGTH_DESCRIPTION = 500;
+
     public static final int MAX_LENGTH_REVIEW = 100;
-    public static final int MAX_LENGTH_TITLE = 100;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,28 +31,26 @@ public class Story {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime creationTime;
 
-    @Column(name = "description", nullable = true, length = MAX_LENGTH_DESCRIPTION)
-    private String description;
 
     @Column(name = "modification_time", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modificationTime;
 
-    @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
-    private String title;
+    @Column(name = "storyId", nullable = false)
+    private Long storyId;
     
     @Column(name = "review", nullable = true, length = MAX_LENGTH_REVIEW)
     private String review;
 
     @Version
     private long version;
-
-    public Story() {
-
+    
+    public Review() {
+    	
     }
-
-    public static Builder getBuilder(String title) {
-        return new Builder(title);
+    
+    public static Builder getBuilder(Long storyId) {
+        return new Builder(storyId);
     }
 
     public Long getId() {
@@ -57,26 +61,23 @@ public class Story {
         return creationTime;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
+    
     public DateTime getModificationTime() {
         return modificationTime;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-    
-    public String getReview() {
-    	return review;
     }
 
     public long getVersion() {
         return version;
     }
-
+    
+    public Long getStoryId() {
+    	return storyId;
+    }
+    
+    public String getReview() {
+    	return review;
+    }
+    
     @PrePersist
     public void prePersist() {
         DateTime now = DateTime.now();
@@ -89,33 +90,22 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
-        this.description = description;
-        this.title = title;
-    }
-    
-    public void update(String description, String title, String review) {
-        this.description = description;
-        this.title = title;
+    public void update(String review) {
         this.review = review;
     }
+    
 
     public static class Builder {
 
-        private Story built;
+        private Review built;
 
-        public Builder(String title) {
-            built = new Story();
-            built.title = title;
+        public Builder(Long storyId) {
+            built = new Review();
+            built.storyId = storyId;
         }
 
-        public Story build() {
+        public Review build() {
             return built;
-        }
-
-        public Builder description(String description) {
-            built.description = description;
-            return this;
         }
         
         public Builder review(String review) {
@@ -128,4 +118,6 @@ public class Story {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+    
+    
 }

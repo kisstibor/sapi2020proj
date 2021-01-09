@@ -16,6 +16,9 @@ public class StoryDTO {
     @Length(max = Story.MAX_LENGTH_DESCRIPTION)
     private String description;
 
+    @Length(max = Story.MAX_LENGTH_REVIEW)
+    private String review;
+    
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
@@ -48,6 +51,14 @@ public class StoryDTO {
         this.title = title;
     }
 
+    public String getReview() {
+    	return review;
+    }
+    
+    public void setReview(String review) {
+    	this.review = review;
+    }
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
