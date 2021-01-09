@@ -24,6 +24,7 @@ import ro.sapientia2015.config.ExampleApplicationContext;
 import ro.sapientia2015.context.WebContextLoader;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.controller.StoryController;
+import ro.sapientia2015.story.dto.ReviewDTO;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.model.Story;
 
@@ -62,6 +63,14 @@ public class ITStoryControllerTest {
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
 
+    private static final Long STORYID_WITH_REVIEW = 1L;
+    private static final Long STORYID_WITH_NO_REVIEW = 2L;
+    private static final Long REVIEWID = 1L;
+    private static final String REVIEW = "Approved";
+    
+    private static final String FORM_REVIEW_REVIEW = "review";
+    private static final String FORM_REVIEW_STORYID = "storyId";
+    
     @Resource
     private WebApplicationContext webApplicationContext;
 
@@ -84,6 +93,63 @@ public class ITStoryControllerTest {
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
     }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void ShowUpdateReviewForm() throws Exception{
+    	mockMvc.perform(get("/story/review/" + STORYID_WITH_REVIEW))
+    	.andExpect(status().isOk())
+    	.andExpect(view().name(StoryController.VIEW_REVIEW))
+    	.andExpect(forwardedUrl("/WEB-INF/jsp/story/review.jsp"))
+    	.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_REVIEW, hasProperty("id", is(REVIEWID))))
+    	.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_REVIEW, hasProperty("storyId", is(STORYID_WITH_REVIEW))))
+    	.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_REVIEW, hasProperty("review", is(REVIEW))));
+    }
+
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void ShowAddReviewForm() throws Exception{
+    	mockMvc.perform(get("/story/review/" + STORYID_WITH_NO_REVIEW))
+    	.andExpect(status().isOk())
+    	.andExpect(view().name(StoryController.VIEW_REVIEW))
+    	.andExpect(forwardedUrl("/WEB-INF/jsp/story/review.jsp"))
+    	.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_REVIEW, hasProperty("id", nullValue())))
+    	.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_REVIEW, hasProperty("storyId", is(STORYID_WITH_NO_REVIEW))))
+    	.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_REVIEW, hasProperty("review", nullValue())));
+    }
+
+    @Test
+    @ExpectedDatabase(value="review-add-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    public void addReview() throws Exception {
+    	mockMvc.perform(post("/story/review/" + STORYID_WITH_NO_REVIEW)
+    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+    			.param(FORM_REVIEW_REVIEW, "Looks Good")
+    			.param(FORM_REVIEW_STORYID, "2")
+    			.sessionAttr(StoryController.MODEL_ATTRIBUTE_REVIEW, new ReviewDTO())
+    			)
+    			.andExpect(status().isOk())
+    			.andExpect(view().name(StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW)))
+    			.andExpect(model().attribute(StoryController.PARAMETER_ID, "2"))
+    			.andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("Story was reviewed.")))
+    		;
+    }
+    
+    @Test
+    @ExpectedDatabase(value="review-update-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    public void updateReview() throws Exception {
+    	mockMvc.perform(post("/story/review/" + STORYID_WITH_REVIEW)
+    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+    			.param(FORM_REVIEW_REVIEW, "Rejected")
+    			.param(FORM_REVIEW_STORYID, "1")
+    			.sessionAttr(StoryController.MODEL_ATTRIBUTE_REVIEW, new ReviewDTO())
+    			)
+    			.andExpect(status().isOk())
+    			.andExpect(view().name(StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW)))
+    			.andExpect(model().attribute(StoryController.PARAMETER_ID, "1"))
+    			.andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("Story review was modified.")))
+    		;
+    }
+    
 
     @Test
     @ExpectedDatabase("storyData.xml")
@@ -193,6 +259,16 @@ public class ITStoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name(expectedRedirectViewPath))
                 .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("Story entry: Bar was deleted.")));
+    }
+    
+    @Test
+    @ExpectedDatabase(value="review-remove-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    public void removeReviewByStoryId() throws Exception {
+    	mockMvc.perform(get("/story/review/remove/{id}", 1L))
+    			.andExpect(status().isOk())
+    			.andExpect(view().name(StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW)))
+    			;
+    		
     }
 
     @Test

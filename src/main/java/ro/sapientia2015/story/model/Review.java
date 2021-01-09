@@ -36,7 +36,7 @@ public class Review {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modificationTime;
 
-    @Column(name = "storyId", nullable = false)
+    @Column(name = "storyid", nullable = false)
     private Long storyId;
     
     @Column(name = "review", nullable = true, length = MAX_LENGTH_REVIEW)
