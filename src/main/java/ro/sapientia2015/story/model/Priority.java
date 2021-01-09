@@ -4,6 +4,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 /**
@@ -32,6 +35,14 @@ public class Priority
 
     @Version
     private long version;
+    
+//    
+//    @OneToMany(
+//            mappedBy = "priority",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true
+//        )
+//    private List<Story> stories = new ArrayList();
 
     public Priority() 
     {
@@ -77,36 +88,36 @@ public class Priority
     }
 
     @PreUpdate
-    public void preUpdate() {
+    public void preUpdate() 
+    {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
-        this.description = description;
-        this.title = title;
+    public void update( String name ) 
+    {
+        this.name = name;
     }
 
-    public static class Builder {
+    public static class Builder 
+    {
 
-        private Story built;
+        private Priority built;
 
-        public Builder(String title) {
-            built = new Story();
-            built.title = title;
+        public Builder( String name )
+        {
+            built 		= new Priority();
+            built.name	= name;
         }
 
-        public Story build() {
+        public Priority build() 
+        {
             return built;
-        }
-
-        public Builder description(String description) {
-            built.description = description;
-            return this;
         }
     }
 
     @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString( this );
     }
 }

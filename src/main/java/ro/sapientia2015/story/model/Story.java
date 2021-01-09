@@ -36,6 +36,9 @@ public class Story {
 
     @Version
     private long version;
+    
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Priority priority;
 
     public Story() {
 
