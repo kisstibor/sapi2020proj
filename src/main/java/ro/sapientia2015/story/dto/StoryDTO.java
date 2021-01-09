@@ -1,10 +1,13 @@
 package ro.sapientia2015.story.dto;
 
+import java.util.List;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.User;
 
 /**
  * @author Kiss Tibor
@@ -19,6 +22,10 @@ public class StoryDTO {
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
+    
+    private List<User> users;
+    
+    private Long userId;
 
     public StoryDTO() {
 
@@ -48,7 +55,23 @@ public class StoryDTO {
         this.title = title;
     }
 
-    @Override
+    public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }

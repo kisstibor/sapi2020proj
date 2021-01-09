@@ -13,6 +13,7 @@ public class StoryTest {
 
     private String TITLE = "title";
     private String DESCRIPTION = "description";
+    private User USER = new User();
 
     @Test
     public void buildWithMandatoryInformation() {
@@ -30,6 +31,7 @@ public class StoryTest {
     public void buildWithAllInformation() {
         Story built = Story.getBuilder(TITLE)
                 .description(DESCRIPTION)
+                .user(USER)
                 .build();
 
         assertNull(built.getId());
@@ -37,6 +39,7 @@ public class StoryTest {
         assertEquals(DESCRIPTION, built.getDescription());
         assertNull(built.getModificationTime());
         assertEquals(TITLE, built.getTitle());
+        assertEquals(USER, built.getUser());
         assertEquals(0L, built.getVersion());
     }
 

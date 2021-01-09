@@ -12,7 +12,9 @@ import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.dto.StoryListDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.repository.UserRepository;
 import ro.sapientia2015.story.service.StoryService;
+import ro.sapientia2015.story.service.UserService;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -48,10 +50,14 @@ public class StoryController extends ControllerBase {
 
     @Resource
     private StoryService service;
+    
+    @Resource
+    private UserService userService;
 
     @RequestMapping(value = "/story/add", method = RequestMethod.GET)
     public String showAddForm(Model model) {
         StoryDTO formObject = new StoryDTO();
+        formObject.setUsers(this.userService.findAll());
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_ADD;
@@ -111,6 +117,7 @@ public class StoryController extends ControllerBase {
     public String showUpdateForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
         Story updated = service.findById(id);
         StoryDTO formObject = constructFormObjectForUpdateForm(updated);
+        formObject.setUsers(userService.findAll());
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_UPDATE;
@@ -135,6 +142,9 @@ public class StoryController extends ControllerBase {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        if (updated.getUser() != null) {
+        	dto.setUserId(updated.getUser().getId());
+        }
 
         return dto;
     }

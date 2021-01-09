@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -30,12 +31,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import ro.sapientia2015.story.CommonTestUtil;
 import ro.sapientia2015.story.StoryTestUtil;
+import ro.sapientia2015.story.UserTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.dto.StoryListDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.User;
 import ro.sapientia2015.story.service.StoryService;
+import ro.sapientia2015.story.service.UserService;
 
 /**
  * @author Kiss Tibor
@@ -66,17 +70,25 @@ public class StoryControllerTest extends ControllerTestBase {
     @Test
     public void showAddStoryForm() {
         BindingAwareModelMap model = new BindingAwareModelMap();
+        List<User> expectedUsers = new ArrayList<User>();
 
+        UserService userServiceMock = mock(UserService.class);
+        ReflectionTestUtils.setField(controller, "userService", userServiceMock);
+        
+        when(userServiceMock.findAll()).thenReturn(expectedUsers);
         String view = controller.showAddForm(model);
 
-        verifyZeroInteractions(messageSourceMock, serviceMock);
+        verify(userServiceMock, times(1)).findAll();
+        verifyZeroInteractions(messageSourceMock, serviceMock, userServiceMock);
         assertEquals(StoryController.VIEW_ADD, view);
 
-        StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+        Map<String, Object> modelMap = model.asMap();
+		StoryDTO formObject = (StoryDTO) modelMap.get(StoryController.MODEL_ATTRIBUTE);
 
         assertNull(formObject.getId());
         assertNull(formObject.getDescription());
         assertNull(formObject.getTitle());
+        assertEquals(expectedUsers, formObject.getUsers());
     }
 
     @Test
@@ -264,13 +276,19 @@ public class StoryControllerTest extends ControllerTestBase {
     public void showUpdateStoryForm() throws NotFoundException {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
-        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, UserTestUtil.createModel(UserTestUtil.ID, UserTestUtil.USERNAME, UserTestUtil.PASSWORD));
         when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
+        
+        List<User> expectedUsersList = new ArrayList<User>();
+        UserService userServiceMock = mock(UserService.class);
+        ReflectionTestUtils.setField(controller, "userService", userServiceMock);
+        when(userServiceMock.findAll()).thenReturn(expectedUsersList);
 
         String view = controller.showUpdateForm(StoryTestUtil.ID, model);
 
         verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(serviceMock);
+        verify(userServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(serviceMock, userServiceMock);
         verifyZeroInteractions(messageSourceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
@@ -280,6 +298,38 @@ public class StoryControllerTest extends ControllerTestBase {
         assertEquals(updated.getId(), formObject.getId());
         assertEquals(updated.getDescription(), formObject.getDescription());
         assertEquals(updated.getTitle(), formObject.getTitle());
+        assertEquals(updated.getUser().getId(), formObject.getUserId());
+        assertEquals(expectedUsersList, formObject.getUsers());
+    }
+    
+    @Test
+    public void showUpdateStoryFormWhenUserNull() throws NotFoundException {
+        BindingAwareModelMap model = new BindingAwareModelMap();
+
+        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, null);
+        when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
+        
+        List<User> expectedUsersList = new ArrayList<User>();
+        UserService userServiceMock = mock(UserService.class);
+        ReflectionTestUtils.setField(controller, "userService", userServiceMock);
+        when(userServiceMock.findAll()).thenReturn(expectedUsersList);
+
+        String view = controller.showUpdateForm(StoryTestUtil.ID, model);
+
+        verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
+        verify(userServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(serviceMock, userServiceMock);
+        verifyZeroInteractions(messageSourceMock);
+
+        assertEquals(StoryController.VIEW_UPDATE, view);
+
+        StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+
+        assertEquals(updated.getId(), formObject.getId());
+        assertEquals(updated.getDescription(), formObject.getDescription());
+        assertEquals(updated.getTitle(), formObject.getTitle());
+        assertEquals(null, formObject.getUserId());
+        assertEquals(expectedUsersList, formObject.getUsers());
     }
 
     @Test(expected = NotFoundException.class)

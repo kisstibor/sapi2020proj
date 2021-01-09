@@ -62,6 +62,7 @@ public class ITStoryControllerTest {
     private static final String FORM_FIELD_DESCRIPTION = "description";
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
+    private static final String FORM_FIELD_USER_ID = "userId";
 
     @Resource
     private WebApplicationContext webApplicationContext;
@@ -83,7 +84,14 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/add.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("users", hasItem(
+                        allOf(
+                                hasProperty("id", is(1L)),
+                                hasProperty("username", is("user1")),
+                                hasProperty("password", is("password1"))
+                        )
+                ))));
     }
 
     @Test
@@ -99,7 +107,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "title"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", nullValue())));
     }
 
     @Test
@@ -107,11 +116,13 @@ public class ITStoryControllerTest {
     public void addWhenTitleAndDescriptionAreTooLong() throws Exception {
         String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
         String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
-
+        Long userId = 2L;
+        
         mockMvc.perform(post("/story/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, description)
                 .param(FORM_FIELD_TITLE, title)
+                .param(FORM_FIELD_USER_ID, userId.toString())
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -121,7 +132,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "description"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", is(userId))));
     }
 
     @Test
@@ -133,6 +145,7 @@ public class ITStoryControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_USER_ID, "1")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -241,7 +254,8 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/update.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("Lorem ipsum"))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", is(1L))));
     }
 
     @Test
@@ -267,7 +281,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "title"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", nullValue())));
     }
 
     @Test
@@ -275,12 +290,14 @@ public class ITStoryControllerTest {
     public void updateWhenTitleAndDescriptionAreTooLong() throws Exception {
         String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
         String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        Long userId = 2L;
 
         mockMvc.perform(post("/story/update")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, description)
                 .param(FORM_FIELD_ID, "1")
                 .param(FORM_FIELD_TITLE, title)
+                .param(FORM_FIELD_USER_ID, userId.toString())
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -290,7 +307,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "description"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", is(userId))));
     }
 
     @Test
@@ -303,6 +321,7 @@ public class ITStoryControllerTest {
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_ID, "1")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_USER_ID, "2")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -319,6 +338,7 @@ public class ITStoryControllerTest {
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_ID, "3")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_USER_ID, "2")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isNotFound())

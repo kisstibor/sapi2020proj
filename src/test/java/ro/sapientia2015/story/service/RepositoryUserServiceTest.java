@@ -6,6 +6,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import ro.sapientia2015.story.UserTestUtil;
 import ro.sapientia2015.story.dto.UserDTO;
+import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.model.User;
 import ro.sapientia2015.story.repository.UserRepository;
 
@@ -46,6 +51,19 @@ public class RepositoryUserServiceTest {
         assertNull(model.getId());
         assertEquals(dto.getUsername(), model.getUsername());
         assertEquals(dto.getPassword(), model.getPassword());
+    }
+    
+    @Test
+    public void findAll() {
+        List<User> models = new ArrayList<User>();
+        when(repositoryMock.findAll()).thenReturn(models);
+
+        List<User> actual = service.findAll();
+
+        verify(repositoryMock, times(1)).findAll();
+        verifyNoMoreInteractions(repositoryMock);
+
+        assertEquals(models, actual);
     }
 
 }

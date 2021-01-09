@@ -33,7 +33,15 @@
                 <c:forEach items="${ storyList.stories}" var="story">
                     <div class="well well-small">
                         <a href="/story/${story.id}"><c:out value="${story.title}"/></a>
-                    </div>
+						<c:if test="${not empty story.user}">
+							<br />
+							<div>
+								<spring:message code="label.story.assignedTo" />
+								:&nbsp;
+								<c:out value="${story.user.username}" />
+							</div>
+						</c:if>
+					</div>
                 </c:forEach>
             </c:otherwise>
         </c:choose>

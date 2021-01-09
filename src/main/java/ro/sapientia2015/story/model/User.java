@@ -1,10 +1,13 @@
 package ro.sapientia2015.story.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -39,6 +42,9 @@ public class User {
 	@Column(name = "modification_time", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modificationTime;
+	
+//	@OneToMany(mappedBy = "user")
+//    private List<Story> stories;
     
     @Version
     private long version;
