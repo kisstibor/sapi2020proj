@@ -122,8 +122,7 @@ public class StoryController {
         
     	attributes.addAttribute(PARAMETER_ID, storyId);
     	
-    	 return createRedirectViewPath(REQUEST_MAPPING_VIEW);
-       //return createRedirectViewPath("/");
+    	return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
     
         
@@ -165,6 +164,19 @@ public class StoryController {
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_UPDATE;
+    }
+    
+    @RequestMapping(value = "/story/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
+        if (result.hasErrors()) {
+            return VIEW_UPDATE;
+        }
+
+        Story updated = service.update(dto);
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
+        attributes.addAttribute(PARAMETER_ID, updated.getId());
+
+        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
     
     @RequestMapping(value = "/story/review/{id}", method = RequestMethod.GET)
