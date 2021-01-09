@@ -188,6 +188,23 @@ public class ITStoryControllerTest {
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
     }
+    
+
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void addEmptyReview() throws Exception {
+    	mockMvc.perform(post("/story/review/" + STORYID_WITH_NO_REVIEW)
+    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+    			.param(FORM_REVIEW_REVIEW, "")
+    			.param(FORM_REVIEW_STORYID, "2")
+    			.sessionAttr(StoryController.MODEL_ATTRIBUTE_REVIEW, new ReviewDTO())
+    			)
+    			.andExpect(status().isOk())
+    			.andExpect(view().name(StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_REVIEW)))
+    			.andExpect(model().attribute(StoryController.PARAMETER_ID, "2"))
+    			.andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_ERROR, is("Can't have empty review.")))
+    		;
+    }
 
     @Test
     @ExpectedDatabase(value="storyData-add-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
