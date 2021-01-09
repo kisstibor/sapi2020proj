@@ -23,7 +23,7 @@
 						code="label.story.review.title" />:</label>
 
 				<div class="controls">
-					<form:input id="review" path="review" />
+					<form:input id="review-status" path="review" />
 					<form:errors id="error-datee" path="review" cssClass="help-inline" />
 				</div>
 			</div>
@@ -31,7 +31,7 @@
 			<div class="action-buttons">
 
 				<c:if test="${not empty review.review}">
-					<a href="/story/review/remove/${storyId}" class="btn"
+					<a href="/story/review/remove/${storyId}" class="btn" id="delete-story-review"
 						style="background: red"><spring:message
 							code="label.review.remove.story.link" /></a>
 				</c:if>
@@ -40,7 +40,7 @@
 						code="label.cancel" /></a>
 
 
-				<button id="review-story-button" type="submit"
+				<button id="review-story-button" type="submit" id="add-edit-story-review"
 					class="btn btn-primary">
 
 					<c:choose>

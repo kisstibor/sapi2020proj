@@ -24,10 +24,10 @@
         <div class="action-buttons">
         	 <c:choose>
 	            <c:when test="${empty review.review}">
-	                <a href="/story/review/${story.id}" class="btn btn-primary"><spring:message code="label.review.story.link"/></a>
+	                <a href="/story/review/${story.id}" id="add-story-review" class="btn btn-primary"><spring:message code="label.review.story.link"/></a>
 	            </c:when>
 	            <c:otherwise>
-	                 <a href="/story/review/${story.id}" class="btn btn-primary"><spring:message code="label.review.update.story.link"/></a>
+	                 <a href="/story/review/${story.id}" id="update-story-review' class="btn btn-primary"><spring:message code="label.review.update.story.link"/></a>
 	            </c:otherwise>
         	</c:choose>
         	
