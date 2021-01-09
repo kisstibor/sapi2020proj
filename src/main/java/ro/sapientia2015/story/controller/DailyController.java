@@ -141,15 +141,24 @@ public class DailyController {
         if (result.hasErrors()) {
             return VIEW_UPDATE;
         }
-
-        Daily updated = service.update(dto);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
-        attributes.addAttribute(PARAMETER_ID, updated.getId());
-        //attributes.addAttribute(PARAMETER_DURATION, updated.getDuration());
-        //attributes.addAttribute(PARAMETER_DATE, updated.getDatee());
-        //attributes.addAttribute(PARAMETER_DESCRIPTION, updated.getDescription());
-
-        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+        
+        if (!isNumeric(dto.getDuration())) {
+        	addFeedbackErrorMessage(attributes, DURATION_ERROR);
+        } else if (!isDate(dto.getDatee())) {
+        	addFeedbackErrorMessage(attributes, DATEE_ERROR);
+        } else {
+        	Daily updated = service.update(dto);
+            addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
+            attributes.addAttribute(PARAMETER_ID, updated.getId());
+            //attributes.addAttribute(PARAMETER_DURATION, updated.getDuration());
+            //attributes.addAttribute(PARAMETER_DATE, updated.getDatee());
+            //attributes.addAttribute(PARAMETER_DESCRIPTION, updated.getDescription());
+            return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+        }
+        
+        String str = "/daily/update/"+dto.getId();
+        
+        return createRedirectViewPath(str);
     }
 	
 	private DailyDTO constructFormObjectForUpdateForm(Daily updated) {
