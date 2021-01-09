@@ -65,7 +65,6 @@ public class StoryController {
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
-
         Story added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());
@@ -122,6 +121,7 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        dto.setTime(updated.getTime());
 
         return dto;
     }

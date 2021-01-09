@@ -34,6 +34,9 @@ public class Story {
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
 
+    @Column(name = "spentTime")
+    private String time;
+
     @Version
     private long version;
 
@@ -68,6 +71,10 @@ public class Story {
     public long getVersion() {
         return version;
     }
+    
+    public String getTime() {
+    	return time;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -81,9 +88,10 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, String time) {
         this.description = description;
         this.title = title;
+        this.time = time;
     }
 
     public static class Builder {
@@ -101,6 +109,11 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+
+        public Builder time(String time) {
+            built.time = time;
             return this;
         }
     }

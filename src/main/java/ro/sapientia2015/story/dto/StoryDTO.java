@@ -20,8 +20,19 @@ public class StoryDTO {
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
 
+    @Length(max = Story.MAX_LENGTH_TITLE)
+    private String time;
+
     public StoryDTO() {
 
+    }
+    
+    public String getTime() {
+    	return time;
+    }
+    
+    public void setTime(String time) {
+    	this.time = time;
     }
 
     public Long getId() {

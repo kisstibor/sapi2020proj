@@ -11,9 +11,17 @@
     <div id="story-id" class="hidden">${story.id}</div>
     <h1><spring:message code="label.story.view.page.title"/></h1>
     <div class="well page-content">
-        <h2 id="story-title"><c:out value="${story.title}"/></h2>
         <div>
+        	<!--<spring:message code="label.update.story.title" />-->
+        	<h2 id="story-title"><c:out value="${story.title}"/></h2>
+        </div>
+        <div>
+        	<!--<spring:message code="label.update.story.description" />-->
             <p><c:out value="${story.description}"/></p>
+        </div>
+        <div>
+        	<spring:message code="label.update.story.time" />
+        	<c:out value="${story.time} hour(s)" />
         </div>
         <div class="action-buttons">
             <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
