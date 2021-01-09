@@ -2,6 +2,7 @@ package ro.sapientia2015.story.controller;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -43,7 +44,8 @@ public class DailyController {
     protected static final String PARAMETER_DURATION = "duration";
     protected static final String PARAMETER_DESCRIPTION = "description";
 
-
+    private static Pattern DATE_PATTERN = Pattern.compile(
+    	      "^\\d{2}-\\d{2}-\\d{4}$");
 
     protected static final String REQUEST_MAPPING_LIST = "/daily/list";
     protected static final String REQUEST_MAPPING_VIEW = "/daily/{id}";
@@ -52,6 +54,9 @@ public class DailyController {
 	 protected static final String VIEW_LIST = "daily/list";
 	 protected static final String VIEW_UPDATE = "daily/update";
 	 protected static final String VIEW_VIEW = "daily/view";
+	 
+	 protected static final String DURATION_ERROR = "Duration not good";
+	 protected static final String DATEE_ERROR = "Date not good";
 	 
 	 @Resource
 	 private DailyService service;
@@ -82,32 +87,24 @@ public class DailyController {
             return VIEW_ADD;
         }
         
-        //if (!isNumeric(dto.getDuration())) {
-        	
-        //}
-      
-        
-        Daily added = service.add(dto);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
-        attributes.addAttribute(PARAMETER_ID, added.getId());        
-        //attributes.addAttribute(PARAMETER_DURATION, added.getDuration());
-        //attributes.addAttribute(PARAMETER_DATE, added.getDatee());
-        //attributes.addAttribute(PARAMETER_DESCRIPTION, added.getDescription());
+        if (!isNumeric(dto.getDuration())) {
+        	addFeedbackErrorMessage(attributes, DURATION_ERROR);
+        } else if (!isDate(dto.getDatee())) {
+        	addFeedbackErrorMessage(attributes, DATEE_ERROR);
+        } else {
+        	Daily added = service.add(dto);
+            addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
+            attributes.addAttribute(PARAMETER_ID, added.getId());        
+            //attributes.addAttribute(PARAMETER_DURATION, added.getDuration());
+            //attributes.addAttribute(PARAMETER_DATE, added.getDatee());
+            //attributes.addAttribute(PARAMETER_DESCRIPTION, added.getDescription());
+            return createRedirectViewPath(REQUEST_MAPPING_VIEW);
 
-        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+        }    
+        
+        return createRedirectViewPath("/daily/add");
+
     }
-	
-	/*public static boolean isNumeric(String strNum) {
-	    if (strNum == null) {
-	        return false;
-	    }
-	    try {
-	        int d = Integer.parseInt(strNum);
-	    } catch (NumberFormatException nfe) {
-	        return false;
-	    }
-	    return true;
-	}*/
 	
 	@RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
@@ -167,6 +164,11 @@ public class DailyController {
         return dto;
     }
 
+	private void addFeedbackErrorMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
+		String localizedFeedbackMessage = getMessage(messageCode, messageParameters);
+		attributes.addFlashAttribute(FLASH_MESSAGE_KEY_ERROR, localizedFeedbackMessage);
+		}
+	
     private void addFeedbackMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
         String localizedFeedbackMessage = getMessage(messageCode, messageParameters);
         attributes.addFlashAttribute(FLASH_MESSAGE_KEY_FEEDBACK, localizedFeedbackMessage);
@@ -184,4 +186,28 @@ public class DailyController {
         redirectViewPath.append(requestMapping);
         return redirectViewPath.toString();
     }
+    
+    public boolean matches(String date) {
+        return DATE_PATTERN.matcher(date).matches();
+    }
+    
+    public boolean isDate(String strDate) {
+		if (strDate == null) {
+			return false;
+		}
+		
+		return matches(strDate);
+	}
+	
+	public static boolean isNumeric(String strNum) {
+	    if (strNum == null) {
+	        return false;
+	    }
+	    try {
+	        int d = Integer.parseInt(strNum);
+	    } catch (NumberFormatException nfe) {
+	        return false;
+	    }
+	    return true;
+	}
 }

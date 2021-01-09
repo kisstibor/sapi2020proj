@@ -59,7 +59,7 @@
 			<div class="action-buttons">
 				<a href="/daily/${daily.id}" class="btn"><spring:message
 						code="label.cancel" /></a>
-				<button id="update-daily-button" type="submit"
+				<button id="update-daily-button" type="submit" style="background:green"
 					class="btn btn-primary">
 					<spring:message code="label.update.daily.button" />
 				</button>

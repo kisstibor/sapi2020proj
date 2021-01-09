@@ -34,8 +34,8 @@
 		<div class="action-buttons">
 			<a href="/daily/update/${daily.id}" class="btn btn-primary"><spring:message
 					code="label.update.daily.link" /></a> <a id="delete-daily-link"
-				class="btn btn-primary"><spring:message
-					code="label.delete.daily.link" /></a>
+				class="btn btn-primary" style="background: #DC143C"><spring:message
+					code="label.delete.daily.link"/></a>
 		</div>
 	</div>
 

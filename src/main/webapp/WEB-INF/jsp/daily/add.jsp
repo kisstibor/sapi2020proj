@@ -7,7 +7,7 @@
 <html>
 <head>
 <title></title>
-<script type="text/javascript" src="/static/js/story.form.js"></script>
+<script type="text/javascript" src="/static/js/daily.form.js"></script>
 </head>
 <body>
 	<h1>
@@ -60,7 +60,7 @@
 			<div class="action-buttons">
 				<a href="/daily/list" class="btn"><spring:message
 						code="label.cancel" /></a>
-				<button id="add-daily-button" type="submit" class="btn btn-primary">
+				<button id="add-daily-button" type="submit" class="btn btn-primary" style="background : green">
 					<spring:message code="label.add.daily.button" />
 				</button>
 			</div>
