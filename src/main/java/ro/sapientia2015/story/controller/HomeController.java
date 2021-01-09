@@ -8,6 +8,8 @@ import ro.sapientia2015.story.model.Task;
 import ro.sapientia2015.story.service.StoryService;
 import ro.sapientia2015.story.service.TaskService;
 import javax.annotation.Resource;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller

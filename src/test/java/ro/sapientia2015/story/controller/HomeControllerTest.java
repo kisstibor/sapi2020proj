@@ -58,6 +58,12 @@ public class HomeControllerTest {
         when(storyServiceMock.findAll()).thenReturn(storyModels);
         
         String view = homeController.findAll(model);
+        
+        verify(taskServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(taskServiceMock);
+        verify(storyServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(storyServiceMock);
+        
 
         assertEquals(HomeController.VIEW_LIST, view);
         assertEquals(taskModels, model.asMap().get(HomeController.MODEL_ATTRIBUTE_LIST_TASK));
