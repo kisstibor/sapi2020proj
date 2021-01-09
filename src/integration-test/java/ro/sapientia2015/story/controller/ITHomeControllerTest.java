@@ -63,12 +63,12 @@ public class ITHomeControllerTest {
     
     @Test
     @ExpectedDatabase("storyData.xml")
-    public void showHomePage() throws Exception {
+    public void findAll() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name(HomeController.VIEW_LIST))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/home/list.jsp"))
-                .andExpect(model().attribute(HomeController.MODEL_ATTRIBUTE_LIST_TASK, hasSize(1)))
+                .andExpect(model().attribute(HomeController.MODEL_ATTRIBUTE_LIST_TASK, hasSize(2)))
                 .andExpect(model().attribute(HomeController.MODEL_ATTRIBUTE_LIST_STORY, hasSize(2)))             
                 .andExpect(model().attribute(HomeController.MODEL_ATTRIBUTE_LIST_STORY, hasItem(
                         allOf(
