@@ -81,16 +81,33 @@ public class DailyController {
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
-
+        
+        //if (!isNumeric(dto.getDuration())) {
+        	
+        //}
+      
+        
         Daily added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
-        attributes.addAttribute(PARAMETER_ID, added.getId());
+        attributes.addAttribute(PARAMETER_ID, added.getId());        
         //attributes.addAttribute(PARAMETER_DURATION, added.getDuration());
         //attributes.addAttribute(PARAMETER_DATE, added.getDatee());
         //attributes.addAttribute(PARAMETER_DESCRIPTION, added.getDescription());
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
+	
+	/*public static boolean isNumeric(String strNum) {
+	    if (strNum == null) {
+	        return false;
+	    }
+	    try {
+	        int d = Integer.parseInt(strNum);
+	    } catch (NumberFormatException nfe) {
+	        return false;
+	    }
+	    return true;
+	}*/
 	
 	@RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
@@ -131,9 +148,9 @@ public class DailyController {
         Daily updated = service.update(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
         attributes.addAttribute(PARAMETER_ID, updated.getId());
-        attributes.addAttribute(PARAMETER_DURATION, updated.getDuration());
-        attributes.addAttribute(PARAMETER_DATE, updated.getDatee());
-        attributes.addAttribute(PARAMETER_DESCRIPTION, updated.getDescription());
+        //attributes.addAttribute(PARAMETER_DURATION, updated.getDuration());
+        //attributes.addAttribute(PARAMETER_DATE, updated.getDatee());
+        //attributes.addAttribute(PARAMETER_DESCRIPTION, updated.getDescription());
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
