@@ -76,6 +76,23 @@ public class StoryController {
 
         return VIEW_ADD;
     }
+    
+    @RequestMapping(value = "/story/review/{id}", method = RequestMethod.GET)
+    public String showReviewForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
+    	Review review = reviewService.findReviewByStoryId(id);
+    	
+    	ReviewDTO reviewDTO = new ReviewDTO();
+    	if (review == null) {
+    		reviewDTO.setStoryId(id);
+    	}else {
+    		reviewDTO = constructFromObjectForReviewUpdateForm(review);
+    	}
+    	
+        model.addAttribute(PARAMETER_STORY_ID, reviewDTO.getStoryId());
+        model.addAttribute(MODEL_ATTRIBUTE_REVIEW, reviewDTO);
+ 
+        return VIEW_REVIEW;
+    }
 
     @RequestMapping(value = "/story/add", method = RequestMethod.POST)
     public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) {
@@ -179,23 +196,6 @@ public class StoryController {
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
     
-    @RequestMapping(value = "/story/review/{id}", method = RequestMethod.GET)
-    public String showReviewForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
-    	Review review = reviewService.findReviewByStoryId(id);
-    	
-    	ReviewDTO reviewDTO = new ReviewDTO();
-    	if (review == null) {
-    		reviewDTO.setStoryId(id);
-    	}else {
-    		reviewDTO = constructFromObjectForReviewUpdateForm(review);
-    	}
-    	
-        model.addAttribute(PARAMETER_STORY_ID, reviewDTO.getStoryId());
-        model.addAttribute(MODEL_ATTRIBUTE_REVIEW, reviewDTO);
- 
-        return VIEW_REVIEW;
-    }
-
     private StoryDTO constructFormObjectForUpdateForm(Story updated) {
         StoryDTO dto = new StoryDTO();
 
@@ -206,7 +206,7 @@ public class StoryController {
         return dto;
     }
     
-    private ReviewDTO constructFromObjectForReviewUpdateForm(Review review) {
+    public ReviewDTO constructFromObjectForReviewUpdateForm(Review review) {
     	ReviewDTO dto = new ReviewDTO();
     	
     	dto.setId(review.getId());

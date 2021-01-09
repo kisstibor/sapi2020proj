@@ -19,8 +19,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
 import ro.sapientia2015.story.controller.StoryController;
+import ro.sapientia2015.story.dto.ReviewDTO;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Review;
 import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.ReviewService;
 import ro.sapientia2015.story.service.StoryService;
@@ -40,347 +42,473 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {UnitTestContext.class})
+@ContextConfiguration(classes = { UnitTestContext.class })
 public class StoryControllerTest {
 
-    private static final String FEEDBACK_MESSAGE = "feedbackMessage";
-    private static final String FIELD_DESCRIPTION = "description";
-    private static final String FIELD_TITLE = "title";
+	private static final String FEEDBACK_MESSAGE = "feedbackMessage";
+	private static final String FIELD_DESCRIPTION = "description";
+	private static final String FIELD_TITLE = "title";
 
-    private StoryController controller;
+	private static final Long STORYID = 1L;
+	private static final Long REVIEWID = 5L;
+	private static final String REVIEW = "Approved";
 
-    private MessageSource messageSourceMock;
+	private StoryController controller;
 
-    private StoryService storyServiceMock;
-    
-    private ReviewService reviewServiceMock;
+	private MessageSource messageSourceMock;
 
-    @Resource
-    private Validator validator;
+	private StoryService storyServiceMock;
 
-    @Before
-    public void setUp() {
-        controller = new StoryController();
+	private ReviewService reviewServiceMock;
 
-        messageSourceMock = mock(MessageSource.class);
-        ReflectionTestUtils.setField(controller, "messageSource", messageSourceMock);
+	@Resource
+	private Validator validator;
 
-        storyServiceMock = mock(StoryService.class);
-        ReflectionTestUtils.setField(controller, "service", storyServiceMock);
-        
-        reviewServiceMock = mock(ReviewService.class);
-        ReflectionTestUtils.setField(controller, "reviewService", reviewServiceMock);
-    }
+	@Before
+	public void setUp() {
+		controller = new StoryController();
 
-    @Test
-    public void showAddStoryForm() {
-        BindingAwareModelMap model = new BindingAwareModelMap();
+		messageSourceMock = mock(MessageSource.class);
+		ReflectionTestUtils.setField(controller, "messageSource", messageSourceMock);
 
-        String view = controller.showAddForm(model);
+		storyServiceMock = mock(StoryService.class);
+		ReflectionTestUtils.setField(controller, "service", storyServiceMock);
 
-        verifyZeroInteractions(messageSourceMock, storyServiceMock);
-        assertEquals(StoryController.VIEW_ADD, view);
+		reviewServiceMock = mock(ReviewService.class);
+		ReflectionTestUtils.setField(controller, "reviewService", reviewServiceMock);
+	}
 
-        StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+	@Test
+	public void showAddStoryForm() {
+		BindingAwareModelMap model = new BindingAwareModelMap();
 
-        assertNull(formObject.getId());
-        assertNull(formObject.getDescription());
-        assertNull(formObject.getTitle());
-    }
+		String view = controller.showAddForm(model);
 
-    @Test
-    public void add() {
-        StoryDTO formObject = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+		verifyZeroInteractions(messageSourceMock, storyServiceMock);
+		assertEquals(StoryController.VIEW_ADD, view);
 
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
-        when(storyServiceMock.add(formObject)).thenReturn(model);
+		StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
-        BindingResult result = bindAndValidate(mockRequest, formObject);
+		assertNull(formObject.getId());
+		assertNull(formObject.getDescription());
+		assertNull(formObject.getTitle());
+	}
 
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+	@Test
+	public void showAddReviewForm() throws NotFoundException {
+		BindingAwareModelMap model = new BindingAwareModelMap();
+		String view = controller.showReviewForm(StoryTestUtil.ID, model);
 
-        initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
+		verifyZeroInteractions(messageSourceMock, storyServiceMock);
+		assertEquals(StoryController.VIEW_REVIEW, view);
 
-        String view = controller.add(formObject, result, attributes);
+		model.addAttribute(StoryController.PARAMETER_STORY_ID, STORYID);
+		ReviewDTO reviewForm = (ReviewDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE_REVIEW);
 
-        verify(storyServiceMock, times(1)).add(formObject);
-        verifyNoMoreInteractions(storyServiceMock);
+		assertEquals(Long.valueOf(STORYID), reviewForm.getStoryId());
+		assertNull(reviewForm.getId());
+		assertNull(reviewForm.getReview());
+	}
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
-        assertEquals(expectedView, view);
+	@Test
+	public void showUpdateReviewForm() throws NotFoundException {
+		BindingAwareModelMap model = new BindingAwareModelMap();
+		String view = controller.showReviewForm(StoryTestUtil.ID, model);
 
-        assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
+		Review review = new Review(REVIEWID, REVIEW, STORYID);
+		when(reviewServiceMock.findReviewByStoryId(STORYID)).thenReturn(review);
 
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
-    }
+		verifyZeroInteractions(messageSourceMock, storyServiceMock);
+		assertEquals(StoryController.VIEW_REVIEW, view);
 
-    @Test
-    public void addEmptyStory() {
-        StoryDTO formObject = StoryTestUtil.createFormObject(null, "", "");
+		ReviewDTO reviewDto = controller.constructFromObjectForReviewUpdateForm(review);
+		model.addAttribute(StoryController.PARAMETER_STORY_ID, STORYID);
+		model.addAttribute(StoryController.MODEL_ATTRIBUTE_REVIEW, reviewDto);
+		ReviewDTO reviewForm = (ReviewDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE_REVIEW);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
-        BindingResult result = bindAndValidate(mockRequest, formObject);
+		assertEquals(Long.valueOf(STORYID), reviewForm.getStoryId());
+		assertEquals(Long.valueOf(review.getId()), Long.valueOf(reviewForm.getId()));
+		assertEquals(review.getReview(), reviewForm.getReview());
+		assertEquals(review.getStoryId(), reviewForm.getStoryId());
+	}
 
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+	@Test
+	public void constructReviewDTOFromReview() {
 
-        String view = controller.add(formObject, result, attributes);
+		Review review = new Review(REVIEWID, REVIEW, STORYID);
+		ReviewDTO reviewDto = controller.constructFromObjectForReviewUpdateForm(review);
 
-        verifyZeroInteractions(storyServiceMock, messageSourceMock);
+		assertEquals(review.getReview(), reviewDto.getReview());
+		assertEquals(review.getStoryId(), reviewDto.getStoryId());
+		assertEquals(review.getId(), reviewDto.getId());
+	}
 
-        assertEquals(StoryController.VIEW_ADD, view);
-        assertFieldErrors(result, FIELD_TITLE);
-    }
+	@Test
+	public void addReview() throws NotFoundException {
+		Review review = new Review(REVIEWID, REVIEW, STORYID);
+		ReviewDTO reviewDto = controller.constructFromObjectForReviewUpdateForm(review);
 
-    @Test
-    public void addWithTooLongDescriptionAndTitle() {
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+		when(reviewServiceMock.add(reviewDto)).thenReturn(review);
 
-        StoryDTO formObject = StoryTestUtil.createFormObject(null, description, title);
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/review/" + STORYID);
+		BindingResult result = bindAndValidate(mockRequest, reviewDto);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
-        BindingResult result = bindAndValidate(mockRequest, formObject);
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_REVIEWED);
 
-        String view = controller.add(formObject, result, attributes);
+		String view = controller.addReview(reviewDto, STORYID, result, attributes);
 
-        verifyZeroInteractions(storyServiceMock, messageSourceMock);
+		verify(reviewServiceMock, times(1)).findReviewByStoryId(STORYID);
+		verify(reviewServiceMock, times(1)).add(reviewDto);
+		verifyNoMoreInteractions(reviewServiceMock);
 
-        assertEquals(StoryController.VIEW_ADD, view);
-        assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
-    }
+		String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+		assertEquals(expectedView, view);
 
-    @Test
-    public void deleteById() throws NotFoundException {
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), review.getStoryId());
+	}
 
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
-        when(storyServiceMock.deleteById(StoryTestUtil.ID)).thenReturn(model);
+	@Test
+	public void updateReview() throws NotFoundException {
+		Review review = new Review(REVIEWID, REVIEW, STORYID);
+		ReviewDTO reviewDto = controller.constructFromObjectForReviewUpdateForm(review);
 
-        initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
+		when(reviewServiceMock.add(reviewDto)).thenReturn(review);
+		when(reviewServiceMock.findReviewByStoryId(STORYID)).thenReturn(review);
 
-        String view = controller.deleteById(StoryTestUtil.ID, attributes);
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/review/" + STORYID);
+		BindingResult result = bindAndValidate(mockRequest, reviewDto);
 
-        verify(storyServiceMock, times(1)).deleteById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(storyServiceMock);
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
+		initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_REVIEWED);
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
-        assertEquals(expectedView, view);
-    }
+		String view = controller.addReview(reviewDto, STORYID, result, attributes);
 
-    @Test(expected = NotFoundException.class)
-    public void deleteByIdWhenIsNotFound() throws NotFoundException {
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		verify(reviewServiceMock, times(1)).findReviewByStoryId(STORYID);
+		verify(reviewServiceMock, times(1)).update(reviewDto);
+		verifyNoMoreInteractions(reviewServiceMock);
 
-        when(storyServiceMock.deleteById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
+		String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+		assertEquals(expectedView, view);
 
-        controller.deleteById(StoryTestUtil.ID, attributes);
+		assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), review.getStoryId());
+	}
 
-        verify(storyServiceMock, times(1)).deleteById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(storyServiceMock);
-        verifyZeroInteractions(messageSourceMock);
-    }
+	@Test
+	public void add() {
+		StoryDTO formObject = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
 
-    @Test
-    public void findAll() {
-        BindingAwareModelMap model = new BindingAwareModelMap();
+		Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+		when(storyServiceMock.add(formObject)).thenReturn(model);
 
-        List<Story> models = new ArrayList<Story>();
-        when(storyServiceMock.findAll()).thenReturn(models);
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
+		BindingResult result = bindAndValidate(mockRequest, formObject);
 
-        String view = controller.findAll(model);
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        verify(storyServiceMock, times(1)).findAll();
-        verifyNoMoreInteractions(storyServiceMock);
-        verifyZeroInteractions(messageSourceMock);
+		initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
 
-        assertEquals(StoryController.VIEW_LIST, view);
-        assertEquals(models, model.asMap().get(StoryController.MODEL_ATTRIBUTE_LIST));
-    }
+		String view = controller.add(formObject, result, attributes);
 
-    @Test
-    public void findById() throws NotFoundException {
-        BindingAwareModelMap model = new BindingAwareModelMap();
+		verify(storyServiceMock, times(1)).add(formObject);
+		verifyNoMoreInteractions(storyServiceMock);
 
-        Story found = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
-        when(storyServiceMock.findById(StoryTestUtil.ID)).thenReturn(found);
+		String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+		assertEquals(expectedView, view);
 
-        String view = controller.findById(StoryTestUtil.ID, model);
+		assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
 
-        verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(storyServiceMock);
-        verifyZeroInteractions(messageSourceMock);
+		assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
+	}
 
-        assertEquals(StoryController.VIEW_VIEW, view);
-        assertEquals(found, model.asMap().get(StoryController.MODEL_ATTRIBUTE));
-    }
+	@Test
+	public void addEmptyStory() {
+		StoryDTO formObject = StoryTestUtil.createFormObject(null, "", "");
 
-    @Test(expected = NotFoundException.class)
-    public void findByIdWhenIsNotFound() throws NotFoundException {
-        BindingAwareModelMap model = new BindingAwareModelMap();
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
+		BindingResult result = bindAndValidate(mockRequest, formObject);
 
-        when(storyServiceMock.findById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        controller.findById(StoryTestUtil.ID, model);
+		String view = controller.add(formObject, result, attributes);
 
-        verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(storyServiceMock);
-        verifyZeroInteractions(messageSourceMock);
-    }
+		verifyZeroInteractions(storyServiceMock, messageSourceMock);
 
-    @Test
-    public void showUpdateStoryForm() throws NotFoundException {
-        BindingAwareModelMap model = new BindingAwareModelMap();
+		assertEquals(StoryController.VIEW_ADD, view);
+		assertFieldErrors(result, FIELD_TITLE);
+	}
 
-        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
-        when(storyServiceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
+	@Test
+	public void addWithTooLongDescriptionAndTitle() {
+		String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+		String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
 
-        String view = controller.showUpdateForm(StoryTestUtil.ID, model);
+		StoryDTO formObject = StoryTestUtil.createFormObject(null, description, title);
 
-        verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(storyServiceMock);
-        verifyZeroInteractions(messageSourceMock);
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
+		BindingResult result = bindAndValidate(mockRequest, formObject);
 
-        assertEquals(StoryController.VIEW_UPDATE, view);
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+		String view = controller.add(formObject, result, attributes);
 
-        assertEquals(updated.getId(), formObject.getId());
-        assertEquals(updated.getDescription(), formObject.getDescription());
-        assertEquals(updated.getTitle(), formObject.getTitle());
-    }
+		verifyZeroInteractions(storyServiceMock, messageSourceMock);
 
-    @Test(expected = NotFoundException.class)
-    public void showUpdateStoryFormWhenIsNotFound() throws NotFoundException {
-        BindingAwareModelMap model = new BindingAwareModelMap();
+		assertEquals(StoryController.VIEW_ADD, view);
+		assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
+	}
 
-        when(storyServiceMock.findById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
+	@Test
+	public void deleteById() throws NotFoundException {
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        controller.showUpdateForm(StoryTestUtil.ID, model);
+		Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+		when(storyServiceMock.deleteById(StoryTestUtil.ID)).thenReturn(model);
 
-        verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(storyServiceMock);
-        verifyZeroInteractions(messageSourceMock);
-    }
+		initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
 
-    @Test
-    public void update() throws NotFoundException {
-        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
+		String view = controller.deleteById(StoryTestUtil.ID, attributes);
 
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
-        when(storyServiceMock.update(formObject)).thenReturn(model);
+		verify(storyServiceMock, times(1)).deleteById(StoryTestUtil.ID);
+		verifyNoMoreInteractions(storyServiceMock);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
-        BindingResult result = bindAndValidate(mockRequest, formObject);
+		assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
 
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
+		assertEquals(expectedView, view);
+	}
 
-        initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_UPDATED);
+	@Test
+	public void deleteReview() throws NotFoundException{
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        String view = controller.update(formObject, result, attributes);
+		Review review = new Review(REVIEWID, REVIEW, STORYID);
+		when(reviewServiceMock.deleteReviewById(REVIEWID)).thenReturn(review);
+		
+		String view = controller.removeReviewById(REVIEWID, attributes);
+		verify(reviewServiceMock, times(1)).deleteReviewById(REVIEWID);
+		verifyNoMoreInteractions(reviewServiceMock);
+		
+		String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+		assertEquals(expectedView, view);
+	}
 
-        verify(storyServiceMock, times(1)).update(formObject);
-        verifyNoMoreInteractions(storyServiceMock);
+	@Test(expected = NotFoundException.class)
+	public void deleteByIdWhenIsNotFound() throws NotFoundException {
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
-        assertEquals(expectedView, view);
+		when(storyServiceMock.deleteById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
 
-        assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
+		controller.deleteById(StoryTestUtil.ID, attributes);
 
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_UPDATED);
-    }
+		verify(storyServiceMock, times(1)).deleteById(StoryTestUtil.ID);
+		verifyNoMoreInteractions(storyServiceMock);
+		verifyZeroInteractions(messageSourceMock);
+	}
 
-    @Test
-    public void updateEmpty() throws NotFoundException {
-        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, "", "");
+	@Test
+	public void findAll() {
+		BindingAwareModelMap model = new BindingAwareModelMap();
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
-        BindingResult result = bindAndValidate(mockRequest, formObject);
+		List<Story> models = new ArrayList<Story>();
+		when(storyServiceMock.findAll()).thenReturn(models);
 
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		String view = controller.findAll(model);
 
-        String view = controller.update(formObject, result, attributes);
+		verify(storyServiceMock, times(1)).findAll();
+		verifyNoMoreInteractions(storyServiceMock);
+		verifyZeroInteractions(messageSourceMock);
 
-        verifyZeroInteractions(messageSourceMock, storyServiceMock);
+		assertEquals(StoryController.VIEW_LIST, view);
+		assertEquals(models, model.asMap().get(StoryController.MODEL_ATTRIBUTE_LIST));
+	}
 
-        assertEquals(StoryController.VIEW_UPDATE, view);
-        assertFieldErrors(result, FIELD_TITLE);
-    }
+	@Test
+	public void findById() throws NotFoundException {
+		BindingAwareModelMap model = new BindingAwareModelMap();
 
-    @Test
-    public void updateWhenDescriptionAndTitleAreTooLong() throws NotFoundException {
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+		Story found = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+		when(storyServiceMock.findById(StoryTestUtil.ID)).thenReturn(found);
 
-        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, description, title);
+		String view = controller.findById(StoryTestUtil.ID, model);
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
-        BindingResult result = bindAndValidate(mockRequest, formObject);
+		verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
+		verifyNoMoreInteractions(storyServiceMock);
+		verifyZeroInteractions(messageSourceMock);
 
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		assertEquals(StoryController.VIEW_VIEW, view);
+		assertEquals(found, model.asMap().get(StoryController.MODEL_ATTRIBUTE));
+	}
 
-        String view = controller.update(formObject, result, attributes);
+	@Test(expected = NotFoundException.class)
+	public void findByIdWhenIsNotFound() throws NotFoundException {
+		BindingAwareModelMap model = new BindingAwareModelMap();
 
-        verifyZeroInteractions(messageSourceMock, storyServiceMock);
+		when(storyServiceMock.findById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
 
-        assertEquals(StoryController.VIEW_UPDATE, view);
-        assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
-    }
+		controller.findById(StoryTestUtil.ID, model);
 
-    @Test(expected = NotFoundException.class)
-    public void updateWhenIsNotFound() throws NotFoundException {
-        StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
+		verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
+		verifyNoMoreInteractions(storyServiceMock);
+		verifyZeroInteractions(messageSourceMock);
+	}
 
-        when(storyServiceMock.update(formObject)).thenThrow(new NotFoundException(""));
+	@Test
+	public void showUpdateStoryForm() throws NotFoundException {
+		BindingAwareModelMap model = new BindingAwareModelMap();
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
-        BindingResult result = bindAndValidate(mockRequest, formObject);
+		Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+		when(storyServiceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
 
-        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		String view = controller.showUpdateForm(StoryTestUtil.ID, model);
 
-        controller.update(formObject, result, attributes);
+		verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
+		verifyNoMoreInteractions(storyServiceMock);
+		verifyZeroInteractions(messageSourceMock);
 
-        verify(storyServiceMock, times(1)).update(formObject);
-        verifyNoMoreInteractions(storyServiceMock);
-        verifyZeroInteractions(messageSourceMock);
-    }
+		assertEquals(StoryController.VIEW_UPDATE, view);
 
-    private void assertFeedbackMessage(RedirectAttributes attributes, String messageCode) {
-        assertFlashMessages(attributes, messageCode, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
-    }
+		StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
 
-    private void assertFieldErrors(BindingResult result, String... fieldNames) {
-        assertEquals(fieldNames.length, result.getFieldErrorCount());
-        for (String fieldName : fieldNames) {
-            assertNotNull(result.getFieldError(fieldName));
-        }
-    }
+		assertEquals(updated.getId(), formObject.getId());
+		assertEquals(updated.getDescription(), formObject.getDescription());
+		assertEquals(updated.getTitle(), formObject.getTitle());
+	}
 
-    private void assertFlashMessages(RedirectAttributes attributes, String messageCode, String flashMessageParameterName) {
-        Map<String, ?> flashMessages = attributes.getFlashAttributes();
-        Object message = flashMessages.get(flashMessageParameterName);
+	@Test(expected = NotFoundException.class)
+	public void showUpdateStoryFormWhenIsNotFound() throws NotFoundException {
+		BindingAwareModelMap model = new BindingAwareModelMap();
 
-        assertNotNull(message);
-        flashMessages.remove(message);
-        assertTrue(flashMessages.isEmpty());
+		when(storyServiceMock.findById(StoryTestUtil.ID)).thenThrow(new NotFoundException(""));
 
-        verify(messageSourceMock, times(1)).getMessage(eq(messageCode), any(Object[].class), any(Locale.class));
-        verifyNoMoreInteractions(messageSourceMock);
-    }
+		controller.showUpdateForm(StoryTestUtil.ID, model);
 
-    private BindingResult bindAndValidate(HttpServletRequest request, Object formObject) {
-        WebDataBinder binder = new WebDataBinder(formObject);
-        binder.setValidator(validator);
-        binder.bind(new MutablePropertyValues(request.getParameterMap()));
-        binder.getValidator().validate(binder.getTarget(), binder.getBindingResult());
-        return binder.getBindingResult();
-    }
+		verify(storyServiceMock, times(1)).findById(StoryTestUtil.ID);
+		verifyNoMoreInteractions(storyServiceMock);
+		verifyZeroInteractions(messageSourceMock);
+	}
 
-    private void initMessageSourceForFeedbackMessage(String feedbackMessageCode) {
-        when(messageSourceMock.getMessage(eq(feedbackMessageCode), any(Object[].class), any(Locale.class))).thenReturn(FEEDBACK_MESSAGE);
-    }
+	@Test
+	public void update() throws NotFoundException {
+		StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED,
+				StoryTestUtil.TITLE_UPDATED);
+
+		Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED,
+				StoryTestUtil.TITLE_UPDATED);
+		when(storyServiceMock.update(formObject)).thenReturn(model);
+
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
+		BindingResult result = bindAndValidate(mockRequest, formObject);
+
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+		initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_UPDATED);
+
+		String view = controller.update(formObject, result, attributes);
+
+		verify(storyServiceMock, times(1)).update(formObject);
+		verifyNoMoreInteractions(storyServiceMock);
+
+		String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+		assertEquals(expectedView, view);
+
+		assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
+
+		assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_UPDATED);
+	}
+
+	@Test
+	public void updateEmpty() throws NotFoundException {
+		StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, "", "");
+
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
+		BindingResult result = bindAndValidate(mockRequest, formObject);
+
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+		String view = controller.update(formObject, result, attributes);
+
+		verifyZeroInteractions(messageSourceMock, storyServiceMock);
+
+		assertEquals(StoryController.VIEW_UPDATE, view);
+		assertFieldErrors(result, FIELD_TITLE);
+	}
+
+	@Test
+	public void updateWhenDescriptionAndTitleAreTooLong() throws NotFoundException {
+		String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+		String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+
+		StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, description, title);
+
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
+		BindingResult result = bindAndValidate(mockRequest, formObject);
+
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+		String view = controller.update(formObject, result, attributes);
+
+		verifyZeroInteractions(messageSourceMock, storyServiceMock);
+
+		assertEquals(StoryController.VIEW_UPDATE, view);
+		assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
+	}
+
+	@Test(expected = NotFoundException.class)
+	public void updateWhenIsNotFound() throws NotFoundException {
+		StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED,
+				StoryTestUtil.TITLE_UPDATED);
+
+		when(storyServiceMock.update(formObject)).thenThrow(new NotFoundException(""));
+
+		MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
+		BindingResult result = bindAndValidate(mockRequest, formObject);
+
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+		controller.update(formObject, result, attributes);
+
+		verify(storyServiceMock, times(1)).update(formObject);
+		verifyNoMoreInteractions(storyServiceMock);
+		verifyZeroInteractions(messageSourceMock);
+	}
+
+	private void assertFeedbackMessage(RedirectAttributes attributes, String messageCode) {
+		assertFlashMessages(attributes, messageCode, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
+	}
+
+	private void assertFieldErrors(BindingResult result, String... fieldNames) {
+		assertEquals(fieldNames.length, result.getFieldErrorCount());
+		for (String fieldName : fieldNames) {
+			assertNotNull(result.getFieldError(fieldName));
+		}
+	}
+
+	private void assertFlashMessages(RedirectAttributes attributes, String messageCode,
+			String flashMessageParameterName) {
+		Map<String, ?> flashMessages = attributes.getFlashAttributes();
+		Object message = flashMessages.get(flashMessageParameterName);
+
+		assertNotNull(message);
+		flashMessages.remove(message);
+		assertTrue(flashMessages.isEmpty());
+
+		verify(messageSourceMock, times(1)).getMessage(eq(messageCode), any(Object[].class), any(Locale.class));
+		verifyNoMoreInteractions(messageSourceMock);
+	}
+
+	private BindingResult bindAndValidate(HttpServletRequest request, Object formObject) {
+		WebDataBinder binder = new WebDataBinder(formObject);
+		binder.setValidator(validator);
+		binder.bind(new MutablePropertyValues(request.getParameterMap()));
+		binder.getValidator().validate(binder.getTarget(), binder.getBindingResult());
+		return binder.getBindingResult();
+	}
+
+	private void initMessageSourceForFeedbackMessage(String feedbackMessageCode) {
+		when(messageSourceMock.getMessage(eq(feedbackMessageCode), any(Object[].class), any(Locale.class)))
+				.thenReturn(FEEDBACK_MESSAGE);
+	}
 }
