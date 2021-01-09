@@ -196,7 +196,6 @@ public class StoryControllerTest {
         verify(serviceMock, times(1)).findAll();
         verifyNoMoreInteractions(serviceMock);
         verifyZeroInteractions(messageSourceMock);
-
         assertEquals(StoryController.VIEW_LIST, view);
         assertEquals(models, model.asMap().get(StoryController.MODEL_ATTRIBUTE_LIST));
     }

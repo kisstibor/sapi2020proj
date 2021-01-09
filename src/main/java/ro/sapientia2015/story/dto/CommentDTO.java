@@ -11,6 +11,7 @@ public class CommentDTO {
     private Long id;
 
     @Length(max = Comment.MAX_LENGTH_DESCRIPTION)
+    @NotEmpty
     private String message;
 
     private Long storyId;

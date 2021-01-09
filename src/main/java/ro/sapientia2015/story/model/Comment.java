@@ -30,7 +30,7 @@ public class Comment {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime creationTime;
 
-    @Column(name = "message", nullable = true, length = MAX_LENGTH_DESCRIPTION)
+    @Column(name = "message", nullable = false, length = MAX_LENGTH_DESCRIPTION)
     private String message;
 
     @Column(name = "modification_time", nullable = false)
@@ -62,6 +62,10 @@ public class Comment {
         return message;
     }
 
+    public DateTime getModificationTimeAsDateTime() {
+        return modificationTime;
+    }
+    
     public String getModificationTime() {
         return modificationTime.toString(DateTimeFormat.forPattern("dd MMMM yyyy, HH:mm"));
     }
