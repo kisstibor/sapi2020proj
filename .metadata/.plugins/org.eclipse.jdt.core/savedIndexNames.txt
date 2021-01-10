@@ -1,0 +1,4 @@
+INDEX VERSION 1.131+/home/sapi/sapi2020proj/.metadata/.plugins/org.eclipse.jdt.core
+646308851.index
+1961369833.index
+2127238442.index
