@@ -4,20 +4,20 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.Task;
 
-public class StoryDTO {
+public class TaskDTO {
 
     private Long id;
 
-    @Length(max = Story.MAX_LENGTH_DESCRIPTION)
+    @Length(max = Task.MAX_LENGTH_DESCRIPTION)
     private String description;
 
     @NotEmpty
-    @Length(max = Story.MAX_LENGTH_TITLE)
+    @Length(max = Task.MAX_LENGTH_TITLE)
     private String title;
 
-    public StoryDTO() {
+    public TaskDTO() {
 
     }
 

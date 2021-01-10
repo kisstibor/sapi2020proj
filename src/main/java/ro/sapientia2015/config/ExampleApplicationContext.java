@@ -14,9 +14,6 @@ import org.springframework.web.servlet.view.JstlView;
 
 import java.util.Properties;
 
-/**
- * @author Kiss Tibor
- */
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {

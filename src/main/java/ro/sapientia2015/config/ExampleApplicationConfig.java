@@ -11,9 +11,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.*;
 import java.util.EnumSet;
 
-/**
- * @author Kiss Tibor
- */
 public class ExampleApplicationConfig implements WebApplicationInitializer {
     private static final String DISPATCHER_SERVLET_NAME = "dispatcher";
     private static final String DISPATCHER_SERVLET_MAPPING = "/";

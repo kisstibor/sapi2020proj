@@ -143,7 +143,7 @@ public class ITStoryControllerTest {
     @Test
     @ExpectedDatabase("storyData.xml")
     public void findAll() throws Exception {
-        mockMvc.perform(get("/"))
+        mockMvc.perform(get("/story"))
                 .andExpect(status().isOk())
                 .andExpect(view().name(StoryController.VIEW_LIST))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/list.jsp"))
