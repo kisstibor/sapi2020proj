@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ro.sapientia2015.story.dto.LabelDTO;
+import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.model.Label;
+import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.LabelService;
 
 import javax.annotation.Resource;
@@ -20,7 +22,6 @@ import java.util.Locale;
 
 
 @Controller
-@SessionAttributes("label")
 public class LabelController {
 
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.label.added";
@@ -42,21 +43,33 @@ public class LabelController {
     private MessageSource messageSource;
 
     @RequestMapping(value = "/label", method = RequestMethod.GET)
-    public String showAddForm(Model model) {
-
-//		List<Label> labels = service.findAll();
-//		model.addAttribute("labels", labels);
+    public String listLabels(Model model) {
+    	
+		List<Label> labels = service.findAll();
+		model.addAttribute(MODEL_ATTRIBUTE_LIST, labels);
 
         return VIEW_LIST;
     }
 
-//    @RequestMapping(value = "/label", method = RequestMethod.POST)
-//    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) LabelDTO dto, BindingResult result, RedirectAttributes attributes) {
-//        Label added = service.add(dto);
-//        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
-//
-//        return VIEW_ADD;
-//    }
+    @RequestMapping(value = "/label/add", method = RequestMethod.GET)
+    public String showAddForm(Model model) {
+    	LabelDTO formObject = new LabelDTO();
+        model.addAttribute(MODEL_ATTRIBUTE, formObject);
+
+        return VIEW_ADD;
+    }
+
+    @RequestMapping(value = "/label/add", method = RequestMethod.POST)
+    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) LabelDTO dto, BindingResult result, RedirectAttributes attributes) {
+    	if (result.hasErrors()) {
+            return VIEW_ADD;
+        }
+
+    	Label added = service.add(dto);
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
+        
+        return "redirect:/label";
+    }
 
     private void addFeedbackMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
         String localizedFeedbackMessage = getMessage(messageCode, messageParameters);
