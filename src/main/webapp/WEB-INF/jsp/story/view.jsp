@@ -20,6 +20,7 @@
             <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
         </div>
     </div>
+    
     <script id="template-delete-story-confirmation-dialog" type="text/x-handlebars-template">
         <div id="delete-story-confirmation-dialog" class="modal">
             <div class="modal-header">
@@ -35,5 +36,7 @@
             </div>
         </div>
     </script>
+    
+    
 </body>
 </html>
