@@ -10,7 +10,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Label;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.service.LabelService;
 import ro.sapientia2015.story.service.StoryService;
 
 import javax.annotation.Resource;
@@ -35,6 +37,7 @@ public class StoryController {
 
     protected static final String MODEL_ATTRIBUTE = "story";
     protected static final String MODEL_ATTRIBUTE_LIST = "stories";
+    protected static final String LABEL_MODEL_ATTRIBUTE_LIST = "labels";
 
     protected static final String PARAMETER_ID = "id";
 
@@ -48,6 +51,9 @@ public class StoryController {
 
     @Resource
     private StoryService service;
+    
+    @Resource
+    private LabelService labelService;
 
     @Resource
     private MessageSource messageSource;
@@ -56,13 +62,18 @@ public class StoryController {
     public String showAddForm(Model model) {
         StoryDTO formObject = new StoryDTO();
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
+    	
+		List<Label> labels = labelService.findAll();
+		model.addAttribute(LABEL_MODEL_ATTRIBUTE_LIST, labels);
 
         return VIEW_ADD;
     }
 
     @RequestMapping(value = "/story/add", method = RequestMethod.POST)
-    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) {
-        if (result.hasErrors()) {
+    public String add(Model model, @Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) {
+    	if (result.hasErrors()) {
+    		List<Label> labels = labelService.findAll();
+    		model.addAttribute(LABEL_MODEL_ATTRIBUTE_LIST, labels);
             return VIEW_ADD;
         }
 

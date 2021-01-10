@@ -22,6 +22,7 @@ import java.util.Locale;
 
 
 @Controller
+@SessionAttributes("label")
 public class LabelController {
 
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.label.added";

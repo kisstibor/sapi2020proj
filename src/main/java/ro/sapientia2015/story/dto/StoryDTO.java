@@ -19,9 +19,19 @@ public class StoryDTO {
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
+    
+    private Long labelId;
 
     public StoryDTO() {
 
+    }
+
+    public Long getlabelId() {
+        return labelId;
+    }
+
+    public void setlabelId(Long id) {
+        this.labelId = id;
     }
 
     public Long getId() {

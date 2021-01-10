@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
@@ -27,6 +28,27 @@
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
             </div>
+            <div id="control-group-label" class="control-group">
+                <spring:message code="label.story.addLabel"/>:
+
+                <div class="controls">
+			        <c:choose>
+			            <c:when test="${empty labels}">
+			                <p><spring:message code="label.label.list.empty"/></p>
+			            </c:when>
+			            <c:otherwise>
+							<select name="labelId">
+								<c:forEach var="label" items="${labels}">
+									<option value="${label.id}" <c:if test="${label.id==story.labelId}"> selected </c:if>>${label.title}</option>
+							  	</c:forEach>
+							</select>
+                    		<form:errors id="error-label" path="labelId" cssClass="help-inline"/>
+			            </c:otherwise>
+			        </c:choose>
+                </div>
+            </div>
+            
+            
             <div class="action-buttons">
                 <a href="/" class="btn"><spring:message code="label.cancel"/></a>
                 <button id="add-story-button" type="submit" class="btn btn-primary"><spring:message
