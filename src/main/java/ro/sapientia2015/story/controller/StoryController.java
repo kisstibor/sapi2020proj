@@ -27,45 +27,32 @@ import java.util.Locale;
 public class StoryController {
 
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.story.added";
-    protected static final String FEEDBACK_MESSAGE_KEY_TEAM_ADDED = "feedback.message.story.team.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";
     protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.story.deleted";
+
 
     protected static final String FLASH_MESSAGE_KEY_ERROR = "errorMessage";
     protected static final String FLASH_MESSAGE_KEY_FEEDBACK = "feedbackMessage";
 
     protected static final String MODEL_ATTRIBUTE = "story";
     protected static final String MODEL_ATTRIBUTE_LIST = "stories";
-    protected static final String MODEL_TEAM_ATTRIBUTE = "team";
-    protected static final String MODEL_TEAM_ATTRIBUTE_LIST = "teams";
-    protected static final String MODEL_SOS_ATTRIBUTE = "sos";
-    protected static final String MODEL_SOS_ATTRIBUTE_LIST = "sos_list";
 
     protected static final String PARAMETER_ID = "id";
 
     protected static final String REQUEST_MAPPING_LIST = "/";
     protected static final String REQUEST_MAPPING_VIEW = "/story/{id}";
-    protected static final String REQUEST_MAPPING_TEAM_VIEW = "/scrum-team/{id}";
 
     protected static final String VIEW_ADD = "story/add";			// webapp/WEB-INF/jsp/story/add.jsp
     protected static final String VIEW_LIST = "story/list";
     protected static final String VIEW_UPDATE = "story/update";
     protected static final String VIEW_VIEW = "story/view";
-    protected static final String VIEW_ADD_TEAM = "story/add-team";
-    protected static final String VIEW_VIEW_TEAM = "story/view-team";
+
     
     
 
     @Resource
-    private StoryService storyService;
-    
-    //@Resource
-    //private ScrumTeamService scrumTeamService;
-    
-    //@Resource
-    //private ScrumOfScrumsService scrumOfScrumsService;
-    
-    
+    private StoryService service;
+      
 
     @Resource
     private MessageSource messageSource;
@@ -87,7 +74,7 @@ public class StoryController {
             return VIEW_ADD;
         }
 
-        Story added = storyService.add(dto);
+        Story added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());
 
@@ -96,7 +83,7 @@ public class StoryController {
     
     @RequestMapping(value = "/story/delete/{id}", method = RequestMethod.GET)
     public String deleteById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
-        Story deleted = storyService.deleteById(id);
+        Story deleted = service.deleteById(id);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED, deleted.getTitle());
         return createRedirectViewPath(REQUEST_MAPPING_LIST);
     }
@@ -105,22 +92,23 @@ public class StoryController {
     @RequestMapping(value = REQUEST_MAPPING_LIST, method = RequestMethod.GET)
     public String findAll(Model model) {
     	System.out.println(">>> REQUEST: /  GET");
-        List<Story> models = storyService.findAll();
+        List<Story> models = service.findAll();
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
     }
+   
     
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
     	System.out.println("R>>> EQUEST: /story/"+id+"  GET");
-        Story found = storyService.findById(id);
+        Story found = service.findById(id);
         model.addAttribute(MODEL_ATTRIBUTE, found);
         return VIEW_VIEW;
     }
 
     @RequestMapping(value = "/story/update/{id}", method = RequestMethod.GET)
     public String showUpdateForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
-        Story updated = storyService.findById(id);
+        Story updated = service.findById(id);
         StoryDTO formObject = constructFormObjectForUpdateForm(updated);
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
@@ -133,7 +121,7 @@ public class StoryController {
             return VIEW_UPDATE;
         }
 
-        Story updated = storyService.update(dto);
+        Story updated = service.update(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
         attributes.addAttribute(PARAMETER_ID, updated.getId());
 
@@ -167,41 +155,5 @@ public class StoryController {
         redirectViewPath.append(requestMapping);
         return redirectViewPath.toString();
     }
-    
-    //
-    // SCRUM TEAM
-    //
-    /*
-    @RequestMapping(value = "/story/add-team", method = RequestMethod.GET)
-    public String showAddTeamForm(Model model) {
-    	System.out.println(">>> REQUEST: /story/add  GET");
-        ScrumTeamDTO formObject = new ScrumTeamDTO();
-        model.addAttribute(MODEL_TEAM_ATTRIBUTE, formObject);
 
-        return VIEW_ADD_TEAM;
-    }
-    
-    @RequestMapping(value = "/story/add-team", method = RequestMethod.POST)
-    public String add(@Valid @ModelAttribute(MODEL_TEAM_ATTRIBUTE) ScrumTeamDTO dto, BindingResult result, RedirectAttributes attributes) {
-    	System.out.println(">>> REQUEST: /story/add-team  POST: " + dto.getName() + " " + dto.getMembers());
-        if (result.hasErrors()) {
-            return VIEW_ADD;
-        }
-
-        //ScrumTeam added = scrumTeamService.add(dto);
-        //addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_TEAM_ADDED, added.getName());
-        //attributes.addAttribute(PARAMETER_ID, added.getId());
-
-        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
-    }
-    
-    @RequestMapping(value = REQUEST_MAPPING_TEAM_VIEW, method = RequestMethod.GET)
-    public String findTeamById(@PathVariable("id") Long id, Model model) throws NotFoundException {
-    	System.out.println(">>> REQUEST: /scrum-team/"+id+"  GET");
-        //ScrumTeam found = scrumTeamService.findById(id);
-        //model.addAttribute(MODEL_TEAM_ATTRIBUTE, found);
-        //return VIEW_VIEW_TEAM;
-    	return VIEW_VIEW;
-    }
-    */
 }

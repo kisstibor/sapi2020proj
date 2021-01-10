@@ -70,11 +70,11 @@ public class PersistenceContext {
 
         entityManagerFactoryBean.setDataSource(dataSource());
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        //entityManagerFactoryBean.setPackagesToScan(PROPERTY_PACKAGES_TO_SCAN);
-        entityManagerFactoryBean.setPackagesToScan(new String[] { 
-        		PROPERTY_PACKAGES_TO_SCAN,
-        		PROPERTY_PACKAGES_TO_SCAN_TEAM,	// !
-        		PROPERTY_PACKAGES_TO_SCAN_SOS	// !
+        //entityManagerFactoryBean.setPackagesToScan(PROPERTY_PACKAGES_TO_SCAN);			// !
+        entityManagerFactoryBean.setPackagesToScan(new String[] { 			// !
+        		PROPERTY_PACKAGES_TO_SCAN,									// !
+        		PROPERTY_PACKAGES_TO_SCAN_TEAM,								// !
+        		PROPERTY_PACKAGES_TO_SCAN_SOS								// !
         });
 
         Properties jpaProperties = new Properties();

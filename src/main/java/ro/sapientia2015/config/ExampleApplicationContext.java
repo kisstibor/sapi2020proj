@@ -19,10 +19,18 @@ import java.util.Properties;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {
+//@ComponentScan(basePackages = {
+//		"ro.sapientia2015.common.controller",
+//		"ro.sapientia2015.story.controller",
+//		"ro.sapientia2015.story.service" })
+@ComponentScan(basePackages = {						// !
         "ro.sapientia2015.common.controller",
         "ro.sapientia2015.story.controller",
-        "ro.sapientia2015.story.service"
+        "ro.sapientia2015.story.service",
+        "ro.sapientia2015.scrumteam.controller",
+        "ro.sapientia2015.scrumteam.service",
+        "ro.sapientia2015.scrumofscrums.controller",
+        "ro.sapientia2015.scrumofscrums.service"
 })
 @Import({PersistenceContext.class})
 @PropertySource("classpath:application.properties")
