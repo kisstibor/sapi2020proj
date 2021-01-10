@@ -30,11 +30,11 @@
                 </div>
             </div>
             
-            <div id="control-group-description" class="control-group">
+            <div id="control-group-title" class="control-group">
                 <label for="story-description"><spring:message code="label.story.progress"/>:</label>
 
                 <div class="controls">
-                    <form:textarea id="story-progress" path="progress"/>
+                    <form:textarea id="story-progress" path="progress" value="0"/>
                     <form:errors id="error-description" path="progress" cssClass="help-inline"/>
                 </div>
             </div>

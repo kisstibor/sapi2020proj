@@ -100,6 +100,7 @@ public class StoryController {
         	StoryDTO s1 = new StoryDTO();
         	StoryDTO s2 = new StoryDTO();
         	StoryDTO s3 = new StoryDTO();
+        	StoryDTO s4 = new StoryDTO();
         	s1.setTitle("Story 1 - Add new item to stories");
         	s1.setDescription("description 1");
         	s1.setProgress(100);
@@ -109,9 +110,13 @@ public class StoryController {
         	s3.setTitle("Story 3 - Delete story");
         	s3.setDescription("description 3");
         	s3.setProgress(0);
+        	s4.setTitle("Story 4 - Another Dummy story");
+        	s4.setDescription("description 4");
+        	s4.setProgress(1);
         	service.add(s1);
         	service.add(s2);
         	service.add(s3);
+        	service.add(s4);
         	models = service.findAll();
         }
         //

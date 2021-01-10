@@ -17,12 +17,12 @@
             <c:otherwise>
                 <c:forEach items="${teams}" var="team">
                     <div class="well well-small">
-                        <a href="/story/${team.id}">
+                        <a href="/scrumteam/${team.id}">
+                        	<b>
                         	<c:out value="${team.name}"/>
-                        	<c:out value=" - "/>
-                        	<c:out value="${team.members}"/>
-                        	<c:out value=" - "/>
-                        	<c:out value="${team.storiesCSV}"/>
+                        	</b>
+                        	<br>
+                        	<c:out value="(${team.storyCount}): ${team.storiesSeparated}"/>
                         </a>
                     </div>
                 </c:forEach>

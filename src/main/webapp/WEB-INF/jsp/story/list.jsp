@@ -18,7 +18,10 @@
                 <c:forEach items="${ stories}" var="story">
                     <div class="well well-small">
                         <a href="/story/${story.id}">
-                        <c:out value="${story.title}   (${story.progress}%)"/>
+                        <b>
+                        <c:out value="${story.title}"/>
+                        </b>
+                        <c:out value=" (${story.progress}%)"/>
                         </a>
                     </div>
                 </c:forEach>

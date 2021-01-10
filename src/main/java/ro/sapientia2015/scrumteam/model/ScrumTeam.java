@@ -32,7 +32,9 @@ public class ScrumTeam {
 	@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.LAZY)
     private List<Story> stories;
 	
-	private String storiesCSV;
+	private String storiesSeparated;
+	
+	private Integer storyCount;
 	
 	@Version
     private long version;
@@ -62,10 +64,13 @@ public class ScrumTeam {
 		return stories;
 	}
 	
-	public String getStoriesCSV() {
-		return storiesCSV;
+	public String getStoriesSeparated() {
+		return storiesSeparated;
 	}
-
+	
+	public Integer getStoryCount() {
+		return storyCount;
+	}
 
 	private void updateStoriesCSV() {
 		String titles = "";
@@ -77,7 +82,7 @@ public class ScrumTeam {
 				titles += ", ";
 			}
 		}
-		storiesCSV = titles;
+		storiesSeparated = titles;
 	}
 	
 	public static class Builder {
@@ -100,6 +105,7 @@ public class ScrumTeam {
         
         public Builder stories(List<Story> stories) {
             built.stories = stories;
+            built.storyCount = stories.size();
             built.updateStoriesCSV();
             return this;
         }

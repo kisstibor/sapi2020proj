@@ -1,5 +1,6 @@
 package ro.sapientia2015.scrumteam.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -80,8 +81,10 @@ public class ScrumTeamController {
         ScrumTeam added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getName());
         attributes.addAttribute(PARAMETER_ID, added.getId());
+        attributes.addAttribute("auxstory", new StoryDTO());
 
-        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+        //return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+        return VIEW_LIST;
     }
     
     
@@ -99,25 +102,29 @@ public class ScrumTeamController {
     	System.out.println(">>> REQUEST: /  GET");
         List<ScrumTeam> models = service.findAll();
         
-        /*
         // ADD DUMMY DATA
         if (models.size() == 0) {
         	List<Story> stories = storyService.findAll();
         	if (stories.size() > 2) {
         		ScrumTeamDTO s1 = new ScrumTeamDTO();
         		ScrumTeamDTO s2 = new ScrumTeamDTO();
-        		ScrumTeamDTO s3 = new ScrumTeamDTO();
+        		List<Story> sl1 = new ArrayList<Story>();
+        		List<Story> sl2 = new ArrayList<Story>();
+        		sl1.add(stories.get(0));
+        		sl1.add(stories.get(1));
         		s1.setName("Alpha");
         		s1.setMembers("Albert, Adam, alkesz Alamer");
-        		s1.set
-            	
+        		s1.setStories(sl1);
+        		sl2.add(stories.get(2));
+        		s2.setName("Beta");
+        		s2.setMembers("Bela, Bob, Bill Bow");
+        		s2.setStories(sl2);
+        		service.add(s1);
+            	service.add(s2);
+            	models = service.findAll();
         	}
-        	service.add(st1);
-        	service.add(st1);
-        	service.add(st1);
         }
         //
-        */
         
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
