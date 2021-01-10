@@ -8,10 +8,10 @@
 </head>
 <body>
 	<h1>
-		<spring:message code="label.story.list.page.title" />
+		<spring:message code="label.project.list.page.title" />
 	</h1>
 	<div>
-		<a href="/scrumsapientia/story/add" id="add-button"
+		<a href="/scrumsapientia/project/add" id="add-button"
 			class="btn btn-primary"><spring:message
 				code="label.add.story.link" /></a>
 	</div>
@@ -23,10 +23,11 @@
 				</p>
 			</c:when>
 			<c:otherwise>
-				<c:forEach items="${ projects}" var="story">
+				<p>Project name - Product owner</p>
+				<c:forEach items="${projects}" var="project">
 					<div class="well well-small">
-						<a href="/scrumsapientia/story/${story.id}"><c:out
-								value="${story.title}" /></a>
+						<a href="/scrumsapientia/project/${project.id}"><c:out
+								value="${project.name} - ${project.productOwner}" /></a>
 					</div>
 				</c:forEach>
 			</c:otherwise>
