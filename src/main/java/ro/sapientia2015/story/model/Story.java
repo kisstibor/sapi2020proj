@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import ro.sapientia2015.scrum.model.Scrum;
+
 import javax.persistence.*;
 
 /**
@@ -34,6 +36,9 @@ public class Story {
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
 
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Scrum assignedTeam;
+    
     @Version
     private long version;
 
@@ -69,7 +74,11 @@ public class Story {
         return version;
     }
 
-    @PrePersist
+    public Scrum getAssignedTeam() {
+		return assignedTeam;
+	}
+
+	@PrePersist
     public void prePersist() {
         DateTime now = DateTime.now();
         creationTime = now;

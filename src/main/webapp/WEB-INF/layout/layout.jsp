@@ -32,6 +32,8 @@
                     <div class="nav-collapse">
                         <ul class="nav">
                             <li><a href="/"><spring:message code="label.navigation.homepage.link"/></a></li>
+                            <li><a href="/pi"><spring:message code="label.navigation.pi.link"/></a></li>
+                            <li><a href="/scrum"><spring:message code="label.navigation.scrum.link"/></a></li>
                         </ul>
                     </div>
                 </div>

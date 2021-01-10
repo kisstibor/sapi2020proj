@@ -17,6 +17,12 @@
     <context:component-scan base-package="ro.sapientia2015.common.controller"/>
     <context:component-scan base-package="ro.sapientia2015.story.controller"/>
     <context:component-scan base-package="ro.sapientia2015.story.service"/>
+    
+    <context:component-scan base-package="ro.sapientia2015.scrum.controller"/>
+    <context:component-scan base-package="ro.sapientia2015.scrum.service"/>
+    
+    <context:component-scan base-package="ro.sapientia2015.pi.controller"/>
+    <context:component-scan base-package="ro.sapientia2015.pi.service"/>
 
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">

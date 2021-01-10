@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import ro.sapientia2015.scrum.model.Scrum;
 import ro.sapientia2015.story.model.Story;
 
 /**
@@ -20,6 +21,8 @@ public class StoryDTO {
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
 
+    private Scrum assignedTeam;
+    
     public StoryDTO() {
 
     }
@@ -48,6 +51,15 @@ public class StoryDTO {
         this.title = title;
     }
 
+    public Scrum getAssignedTeam() {
+        return assignedTeam;
+    }
+
+    public void setAssignedTeam(Scrum scrum) {
+        this.assignedTeam = scrum;
+    }
+    
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
