@@ -24,12 +24,15 @@ public class ScrumTeam {
 	@Column(name = "members")
     private String members;
 	
-	@Column(name = "stories")
-	@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.LAZY)
+	
 	//@JoinTable(name="scrumteam_and_stories", 
     //	joinColumns={@JoinColumn(name="id1")},
     //	inverseJoinColumns=@JoinColumn(name="id2"))
+	@Column(name = "stories")
+	@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.LAZY)
     private List<Story> stories;
+	
+	private String storiesCSV;
 	
 	@Version
     private long version;
@@ -58,20 +61,13 @@ public class ScrumTeam {
 	public List<Story> getStories() {
 		return stories;
 	}
-	public String storieTitlesCSV() {
-		String titles = "";
-		int i = 0;
-		for(Story s : stories) {
-			titles += s.getTitle();
-			i++;
-			if (i != stories.size()) {
-				titles += ", ";
-			}
-		}
-		return titles;
-	}
 	
-	public String getStorieTitlesCSV() {
+	public String getStoriesCSV() {
+		return storiesCSV;
+	}
+
+
+	private void updateStoriesCSV() {
 		String titles = "";
 		int i = 0;
 		for(Story s : stories) {
@@ -81,7 +77,7 @@ public class ScrumTeam {
 				titles += ", ";
 			}
 		}
-		return titles;
+		storiesCSV = titles;
 	}
 	
 	public static class Builder {
@@ -104,6 +100,7 @@ public class ScrumTeam {
         
         public Builder stories(List<Story> stories) {
             built.stories = stories;
+            built.updateStoriesCSV();
             return this;
         }
         

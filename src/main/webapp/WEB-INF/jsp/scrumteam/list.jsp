@@ -22,7 +22,7 @@
                         	<c:out value=" - "/>
                         	<c:out value="${team.members}"/>
                         	<c:out value=" - "/>
-                        	<c:out value="${team.storieTitlesCSV}"/>
+                        	<c:out value="${team.storiesCSV}"/>
                         </a>
                     </div>
                 </c:forEach>

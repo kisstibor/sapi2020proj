@@ -97,11 +97,23 @@ public class StoryController {
         
         // ADD DUMMY DATA
         if (models.size() == 0) {
-        	models.add(Story.getBuilder("Story 1 - Add new item to stories").description("description 1").build());
-        	models.add(Story.getBuilder("Story 2 - Update story").description("description 2").build());
-        	models.add(Story.getBuilder("Story 3 - Delete story").description("description 3").build());
+        	StoryDTO s1 = new StoryDTO();
+        	StoryDTO s2 = new StoryDTO();
+        	StoryDTO s3 = new StoryDTO();
+        	s1.setTitle("Story 1 - Add new item to stories");
+        	s1.setDescription("description 1");
+        	s1.setProgress(100);
+        	s2.setTitle("Story 2 - Update story");
+        	s2.setDescription("description 2");
+        	s2.setProgress(49);
+        	s3.setTitle("Story 3 - Delete story");
+        	s3.setDescription("description 3");
+        	s3.setProgress(0);
+        	service.add(s1);
+        	service.add(s2);
+        	service.add(s3);
+        	models = service.findAll();
         }
-        //
         //
         
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);

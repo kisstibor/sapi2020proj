@@ -27,6 +27,7 @@ public class RepositoryStoryService implements StoryService {
 
         Story model = Story.getBuilder(added.getTitle())
                 .description(added.getDescription())
+                .progress(added.getProgress())
                 .build();
 
         return repository.save(model);

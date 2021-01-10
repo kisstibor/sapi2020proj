@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ro.sapientia2015.scrumteam.dto.ScrumTeamDTO;
 import ro.sapientia2015.scrumteam.model.ScrumTeam;
 import ro.sapientia2015.scrumteam.service.ScrumTeamService;
+import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.StoryService;
@@ -51,10 +52,10 @@ public class ScrumTeamController {
     
 
     @Resource
-    private ScrumTeamService service;
+    private StoryService storyService;
     
     @Resource
-    private StoryService storyService;
+    private ScrumTeamService service;
     
     @Resource
     private MessageSource messageSource;
@@ -97,6 +98,27 @@ public class ScrumTeamController {
     public String findAll(Model model) {
     	System.out.println(">>> REQUEST: /  GET");
         List<ScrumTeam> models = service.findAll();
+        
+        /*
+        // ADD DUMMY DATA
+        if (models.size() == 0) {
+        	List<Story> stories = storyService.findAll();
+        	if (stories.size() > 2) {
+        		ScrumTeamDTO s1 = new ScrumTeamDTO();
+        		ScrumTeamDTO s2 = new ScrumTeamDTO();
+        		ScrumTeamDTO s3 = new ScrumTeamDTO();
+        		s1.setName("Alpha");
+        		s1.setMembers("Albert, Adam, alkesz Alamer");
+        		s1.set
+            	
+        	}
+        	service.add(st1);
+        	service.add(st1);
+        	service.add(st1);
+        }
+        //
+        */
+        
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
     }

@@ -20,7 +20,7 @@ public class StoryDTO {
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
     
-    private String progress;
+    private Integer progress;
 
     
     public StoryDTO() {
@@ -51,11 +51,11 @@ public class StoryDTO {
         this.title = title;
     }
 
-    public String getProgress() {
+    public Integer getProgress() {
 		return progress;
 	}
 
-	public void setProgress(String progress) {
+	public void setProgress(Integer progress) {
 		this.progress = progress;
 	}
 

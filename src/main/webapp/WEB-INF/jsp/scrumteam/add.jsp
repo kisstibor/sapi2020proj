@@ -43,6 +43,7 @@
 					<label class="checkbox-inline btn btn-default" for="whichTitle-${item.title}">
 					<form:checkbox id="whichTitle-${item.title}" value="${item.title}" path="selectedStories"/>
 						${item.title}
+						<br>
 				    </label>
 				</c:forEach>
 			</div>
