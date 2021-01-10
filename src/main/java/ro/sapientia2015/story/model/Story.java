@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import ro.sapientia2015.scrumteam.model.ScrumTeam;
+
 import javax.persistence.*;
 
 /**
@@ -36,6 +38,9 @@ public class Story {
     
     @Column(name = "progress")
     private Integer progress;
+    
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private ScrumTeam scrumTeam;
 
     @Version
     private long version;

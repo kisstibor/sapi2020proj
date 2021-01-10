@@ -21,10 +21,10 @@ public class RepositoryScrumTeamService implements ScrumTeamService {
 	@Transactional
     @Override
     public ScrumTeam add(ScrumTeamDTO added) {
-    	List<String> members = Arrays.asList(added.getMembers().trim().replace(" ", "").split(","));
+    	//List<String> members = Arrays.asList(added.getMembers().trim().replace(" ", "").split(","));
 
     	ScrumTeam model = ScrumTeam.getBuilder(added.getName())
-    			.members(members)
+    			.members(added.getMembers().trim())
     			.build();
 
     	// TODO >>>>>> set stories

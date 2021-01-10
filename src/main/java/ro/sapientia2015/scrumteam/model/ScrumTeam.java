@@ -9,7 +9,7 @@ import ro.sapientia2015.story.model.Story;
 
 
 @Entity
-@Table(name="scrum_team")
+@Table(name="scrumteam")
 public class ScrumTeam {
 
 	public static final int MAX_LENGTH_NAME = 100;
@@ -22,9 +22,13 @@ public class ScrumTeam {
     private String name;
 	
 	@Column(name = "members")
-    private List<String> members;
+    private String members;
 	
 	@Column(name = "stories")
+	@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.LAZY)
+	//@JoinTable(name="scrumteam_and_stories", 
+    //	joinColumns={@JoinColumn(name="id1")},
+    //	inverseJoinColumns=@JoinColumn(name="id2"))
     private List<Story> stories;
 	
 	@Version
@@ -47,12 +51,12 @@ public class ScrumTeam {
 		return name;
 	}
 	
-	public List<String> getMembers() {
+	public String getMembers() {
 		return members;
 	}
 	
 	public String getMembersCSV() {
-		return String.join(", ", members);
+		return members;
 	}
 
 	public List<Story> getStories() {
@@ -74,7 +78,7 @@ public class ScrumTeam {
             return built;
         }
 
-        public Builder members(List<String> members) {
+        public Builder members(String members) {
             built.members = members;
             return this;
         }
