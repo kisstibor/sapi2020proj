@@ -17,7 +17,7 @@
         </div>
         	<c:if test="${not empty review.review}">
                 <div>
-            <p><spring:message code="label.review.story.link"/>: <c:out value="${review.review}"/></p>
+            <p><spring:message code="label.review.story.link"/>: <p id="review-status"><c:out value="${review.review}"/></p></p>
         		</div>
              </c:if>
       
