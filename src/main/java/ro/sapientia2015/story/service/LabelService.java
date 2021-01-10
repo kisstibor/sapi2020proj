@@ -12,7 +12,7 @@ public interface LabelService {
 
     public List<Label> findAll();
 
-    public Label findById(Long id) throws NotFoundException;
+    public Label findById(Long id);
 
 
 }

@@ -32,19 +32,13 @@
                 <spring:message code="label.story.addLabel"/>:
 
                 <div class="controls">
-			        <c:choose>
-			            <c:when test="${empty labels}">
-			                <p><spring:message code="label.label.list.empty"/></p>
-			            </c:when>
-			            <c:otherwise>
-							<select name="labelId">
-								<c:forEach var="label" items="${labels}">
-									<option value="${label.id}" <c:if test="${label.id==story.labelId}"> selected </c:if>>${label.title}</option>
-							  	</c:forEach>
-							</select>
-                    		<form:errors id="error-label" path="labelId" cssClass="help-inline"/>
-			            </c:otherwise>
-			        </c:choose>
+					<select name="labelId">
+					<option value=0>Assign no label</option>
+						<c:forEach var="label" items="${labels}">
+							<option value="${label.id}" <c:if test="${label.id==story.labelId}"> selected </c:if>>${label.title}</option>
+					  	</c:forEach>
+					</select>
+               		<form:errors id="error-label" path="labelId" cssClass="help-inline"/>
                 </div>
             </div>
             

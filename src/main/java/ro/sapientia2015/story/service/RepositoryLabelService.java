@@ -34,13 +34,10 @@ public class RepositoryLabelService implements LabelService {
        return repository.findAll();
     }
 
-    @Transactional(readOnly = true, rollbackFor = {NotFoundException.class})
+    @Transactional(readOnly = true)
     @Override
-    public Label findById(Long id) throws NotFoundException {
+    public Label findById(Long id){
     	Label found = repository.findOne(id);
-        if (found == null) {
-            throw new NotFoundException("No entry found with id: " + id);
-        }
 
         return found;
     }

@@ -1,5 +1,6 @@
 package ro.sapientia2015.story.dto;
 
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -26,11 +27,11 @@ public class StoryDTO {
 
     }
 
-    public Long getlabelId() {
+    public Long getLabelId() {
         return labelId;
     }
 
-    public void setlabelId(Long id) {
+    public void setLabelId(Long id) {
         this.labelId = id;
     }
 
