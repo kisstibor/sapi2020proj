@@ -1,23 +1,25 @@
 package ro.sapientia2015.story.model;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
-
-import javax.persistence.*;
-
-/**
- * @author Kiss Tibor
- */
 @Entity
-@Table(name="story")
-public class Story {
-
-    public static final int MAX_LENGTH_DESCRIPTION = 500;
-    public static final int MAX_LENGTH_TITLE = 100;
+@Table(name="story_timelimit")
+public class StoryTimeLimit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,28 +29,25 @@ public class Story {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime creationTime;
 
-    @Column(name = "description", nullable = true, length = MAX_LENGTH_DESCRIPTION)
-    private String description;
-
     @Column(name = "modification_time", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modificationTime;
-
-    @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
-    private String title;
     
-    @Column(name = "timelimit", nullable = true)
+    @Column(name = "timelimit", nullable = false)
     private String timelimit;
+    
+    @Column(name = "storyId", nullable = false)
+    private Long storyId;
 
     @Version
     private long version;
 
-    public Story() {
+    public StoryTimeLimit() {
 
     }
 
-    public static Builder getBuilder(String title) {
-        return new Builder(title);
+    public static Builder getBuilder(Long storyId) {
+        return new Builder(storyId);
     }
 
     public Long getId() {
@@ -59,20 +58,16 @@ public class Story {
         return creationTime;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public DateTime getModificationTime() {
         return modificationTime;
     }
 
-    public String getTitle() {
-        return title;
-    }
-    
     public String getTimelimit() {
         return timelimit;
+    }
+    
+    public Long getStoryId() {
+        return storyId;
     }
 
     public long getVersion() {
@@ -91,35 +86,23 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
-        this.description = description;
-        this.title = title;
-    }
-    
-    public void update(String description, String title, String timelimit) {
-        this.description = description;
-        this.title = title;
+    public void update(String timelimit) {
         this.timelimit = timelimit;
     }
 
     public static class Builder {
 
-        private Story built;
+        private StoryTimeLimit built;
 
-        public Builder(String title) {
-            built = new Story();
-            built.title = title;
+        public Builder(Long storyId) {
+            built = new StoryTimeLimit();
+            built.storyId = storyId;
         }
 
-        public Story build() {
+        public StoryTimeLimit build() {
             return built;
         }
 
-        public Builder description(String description) {
-            built.description = description;
-            return this;
-        }
-        
         public Builder timelimit(String timelimit) {
             built.timelimit = timelimit;
             return this;
@@ -131,3 +114,4 @@ public class Story {
         return ToStringBuilder.reflectionToString(this);
     }
 }
+

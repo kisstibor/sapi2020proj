@@ -5,7 +5,7 @@
 <html>
 <head>
     <title></title>
-    <script type="text/javascript" src="/static/js/story.view.js"></script>
+    <script type="text/javascript" src="/scrumsapientia/static/js/story.view.js"></script>
 </head>
 <body>
     <div id="story-id" class="hidden">${story.id}</div>
@@ -15,8 +15,22 @@
         <div>
             <p><c:out value="${story.description}"/></p>
         </div>
+        <c:choose>
+		    <c:when test="${empty storytimelimit}">
+		        <div>
+            		<a href="/scrumsapientia/story/timelimit/add/${story.id}" class="btn btn-primary"><spring:message code="label.add.storytimelimit.button"/></a>
+       			</div>
+		    </c:when>    
+		    <c:otherwise>
+		        <div>
+            		<p><spring:message code="label.storytimelimit"/>: <c:out value="${storytimelimit.timelimit}"/></p>
+            		<a href="/scrumsapientia/story/timelimit/update/${story.id}/${storytimelimit.id}" class="btn btn-primary"><spring:message code="label.update.storytimelimit.link"/></a>
+            		<a href="/scrumsapientia/story/timelimit/delete/${story.id}/${storytimelimit.id}" class="btn btn-primary"><spring:message code="label.delete.storytimelimit.link"/></a>
+            	</div>
+		    </c:otherwise>
+		</c:choose>
         <div class="action-buttons">
-            <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
+            <a href="/scrumsapientia/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
             <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
         </div>
     </div>

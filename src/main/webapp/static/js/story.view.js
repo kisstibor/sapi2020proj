@@ -21,4 +21,5 @@ $(function() {
         e.preventDefault();
         window.location.href = "/story/delete/" + $("#story-id").text();
     });
+    
 });
