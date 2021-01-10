@@ -15,7 +15,22 @@
         <div>
             <p><c:out value="${story.description}"/></p>
         </div>
+        	<c:if test="${not empty review.review}">
+                <div>
+            <p><spring:message code="label.review.story.link"/>: <p id="review-status"><c:out value="${review.review}"/></p></p>
+        		</div>
+             </c:if>
+      
         <div class="action-buttons">
+        	 <c:choose>
+	            <c:when test="${empty review.review}">
+	                <a href="/story/review/${story.id}" id="add-story-review" class="btn btn-primary"><spring:message code="label.review.story.link"/></a>
+	            </c:when>
+	            <c:otherwise>
+	                 <a href="/story/review/${story.id}" id="update-story-review" class="btn btn-primary"><spring:message code="label.review.update.story.link"/></a>
+	            </c:otherwise>
+        	</c:choose>
+        	
             <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
             <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
         </div>

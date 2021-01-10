@@ -28,6 +28,7 @@
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
             </div>
+            
             <div class="action-buttons">
                 <a href="/story/${story.id}" class="btn"><spring:message code="label.cancel"/></a>
                 <button id="update-story-button" type="submit" class="btn btn-primary"><spring:message

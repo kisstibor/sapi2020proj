@@ -14,6 +14,7 @@ import javax.persistence.*;
 public class Story {
 
     public static final int MAX_LENGTH_DESCRIPTION = 500;
+    public static final int MAX_LENGTH_REVIEW = 100;
     public static final int MAX_LENGTH_TITLE = 100;
 
     @Id
@@ -33,14 +34,14 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
-
+    
     @Version
     private long version;
 
     public Story() {
 
     }
-
+    
     public static Builder getBuilder(String title) {
         return new Builder(title);
     }
@@ -64,7 +65,7 @@ public class Story {
     public String getTitle() {
         return title;
     }
-
+    
     public long getVersion() {
         return version;
     }
@@ -85,7 +86,7 @@ public class Story {
         this.description = description;
         this.title = title;
     }
-
+    
     public static class Builder {
 
         private Story built;
@@ -103,6 +104,7 @@ public class Story {
             built.description = description;
             return this;
         }
+       
     }
 
     @Override
