@@ -11,7 +11,7 @@
 		<spring:message code="label.project.list.page.title" />
 	</h1>
 	<div>
-		<a href="/scrumsapientia/project/add" id="add-button"
+		<a href="/project/add" id="add-button"
 			class="btn btn-primary"><spring:message
 				code="label.add.story.link" /></a>
 	</div>
@@ -26,7 +26,7 @@
 				<p>Project name - Product owner</p>
 				<c:forEach items="${projects}" var="project">
 					<div class="well well-small">
-						<a href="/scrumsapientia/project/${project.id}"><c:out
+						<a href="/project/${project.id}"><c:out
 								value="${project.name} - ${project.productOwner}" /></a>
 					</div>
 				</c:forEach>

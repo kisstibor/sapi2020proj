@@ -5,15 +5,15 @@
 <html>
 <head>
     <title><spring:message code="spring.test.mvc.example.title"/></title>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/static/css/example.css'/>"/>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/static/css/bootstrap.css'/>"/>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/static/css/bootstrap-responsive.css'/>"/>
-    <script type="text/javascript" src="<c:url value='/static/js/vendor/jquery-1.8.2.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/static/js/vendor/bootstrap.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/static/js/vendor/bootstrap-transition.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/static/js/vendor/bootstrap-collapse.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/static/js/vendor/handlebars-1.0.rc.1.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/static/js/scrum.js'/>"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/example.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-responsive.css"/>
+    <script type="text/javascript" src="/static/js/vendor/jquery-1.8.2.js"></script>
+    <script type="text/javascript" src="/static/js/vendor/bootstrap.js"></script>
+    <script type="text/javascript" src="/static/js/vendor/bootstrap-transition.js"></script>
+    <script type="text/javascript" src="/static/js/vendor/bootstrap-collapse.js"></script>
+    <script type="text/javascript" src="/static/js/vendor/handlebars-1.0.rc.1.js"></script>
+    <script type="text/javascript" src="/static/js/scrum.js"></script>
     <sitemesh:write property="head"/>
 </head>
 <body>
@@ -31,8 +31,8 @@
 
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li><a href="/scrumsapientia"><spring:message code="label.navigation.homepage.link"/></a></li>
-                            <li><a href="/scrumsapientia/projects"><spring:message code="label.navigation.projects.link"/></a></li>
+                            <li><a href="/"><spring:message code="label.navigation.homepage.link"/></a></li>
+                            <li><a href="/projects"><spring:message code="label.navigation.projects.link"/></a></li>
                         </ul>
                     </div>
                 </div>

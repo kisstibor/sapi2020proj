@@ -1,23 +1,10 @@
 package ro.sapientia2015.story.controller;
 
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,12 +13,33 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
+import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.SprintDTO;
+import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Sprint;
+import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.SprintService;
+import ro.sapientia2015.story.service.StoryService;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Kiss Tibor

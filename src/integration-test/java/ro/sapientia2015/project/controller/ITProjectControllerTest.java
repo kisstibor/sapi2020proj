@@ -45,7 +45,6 @@ import ro.sapientia2015.project.model.Project;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = WebContextLoader.class, classes = {ExampleApplicationContext.class})
-//@ContextConfiguration(loader = WebContextLoader.class, locations = {"classpath:exampleApplicationContext.xml"})
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class,
         TransactionalTestExecutionListener.class,

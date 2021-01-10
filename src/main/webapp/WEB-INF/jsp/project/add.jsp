@@ -13,7 +13,7 @@
 		<spring:message code="label.project.add.page.title" />
 	</h1>
 	<div class="well page-content">
-		<form:form action="/scrumsapientia/project/add" commandName="project"
+		<form:form action="/project/add" commandName="project"
 			method="POST" enctype="utf8">
 			<div id="control-group-title" class="control-group">
 				<label for="story-title"><spring:message
@@ -57,7 +57,7 @@
 				</div>
 			</div>
 			<div class="action-buttons">
-				<a href="/scrumsapientia" class="btn"><spring:message
+				<a href="/" class="btn"><spring:message
 						code="label.cancel" /></a>
 				<button id="add-story-button" type="submit" class="btn btn-primary">
 					<spring:message code="label.add.story.button" />

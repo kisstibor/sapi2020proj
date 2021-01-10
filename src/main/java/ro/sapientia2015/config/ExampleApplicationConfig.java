@@ -1,18 +1,15 @@
 package ro.sapientia2015.config;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-
 import org.sitemesh.config.ConfigurableSiteMeshFilter;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.servlet.*;
+import java.util.EnumSet;
 
 /**
  * @author Kiss Tibor
@@ -25,6 +22,9 @@ public class ExampleApplicationConfig implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(ExampleApplicationContext.class);
+
+        //XmlWebApplicationContext rootContext = new XmlWebApplicationContext();
+        //rootContext.setConfigLocation("classpath:exampleApplicationContext.xml");
 
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet(rootContext));
         dispatcher.setLoadOnStartup(1);

@@ -5,10 +5,10 @@
 <html>
 <head>
 <title></title>
-<script type="text/javascript" src="/static/js/story.view.js"></script>
+<script type="text/javascript" src="/static/js/project.view.js"></script>
 </head>
 <body>
-	<div id="story-id" class="hidden">${project.id}</div>
+	<div id="project-id" class="hidden">${project.id}</div>
 	<h1>
 		<spring:message code="label.project.view.page.title" />
 	</h1>
@@ -48,18 +48,18 @@
 		</div>
 
 		<div class="action-buttons">
-			<a href="/scrumsapientia/project/update/${project.id}"
+			<a href="/project/update/${project.id}"
 				class="btn btn-primary"><spring:message
 					code="label.update.story.link" /></a> <a
-				href="/scrumsapientia/project/delete/${project.id}"
-				id="delete-story-link" class="btn btn-primary"><spring:message
+				href="/project/delete/${project.id}"
+				id="delete-project-link" class="btn btn-primary"><spring:message
 					code="label.delete.story.link" /></a>
 			<!-- <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a> -->
 		</div>
 	</div>
-	<script id="template-delete-story-confirmation-dialog"
+	<script id="template-delete-project-confirmation-dialog"
 		type="text/x-handlebars-template">
-        <div id="delete-story-confirmation-dialog" class="modal">
+        <div id="delete-project-confirmation-dialog" class="modal">
             <div class="modal-header">
                 <button class="close" data-dismiss="modal">×</button>
                 <h3><spring:message code="label.story.delete.dialog.title"/></h3>
@@ -68,8 +68,8 @@
                 <p><spring:message code="label.story.delete.dialog.message"/></p>
             </div>
             <div class="modal-footer">
-                <a id="cancel-story-button" href="#" class="btn"><spring:message code="label.cancel"/></a>
-                <a id="delete-story-button" href="#" class="btn btn-primary"><spring:message code="label.delete.story.button"/></a>
+                <a id="cancel-project-button" href="#" class="btn"><spring:message code="label.cancel"/></a>
+                <a id="delete-project-button" href="#" class="btn btn-primary"><spring:message code="label.delete.story.button"/></a>
             </div>
         </div>
     </script>

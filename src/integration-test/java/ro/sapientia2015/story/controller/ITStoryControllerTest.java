@@ -74,7 +74,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase(value="storyData.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    @ExpectedDatabase("storyData.xml")
     public void showAddForm() throws Exception {
         mockMvc.perform(get("/story/add"))
                 .andExpect(status().isOk())
@@ -86,7 +86,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase(value = "storyData.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    @ExpectedDatabase("storyData.xml")
     public void addEmpty() throws Exception {
         mockMvc.perform(post("/story/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
