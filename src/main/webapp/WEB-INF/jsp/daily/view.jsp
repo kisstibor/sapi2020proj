@@ -17,12 +17,12 @@
 			<c:out value="${daily.title}" />
 		</h2>
 		<div>
-			<p>
+			<p id=daily-duration>
 				<c:out value="Duration: ${daily.duration}" />
 			</p>
 		</div>
 		<div>
-			<p>
+			<p id=daily-datee>
 				<c:out value="Date: ${daily.datee}" />
 			</p>
 		</div>
