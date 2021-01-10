@@ -1,4 +1,4 @@
-package ro.sapientia2015.story.service;
+package ro.sapientia2015.scrumofscrums.service;
 
 import java.util.List;
 
@@ -6,10 +6,10 @@ import javax.annotation.Resource;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import ro.sapientia2015.story.dto.ScrumOfScrumsDTO;
+import ro.sapientia2015.scrumofscrums.dto.ScrumOfScrumsDTO;
+import ro.sapientia2015.scrumofscrums.model.ScrumOfScrums;
 import ro.sapientia2015.story.exception.NotFoundException;
-import ro.sapientia2015.story.model.ScrumOfScrums;
-import ro.sapientia2015.story.repository.ScrumOfScrumsRepository;
+import ro.sapientia2015.scrumofscrums.repository.ScrumOfScrumsRepository;
 
 public class RepositoryScrumOfScrumsService implements ScrumOfScrumsService {
 

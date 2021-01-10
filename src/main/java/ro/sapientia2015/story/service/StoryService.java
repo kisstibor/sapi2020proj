@@ -4,9 +4,7 @@ import java.util.List;
 
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
-import ro.sapientia2015.story.model.ScrumTeam;
 import ro.sapientia2015.story.model.Story;
-import ro.sapientia2015.story.dto.ScrumTeamDTO;
 
 /**
  * @author Kiss Tibor

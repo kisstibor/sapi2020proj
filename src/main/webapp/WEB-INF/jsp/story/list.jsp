@@ -32,6 +32,7 @@
     
     TODO<br>
     List:
+    <!-- 
     <div id="team-list" class="page-content">
         <c:choose>
             <c:when test="${empty teams}">
@@ -46,7 +47,7 @@
             </c:otherwise>
         </c:choose>
     </div>
-    
+     -->
     <div>
         <a href="/story/add-team" id="add-team-button" class="btn btn-primary"><spring:message code="label.add.story.link.team"/></a>
     </div>

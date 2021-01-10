@@ -1,18 +1,12 @@
-package ro.sapientia2015.story.dto;
+package ro.sapientia2015.scrumteam.dto;
 
-import java.util.ArrayList;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Version;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 
-import ro.sapientia2015.story.model.ScrumTeam;
-import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.scrumteam.model.ScrumTeam;
 
 public class ScrumTeamDTO {
 
@@ -53,7 +47,9 @@ public class ScrumTeamDTO {
 		return members;
 	}
 
-
+	public List<String> getMembersList() {
+		return Arrays.asList(members.trim().replace(" ", "").split(","));
+	}
 
 	public void setMembers(String members) {
 		this.members = members;

@@ -1,11 +1,12 @@
-package ro.sapientia2015.story.model;
+package ro.sapientia2015.scrumteam.model;
 
 import java.util.List;
 
 import javax.persistence.*;
 
-import jdk.internal.joptsimple.internal.Strings;
-import ro.sapientia2015.story.model.Story.Builder;
+
+import ro.sapientia2015.story.model.Story;
+
 
 @Entity
 @Table(name="scrum_team")
@@ -51,7 +52,7 @@ public class ScrumTeam {
 	}
 	
 	public String getMembersCSV() {
-		return Strings.join(members, ", ");
+		return String.join(", ", members);
 	}
 
 	public List<Story> getStories() {

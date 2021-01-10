@@ -1,11 +1,10 @@
-package ro.sapientia2015.story.service;
+package ro.sapientia2015.scrumteam.service;
 
 import java.util.List;
 
-import ro.sapientia2015.story.dto.ScrumTeamDTO;
-import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.scrumteam.dto.ScrumTeamDTO;
+import ro.sapientia2015.scrumteam.model.ScrumTeam;
 import ro.sapientia2015.story.exception.NotFoundException;
-import ro.sapientia2015.story.model.ScrumTeam;
 
 public interface ScrumTeamService {
 	

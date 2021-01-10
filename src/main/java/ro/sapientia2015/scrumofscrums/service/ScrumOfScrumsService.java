@@ -1,10 +1,10 @@
-package ro.sapientia2015.story.service;
+package ro.sapientia2015.scrumofscrums.service;
 
 import java.util.List;
 
-import ro.sapientia2015.story.dto.ScrumOfScrumsDTO;
+import ro.sapientia2015.scrumofscrums.dto.ScrumOfScrumsDTO;
+import ro.sapientia2015.scrumofscrums.model.ScrumOfScrums;
 import ro.sapientia2015.story.exception.NotFoundException;
-import ro.sapientia2015.story.model.ScrumOfScrums;;
 
 public interface ScrumOfScrumsService {
 	

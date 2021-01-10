@@ -1,11 +1,14 @@
-package ro.sapientia2015.story.model;
+package ro.sapientia2015.scrumofscrums.model;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import ro.sapientia2015.scrumteam.model.ScrumTeam;
+
 import java.util.ArrayList;
 
 import javax.persistence.*;
+
 
 @Entity
 @Table(name="scrum_of_scrums")
@@ -43,8 +46,6 @@ public class ScrumOfScrums {
 	public static Builder getBuilder(String title) {
 		return new Builder(title);
 	}
-	
-	
 	
 	public Long getId() {
 		return id;
