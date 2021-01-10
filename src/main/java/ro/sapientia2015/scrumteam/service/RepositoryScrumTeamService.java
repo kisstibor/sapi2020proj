@@ -11,6 +11,7 @@ import ro.sapientia2015.scrumteam.dto.ScrumTeamDTO;
 import ro.sapientia2015.scrumteam.model.ScrumTeam;
 import ro.sapientia2015.scrumteam.repository.ScrumTeamRepository;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Story;
 
 @Service
 public class RepositoryScrumTeamService implements ScrumTeamService {
@@ -26,9 +27,8 @@ public class RepositoryScrumTeamService implements ScrumTeamService {
 
     	ScrumTeam model = ScrumTeam.getBuilder(added.getName())
     			.members(added.getMembers().trim())
+    			.stories(added.getStories())
     			.build();
-
-    	// TODO >>>>>> set stories
 
         return repository.save(model);
     }
@@ -40,10 +40,10 @@ public class RepositoryScrumTeamService implements ScrumTeamService {
 		return null;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<ScrumTeam> findAll() {
-		// TODO >>>>>> Auto-generated method stub
-		return null;
+		return repository.findAll();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 
 import ro.sapientia2015.scrumteam.model.ScrumTeam;
+import ro.sapientia2015.story.model.Story;
 
 public class ScrumTeamDTO {
 
@@ -17,27 +18,22 @@ public class ScrumTeamDTO {
 	
     private String members;
     
-	//private ArrayList<Story> stories;
+	private List<Story> stories;
 	
+	private List<String> selectedStories;
 	
 	
 	public Long getId() {
 		return id;
 	}
 
-
-
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-
-
 	public String getName() {
 		return name;
 	}
-
-
 
 	public void setName(String name) {
 		this.name = name;
@@ -55,21 +51,21 @@ public class ScrumTeamDTO {
 		this.members = members;
 	}
 
-/*
-
-	public ArrayList<Story> getStories() {
+	public List<Story> getStories() {
 		return stories;
 	}
-	
 
-
-
-	public void setStories(ArrayList<Story> stories) {
+	public void setStories(List<Story> stories) {
 		this.stories = stories;
 	}
 
-*/
+	public List<String> getSelectedStories() {
+		return selectedStories;
+	}
 
+	public void setSelectedStories(List<String> selectedStories) {
+		this.selectedStories = selectedStories;
+	}
 
 	@Override
     public String toString() {

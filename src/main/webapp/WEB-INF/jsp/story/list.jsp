@@ -8,9 +8,7 @@
 </head>
 <body>
     <h1><spring:message code="label.story.list.page.title"/></h1>
-    <div>
-        <a href="/story/add" id="add-button" class="btn btn-primary"><spring:message code="label.add.story.link"/></a>
-    </div>
+    
     <div id="story-list" class="page-content">
         <c:choose>
             <c:when test="${empty stories}">
@@ -25,5 +23,7 @@
             </c:otherwise>
         </c:choose>
     </div>
+    
+    <a href="/story/add" id="add-button" class="btn btn-primary"><spring:message code="label.add.story.link"/></a>
 </body>
 </html>

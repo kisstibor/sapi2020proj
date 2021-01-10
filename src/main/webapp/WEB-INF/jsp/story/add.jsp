@@ -29,8 +29,9 @@
             </div>
             <div class="action-buttons">
                 <a href="/" class="btn"><spring:message code="label.cancel"/></a>
-                <button id="add-story-button" type="submit" class="btn btn-primary"><spring:message
-                        code="label.add.story.button"/></button>
+                <button id="add-story-button" type="submit" class="btn btn-primary">
+                	<spring:message code="label.add.story.button"/>
+                </button>
             </div>
         </form:form>
     </div>

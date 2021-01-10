@@ -54,16 +54,35 @@ public class ScrumTeam {
 	public String getMembers() {
 		return members;
 	}
-	
-	public String getMembersCSV() {
-		return members;
-	}
 
 	public List<Story> getStories() {
 		return stories;
 	}
-
-
+	public String storieTitlesCSV() {
+		String titles = "";
+		int i = 0;
+		for(Story s : stories) {
+			titles += s.getTitle();
+			i++;
+			if (i != stories.size()) {
+				titles += ", ";
+			}
+		}
+		return titles;
+	}
+	
+	public String getStorieTitlesCSV() {
+		String titles = "";
+		int i = 0;
+		for(Story s : stories) {
+			titles += s.getTitle();
+			i++;
+			if (i != stories.size()) {
+				titles += ", ";
+			}
+		}
+		return titles;
+	}
 	
 	public static class Builder {
 

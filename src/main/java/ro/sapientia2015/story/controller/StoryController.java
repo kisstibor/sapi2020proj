@@ -16,6 +16,7 @@ import ro.sapientia2015.story.service.StoryService;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -93,6 +94,16 @@ public class StoryController {
     public String findAll(Model model) {
     	System.out.println(">>> REQUEST: /  GET");
         List<Story> models = service.findAll();
+        
+        // ADD DUMMY DATA
+        if (models.size() == 0) {
+        	models.add(Story.getBuilder("Story 1 - Add new item to stories").description("description 1").build());
+        	models.add(Story.getBuilder("Story 2 - Update story").description("description 2").build());
+        	models.add(Story.getBuilder("Story 3 - Delete story").description("description 3").build());
+        }
+        //
+        //
+        
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
     }

@@ -22,6 +22,8 @@ import ro.sapientia2015.scrumteam.dto.ScrumTeamDTO;
 import ro.sapientia2015.scrumteam.model.ScrumTeam;
 import ro.sapientia2015.scrumteam.service.ScrumTeamService;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.service.StoryService;
 
 @Controller
 @SessionAttributes("scrumteam")
@@ -34,8 +36,8 @@ public class ScrumTeamController {
     protected static final String FLASH_MESSAGE_KEY_ERROR = "errorMessage";
     protected static final String FLASH_MESSAGE_KEY_FEEDBACK = "feedbackMessage";
 
-    protected static final String MODEL_ATTRIBUTE = "team";
-    protected static final String MODEL_ATTRIBUTE_LIST = "teams";
+    protected static final String MODEL_ATTRIBUTE = "team";			// add.jsp  -> input param name ("team-name" => .getName() method)
+    protected static final String MODEL_ATTRIBUTE_LIST = "teams";	// list.jsp -> output param name
 
     protected static final String PARAMETER_ID = "id";
 
@@ -52,12 +54,16 @@ public class ScrumTeamController {
     private ScrumTeamService service;
     
     @Resource
+    private StoryService storyService;
+    
+    @Resource
     private MessageSource messageSource;
     
     @RequestMapping(value = "/scrumteam/add", method = RequestMethod.GET)
     public String showAddTeamForm(Model model) {
     	System.out.println(">>> REQUEST: /scrumteam/add  GET");
         ScrumTeamDTO formObject = new ScrumTeamDTO();
+        formObject.setStories(storyService.findAll());
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_ADD;
