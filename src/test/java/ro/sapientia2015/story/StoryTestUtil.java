@@ -12,22 +12,26 @@ public class StoryTestUtil {
     public static final String DESCRIPTION_UPDATED = "updatedDescription";
     public static final String TITLE = "title";
     public static final String TITLE_UPDATED = "updatedTitle";
+    public static final String TIME = "2";
+    public static final String TIME_UPDATED = "4";
 
     private static final String CHARACTER = "a";
 
-    public static StoryDTO createFormObject(Long id, String description, String title) {
+    public static StoryDTO createFormObject(Long id, String description, String title, String time) {
         StoryDTO dto = new StoryDTO();
 
         dto.setId(id);
         dto.setDescription(description);
         dto.setTitle(title);
+        dto.setTime(time);
 
         return dto;
     }
 
-    public static Story createModel(Long id, String description, String title) {
+    public static Story createModel(Long id, String description, String title, String time) {
         Story model = Story.getBuilder(title)
                 .description(description)
+                .time(time)
                 .build();
 
         ReflectionTestUtils.setField(model, "id", id);
