@@ -19,10 +19,10 @@
                     <div class="well well-small">
                         <a href="/scrumteam/${team.id}">
                         	<b>
-                        	<c:out value="${team.name}"/>
+                        		<c:out value="${team.name}"/>
+                        		<br>
                         	</b>
-                        	<br>
-                        	<c:out value="(${team.storyCount}): ${team.storiesSeparated}"/>
+                        	<c:out value="(${team.storyCount} story/stories)"/>
                         </a>
                     </div>
                 </c:forEach>

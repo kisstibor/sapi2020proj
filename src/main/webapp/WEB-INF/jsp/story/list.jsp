@@ -15,7 +15,7 @@
                 <p><spring:message code="label.story.list.empty"/></p>
             </c:when>
             <c:otherwise>
-                <c:forEach items="${ stories}" var="story">
+                <c:forEach items="${stories}" var="story">
                     <div class="well well-small">
                         <a href="/story/${story.id}">
                         <b>

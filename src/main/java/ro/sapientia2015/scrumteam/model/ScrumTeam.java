@@ -1,5 +1,6 @@
 package ro.sapientia2015.scrumteam.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
@@ -47,6 +48,26 @@ public class ScrumTeam {
 	public static Builder getBuilder(String title) {
         return new Builder(title);
     }
+	
+	public static List<Story> filterStoriesByTitle(List<Story> stories, List<String> titles) {
+		List<Story> ret = new ArrayList<Story>();
+		for (String t : titles) {
+			Story found = getStoryByTitle(stories, t);
+			if (found != null) {
+				ret.add(found);
+			}
+		}
+		return ret;
+	}
+	
+	public static Story getStoryByTitle(List<Story> stories, String title) {
+		for (Story s : stories) {
+			if (s.getTitle().equals(title)) {
+				return s;
+			}
+		}
+		return null;
+	}
 	
 	public Long getId() {
 		return id;

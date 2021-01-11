@@ -22,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ro.sapientia2015.scrumteam.dto.ScrumTeamDTO;
 import ro.sapientia2015.scrumteam.model.ScrumTeam;
 import ro.sapientia2015.scrumteam.service.ScrumTeamService;
-import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.StoryService;
@@ -77,14 +76,31 @@ public class ScrumTeamController {
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
+        
+        // Log inputs
+        System.out.println(">>> SELECTED STORIES: ");
+        for(String title : dto.getSelectedStories()) {
+        	System.out.println("object>>> " + title);
+        }
+        
+        // put selected stories into model
+        List<Story> storyObjs = ScrumTeam.filterStoriesByTitle(
+        		storyService.findAll(), 
+        		dto.getSelectedStories()
+        );
+        
+        // Log selected objects
+        System.out.println(">>> SELECTED STORIES: ");
+        for(Story s : storyObjs) {
+        	System.out.println("input>>> id: " + s.getId() + " -> title: " + s.getTitle());
+        }
+        
+        dto.setStories(storyObjs);
 
         ScrumTeam added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getName());
         attributes.addAttribute(PARAMETER_ID, added.getId());
-        attributes.addAttribute("auxstory", new StoryDTO());
-
-        //return createRedirectViewPath(REQUEST_MAPPING_VIEW);
-        return VIEW_LIST;
+        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
     
     
