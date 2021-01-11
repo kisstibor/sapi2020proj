@@ -1,6 +1,9 @@
 <dataset>
-    <story id="1" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" modification_time="2012-10-21 11:13:28" title="Foo" version="0"/>
-    <story id="2" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" modification_time="2012-10-21 11:13:28" title="Bar" version="0"/>
+    <priority id="1" creation_time="2012-10-21 11:13:28"  modification_time="2012-10-21 11:13:28" name="low" version="0"/>
+    <priority id="2" creation_time="2012-10-21 11:13:28"  modification_time="2012-10-21 11:13:28" name="medium" version="0"/>
+    <priority id="3" creation_time="2012-10-21 11:13:28"  modification_time="2012-10-21 11:13:28" name="high" version="0"/>
+    <story id="1" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" modification_time="2012-10-21 11:13:28" title="Foo" priority_id="1" version="0"/>
+    <story id="2" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" modification_time="2012-10-21 11:13:28" title="Bar" priority_id="1" version="0"/>
     <sprint id="1" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" modification_time="2012-10-21 11:13:28" title="Bar" version="0"/>
     <sprint_stories stories="1" sprint="1"/>
 </dataset>

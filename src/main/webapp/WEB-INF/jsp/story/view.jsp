@@ -14,6 +14,12 @@
         <h2 id="story-title"><c:out value="${story.title}"/></h2>
         <div>
             <p><c:out value="${story.description}"/></p>
+            <c:if test="${not empty story.priority}">
+            	<br/>
+            	<p>
+            		<c:out value="${story.priority.name}"/>
+            	</p>
+            </c:if>
         </div>
         <div class="action-buttons">
             <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>

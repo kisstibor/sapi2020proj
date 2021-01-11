@@ -47,4 +47,6 @@ public interface StoryService {
      * @throws NotFoundException    If no to-do entry is found with the given id.
      */
     public Story update(StoryDTO updated) throws NotFoundException;
+
+	public List<Story> findByPriorityId(Long priorityId);
 }

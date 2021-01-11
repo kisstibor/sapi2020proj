@@ -8,19 +8,23 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ro.sapientia2015.story.dto.PriorityDTO;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Priority;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.service.PriorityService;
 import ro.sapientia2015.story.service.StoryService;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * @author Kiss Tibor
+ * @author Kapas Krisztina
  */
 @Controller
 @SessionAttributes("story")
@@ -35,6 +39,8 @@ public class StoryController {
 
     protected static final String MODEL_ATTRIBUTE = "story";
     protected static final String MODEL_ATTRIBUTE_LIST = "stories";
+    
+    protected static final String PRIORITY_LIST = "priorities";
 
     protected static final String PARAMETER_ID = "id";
 
@@ -48,6 +54,9 @@ public class StoryController {
 
     @Resource
     private StoryService service;
+    
+    @Resource
+    private PriorityService priorityService;
 
     @Resource
     private MessageSource messageSource;
@@ -56,6 +65,7 @@ public class StoryController {
     public String showAddForm(Model model) {
         StoryDTO formObject = new StoryDTO();
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
+        showPriorities( model );
 
         return VIEW_ADD;
     }
@@ -84,7 +94,25 @@ public class StoryController {
     public String findAll(Model model) {
         List<Story> models = service.findAll();
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
+        showPriorities(model);
+        model.addAttribute("selectedPriority", new PriorityDTO());
         return VIEW_LIST;
+    }
+    
+    @RequestMapping(value = "/filteredStories", method = RequestMethod.GET)
+    public String filteredStories(@RequestParam("id") Long priorityId, Model model) {
+    	List<Story> models = service.findByPriorityId(priorityId);// filter
+        model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
+        showPriorities(model);
+        model.addAttribute("selectedPriority", new PriorityDTO());
+    	return VIEW_LIST;
+    }
+   
+    public void showPriorities(Model model) 
+    {
+    	 List<Priority> models = priorityService.findAll();
+         
+         model.addAttribute( "priorities", models );
     }
 
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
@@ -99,7 +127,7 @@ public class StoryController {
         Story updated = service.findById(id);
         StoryDTO formObject = constructFormObjectForUpdateForm(updated);
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
-
+        showPriorities(model);
         return VIEW_UPDATE;
     }
 
@@ -122,6 +150,10 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        if(updated.getPriority()!=null) {
+        	dto.setPriorityId( updated.getPriority().getId() );
+        }
+        
 
         return dto;
     }

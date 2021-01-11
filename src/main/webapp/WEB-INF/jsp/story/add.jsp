@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 <head>
@@ -26,6 +27,12 @@
                     <form:textarea id="story-description" path="description"/>
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
+            </div>
+             <div id="control-group-priority" class="control-group">
+                <label for="story-priority"><spring:message code="Priority"/>:</label>
+                <form:select name='priorities' path="priorityId">  
+				       <form:options items="${priorities}" itemLabel="name" itemValue="id"/>   
+				</form:select>
             </div>
             <div class="action-buttons">
                 <a href="/" class="btn"><spring:message code="label.cancel"/></a>

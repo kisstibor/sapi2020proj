@@ -38,11 +38,10 @@ public class Priority
     
 //    
 //    @OneToMany(
-//            mappedBy = "priority",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
+//            mappedBy = "priority"
 //        )
-//    private List<Story> stories = new ArrayList();
+//    private List<Story> stories;
+//    // = new ArrayList<Story>();
 
     public Priority() 
     {
@@ -100,7 +99,6 @@ public class Priority
 
     public static class Builder 
     {
-
         private Priority built;
 
         public Builder( String name )

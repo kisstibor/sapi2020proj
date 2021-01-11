@@ -61,6 +61,7 @@ public class ITStoryControllerTest {
     private static final String FORM_FIELD_DESCRIPTION = "description";
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
+    private static final String FORM_FIELD_PRIORITY = "priorityId";
 
     @Resource
     private WebApplicationContext webApplicationContext;
@@ -132,6 +133,7 @@ public class ITStoryControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_TITLE, "title")
+                .param( FORM_FIELD_PRIORITY, "1")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -275,6 +277,7 @@ public class ITStoryControllerTest {
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_ID, "1")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_PRIORITY, "1")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())

@@ -17,7 +17,7 @@
                 <p><spring:message code="label.priority.list.empty"/></p>
             </c:when>
             <c:otherwise>
-                <c:forEach items="${ priorities}" var="priority">
+                <c:forEach items="${priorities}" var="priority">
                     <div class="well well-small">
                         <a href="/priority/${priority.id}"><c:out value="${priority.name}"/></a>
                     </div>

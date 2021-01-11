@@ -9,6 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.validation.support.BindingAwareModelMap;
@@ -16,12 +17,16 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import ro.sapientia2015.story.PriorityTestUtil;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
 import ro.sapientia2015.story.controller.StoryController;
+import ro.sapientia2015.story.dto.PriorityDTO;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Priority;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.service.PriorityService;
 import ro.sapientia2015.story.service.StoryService;
 
 import javax.annotation.Resource;
@@ -54,6 +59,8 @@ public class StoryControllerTest {
     private MessageSource messageSourceMock;
 
     private StoryService serviceMock;
+    
+    private PriorityService pserviceMock;
 
     @Resource
     private Validator validator;
@@ -67,22 +74,54 @@ public class StoryControllerTest {
 
         serviceMock = mock(StoryService.class);
         ReflectionTestUtils.setField(controller, "service", serviceMock);
+      
     }
 
     @Test
     public void showAddStoryForm() {
         BindingAwareModelMap model = new BindingAwareModelMap();
+        
+        PriorityService pserviceMock = mock(PriorityService.class);
+        ReflectionTestUtils.setField(controller, "priorityService", pserviceMock);
 
         String view = controller.showAddForm(model);
 
         verifyZeroInteractions(messageSourceMock, serviceMock);
+        
         assertEquals(StoryController.VIEW_ADD, view);
 
         StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+        
+        
+        verify(pserviceMock, times(1)).findAll();
+        
 
         assertNull(formObject.getId());
         assertNull(formObject.getDescription());
         assertNull(formObject.getTitle());
+        assertNull(formObject.getPriorityId());
+    }
+    
+    @Test
+    public void showPriorities() 
+    {
+    	BindingAwareModelMap model = new BindingAwareModelMap();
+    	
+    	 PriorityService pserviceMock = mock(PriorityService.class);
+         ReflectionTestUtils.setField(controller, "priorityService", pserviceMock);
+         
+         List<Priority> models = new ArrayList<Priority>();
+     	 when( pserviceMock.findAll() ).thenReturn(models);
+         
+         controller.showPriorities(model);;
+    	
+         verify(pserviceMock, times(1)).findAll();
+         verifyNoMoreInteractions( pserviceMock );
+         verifyZeroInteractions( serviceMock );
+    	
+    	
+    	 List<Priority> list = (List<Priority>) model.asMap().get( "priorities" );
+    	assertEquals( models, list );
     }
 
     @Test
@@ -185,6 +224,9 @@ public class StoryControllerTest {
     @Test
     public void findAll() {
         BindingAwareModelMap model = new BindingAwareModelMap();
+        
+        PriorityService pserviceMock = mock(PriorityService.class);
+        ReflectionTestUtils.setField(controller, "priorityService", pserviceMock);
 
         List<Story> models = new ArrayList<Story>();
         when(serviceMock.findAll()).thenReturn(models);
@@ -192,11 +234,35 @@ public class StoryControllerTest {
         String view = controller.findAll(model);
 
         verify(serviceMock, times(1)).findAll();
+        verify(pserviceMock, times(1)).findAll();
         verifyNoMoreInteractions(serviceMock);
         verifyZeroInteractions(messageSourceMock);
 
         assertEquals(StoryController.VIEW_LIST, view);
         assertEquals(models, model.asMap().get(StoryController.MODEL_ATTRIBUTE_LIST));
+    
+    }
+    
+    @Test
+    public void filteredStories() {
+        BindingAwareModelMap model = new BindingAwareModelMap();
+        
+        PriorityService pserviceMock = mock(PriorityService.class);
+        ReflectionTestUtils.setField(controller, "priorityService", pserviceMock);
+
+        List<Story> models = new ArrayList<Story>();
+        when(serviceMock.findByPriorityId( PriorityTestUtil.ID )).thenReturn(models);
+
+        String view = controller.filteredStories(PriorityTestUtil.ID, model);
+
+        verify(serviceMock, times(1)).findByPriorityId( PriorityTestUtil.ID );
+        verify(pserviceMock, times(1)).findAll();
+        verifyNoMoreInteractions(serviceMock);
+        verifyZeroInteractions(messageSourceMock);
+
+        assertEquals(StoryController.VIEW_LIST, view);
+        assertEquals(models, model.asMap().get(StoryController.MODEL_ATTRIBUTE_LIST));
+    
     }
 
     @Test
@@ -232,6 +298,9 @@ public class StoryControllerTest {
     @Test
     public void showUpdateStoryForm() throws NotFoundException {
         BindingAwareModelMap model = new BindingAwareModelMap();
+        
+        PriorityService pserviceMock = mock(PriorityService.class);
+        ReflectionTestUtils.setField(controller, "priorityService", pserviceMock);
 
         Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
         when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
@@ -241,14 +310,19 @@ public class StoryControllerTest {
         verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
         verifyNoMoreInteractions(serviceMock);
         verifyZeroInteractions(messageSourceMock);
+        verify(pserviceMock, times(1)).findAll();
 
         assertEquals(StoryController.VIEW_UPDATE, view);
 
         StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+       
 
         assertEquals(updated.getId(), formObject.getId());
         assertEquals(updated.getDescription(), formObject.getDescription());
         assertEquals(updated.getTitle(), formObject.getTitle());
+        
+        assertNull(updated.getPriority());
+        assertNull( formObject.getPriorityId() );
     }
 
     @Test(expected = NotFoundException.class)
