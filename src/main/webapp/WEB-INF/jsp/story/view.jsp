@@ -15,6 +15,16 @@
         <div>
             <p><c:out value="${story.description}"/></p>
         </div>
+        <div>
+	        <c:choose>
+	            <c:when test="${empty storyLabel}">
+	                <p><spring:message code="label.label.list.empty"/></p>
+	            </c:when>
+	            <c:otherwise>
+            		<p>Label assigned: <c:out value="${storyLabel}"/></p>
+	            </c:otherwise>
+	        </c:choose>
+        </div>
         <div class="action-buttons">
             <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
             <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>

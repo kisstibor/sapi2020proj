@@ -10,7 +10,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Label;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.service.LabelService;
 import ro.sapientia2015.story.service.StoryService;
 
 import javax.annotation.Resource;
@@ -35,6 +37,7 @@ public class StoryController {
 
     protected static final String MODEL_ATTRIBUTE = "story";
     protected static final String MODEL_ATTRIBUTE_LIST = "stories";
+    protected static final String LABEL_MODEL_ATTRIBUTE_LIST = "labels";
 
     protected static final String PARAMETER_ID = "id";
 
@@ -48,6 +51,9 @@ public class StoryController {
 
     @Resource
     private StoryService service;
+    
+    @Resource
+    private LabelService labelService;
 
     @Resource
     private MessageSource messageSource;
@@ -56,16 +62,23 @@ public class StoryController {
     public String showAddForm(Model model) {
         StoryDTO formObject = new StoryDTO();
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
+    	
+		List<Label> labels = labelService.findAll();
+		model.addAttribute(LABEL_MODEL_ATTRIBUTE_LIST, labels);
 
         return VIEW_ADD;
     }
 
     @RequestMapping(value = "/story/add", method = RequestMethod.POST)
-    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) {
-        if (result.hasErrors()) {
+    public String add(Model model, @Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) {
+    	if (result.hasErrors()) {
+    		List<Label> labels = labelService.findAll();
+    		model.addAttribute(LABEL_MODEL_ATTRIBUTE_LIST, labels);
             return VIEW_ADD;
         }
-
+    	if(dto.getLabelId()==0) {
+    		dto.setLabelId(null);
+    	}
         Story added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());
@@ -90,7 +103,16 @@ public class StoryController {
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
         Story found = service.findById(id);
+        Label label = null;
+        if(found.getLabelId() != null) {
+            label = labelService.findById(found.getLabelId());
+        }
+        if(label != null) {
+            model.addAttribute("storyLabel", label.getTitle());
+        }
         model.addAttribute(MODEL_ATTRIBUTE, found);
+        
+        
         return VIEW_VIEW;
     }
 
@@ -99,15 +121,23 @@ public class StoryController {
         Story updated = service.findById(id);
         StoryDTO formObject = constructFormObjectForUpdateForm(updated);
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
+        
+		List<Label> labels = labelService.findAll();
+		model.addAttribute(LABEL_MODEL_ATTRIBUTE_LIST, labels);
 
         return VIEW_UPDATE;
     }
 
     @RequestMapping(value = "/story/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
+    public String update( Model model, @Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
         if (result.hasErrors()) {
+    		List<Label> labels = labelService.findAll();
+    		model.addAttribute(LABEL_MODEL_ATTRIBUTE_LIST, labels);
             return VIEW_UPDATE;
         }
+    	if(dto.getLabelId()==0) {
+    		dto.setLabelId(null);
+    	}
 
         Story updated = service.update(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
@@ -122,6 +152,7 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        dto.setLabelId(updated.getLabelId());
 
         return dto;
     }

@@ -17,6 +17,8 @@
     <context:component-scan base-package="ro.sapientia2015.common.controller"/>
     <context:component-scan base-package="ro.sapientia2015.story.controller"/>
     <context:component-scan base-package="ro.sapientia2015.story.service"/>
+    <context:component-scan base-package="ro.sapientia2015.label.controller"/>
+    <context:component-scan base-package="ro.sapientia2015.label.service"/>
 
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">

@@ -1,5 +1,6 @@
 package ro.sapientia2015.story.dto;
 
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -19,9 +20,19 @@ public class StoryDTO {
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
+    
+    private Long labelId;
 
     public StoryDTO() {
 
+    }
+
+    public Long getLabelId() {
+        return labelId;
+    }
+
+    public void setLabelId(Long id) {
+        this.labelId = id;
     }
 
     public Long getId() {
