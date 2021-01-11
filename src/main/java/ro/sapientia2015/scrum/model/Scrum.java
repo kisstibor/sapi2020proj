@@ -1,5 +1,6 @@
 package ro.sapientia2015.scrum.model;
 
+import ro.sapientia2015.pi.model.PI;
 import ro.sapientia2015.story.model.Story;
 
 import java.util.List;
@@ -26,6 +27,13 @@ public class Scrum {
 	@OneToMany(mappedBy = "assignedTeam", fetch = FetchType.LAZY)
 	private List<Story> stories;
 	
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	private PI actualPi;
+	
+	public PI getActualPi() {
+		return actualPi;
+	}
+
 	@Version
     private long version;
 	
@@ -63,6 +71,11 @@ public class Scrum {
 
         public Builder members(String members) {
             built.members = members;
+            return this;
+        }
+        
+        public Builder actualPi(PI actualPi) {
+            built.actualPi = actualPi;
             return this;
         }
         

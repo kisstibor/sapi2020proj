@@ -1,11 +1,11 @@
 package ro.sapientia2015.pi.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
 
 import ro.sapientia2015.scrum.model.Scrum;
+
 
 @Entity
 @Table(name = "PI")
@@ -24,6 +24,7 @@ public class PI {
 	private String description;
 	
 	@Column(name = "scrums")
+	@OneToMany(mappedBy = "actualPi", fetch = FetchType.LAZY)
 	private List<Scrum> scrums;
 	
 	public PI() {
@@ -48,7 +49,10 @@ public class PI {
 	@Version
     private long version;
 	
-
+	public static Builder getBuilder(String title) {
+        return new Builder(title);
+    }
+	
 	public static class Builder {
 
         private PI built;
@@ -63,7 +67,7 @@ public class PI {
             return this;
         }
         
-        public Builder scrums(ArrayList<Scrum> scrums) {
+        public Builder scrums(List<Scrum> scrums) {
             built.scrums = scrums;
             return this;
         }
