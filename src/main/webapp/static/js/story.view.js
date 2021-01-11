@@ -21,4 +21,9 @@ $(function() {
         e.preventDefault();
         window.location.href = "/story/delete/" + $("#story-id").text();
     });
+    
+    $("#view-holder").on("click", "#delete-task-button", function(e) {
+        e.preventDefault();
+        window.location.href = "/board/delete/" + $("#story-id").text();
+    });
 });
