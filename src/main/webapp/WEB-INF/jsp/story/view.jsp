@@ -19,7 +19,7 @@
 				<p>
 					<spring:message code="label.story.assignedTo" />
 					:&nbsp;
-					<c:out value="${story.user.username}" />
+					<span id="assignedTo"><c:out value="${story.user.username}" /></span>
 				</p>
 			</c:if>
 		</div>
