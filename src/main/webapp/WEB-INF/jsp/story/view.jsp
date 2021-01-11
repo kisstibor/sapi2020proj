@@ -15,6 +15,9 @@
         <div>
             <p><c:out value="${story.description}"/></p>
         </div>
+        <div>
+            <p>Fix Version: <c:out value="${story.fixVersion.name}"/></p>
+        </div>
         <div class="action-buttons">
             <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
             <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>

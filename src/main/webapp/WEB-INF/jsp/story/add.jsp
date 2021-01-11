@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title></title>
@@ -26,6 +27,16 @@
                     <form:textarea id="story-description" path="description"/>
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
+            </div>
+            <div id="control-group-fixVersion" class="control-group">
+            	<label for="story-fixVersion"><spring:message code="label.story.fixVersion"/></label>
+            	<div class="controls">
+	            	<select name="fixVersion" path="fixVersion">
+	        			<c:forEach items="${fixVersions}" var="fixVersion">
+	            			<option value="${fixVersion.id}">${fixVersion.name}</option>
+	        			</c:forEach>
+	    			</select>
+    			</div>
             </div>
             <div class="action-buttons">
                 <a href="/" class="btn"><spring:message code="label.cancel"/></a>
