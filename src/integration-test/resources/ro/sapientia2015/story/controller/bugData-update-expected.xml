@@ -1,0 +1,5 @@
+<dataset>
+    <bug id="1" description="Description of bug 1" title="Bug1"/>
+    <bug id="2" description="Description of bug 2" title="Bug2"/>
+</dataset>
+
