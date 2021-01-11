@@ -39,7 +39,8 @@ public class Story {
     @Column(name = "progress")
     private Integer progress;
     
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    //@ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     private ScrumTeam scrumTeam;
 
     @Version
@@ -80,6 +81,10 @@ public class Story {
     public Integer getProgress() {
         return progress;
     }
+    
+    public ScrumTeam getScrumTeam() {
+    	return scrumTeam;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -113,6 +118,11 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder scrumTeam(ScrumTeam scrumTeam) {
+            built.scrumTeam = scrumTeam;
             return this;
         }
         

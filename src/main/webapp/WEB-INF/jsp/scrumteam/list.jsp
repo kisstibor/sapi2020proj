@@ -22,7 +22,7 @@
                         		<c:out value="${team.name}"/>
                         		<br>
                         	</b>
-                        	<c:out value="(${team.storyCount} story/stories)"/>
+                        	<c:out value="(${team.storyCount} story/s)"/>
                         </a>
                     </div>
                 </c:forEach>

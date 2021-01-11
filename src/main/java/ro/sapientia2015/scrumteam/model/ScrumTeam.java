@@ -5,7 +5,9 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.joda.time.DateTime;
 
+import ro.sapientia2015.scrumofscrums.model.ScrumOfScrums;
 import ro.sapientia2015.story.model.Story;
 
 
@@ -25,20 +27,25 @@ public class ScrumTeam {
 	@Column(name = "members")
     private String members;
 	
-	
 	//@JoinTable(name="scrumteam_and_stories", 
     //	joinColumns={@JoinColumn(name="id1")},
     //	inverseJoinColumns=@JoinColumn(name="id2"))
 	@Column(name = "stories")
 	@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.LAZY)
-    private List<Story> stories;
+	//@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.EAGER)
+	private List<Story> stories;
 	
 	private String storiesSeparated;
 	
 	private Integer storyCount;
 	
+	//@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.ALL)
+	private ScrumOfScrums scrumOfScrums;
+	
 	@Version
     private long version;
+	
 	
 	
 	public ScrumTeam() {
@@ -92,6 +99,10 @@ public class ScrumTeam {
 	public Integer getStoryCount() {
 		return storyCount;
 	}
+	
+	public ScrumOfScrums getScrumOfScrums() {
+		return scrumOfScrums;
+	}
 
 	private void updateStoriesCSV() {
 		String titles = "";
@@ -106,6 +117,13 @@ public class ScrumTeam {
 		storiesSeparated = titles;
 	}
 	
+
+    public void update(String name, String members, List<Story> stories) {
+        this.name = name;
+        this.members = members;
+        this.stories = stories;
+    }
+	
 	public static class Builder {
 
         private ScrumTeam built;
@@ -113,10 +131,6 @@ public class ScrumTeam {
         public Builder(String name) {
             built = new ScrumTeam();
             built.name = name;
-        }
-
-        public ScrumTeam build() {
-            return built;
         }
 
         public Builder members(String members) {
@@ -129,6 +143,15 @@ public class ScrumTeam {
             built.storyCount = stories.size();
             built.updateStoriesCSV();
             return this;
+        }
+        
+        public Builder scrumOfScrums(ScrumOfScrums scrumOfScrums) {
+        	built.scrumOfScrums = scrumOfScrums;
+            return this;
+        }
+        
+        public ScrumTeam build() {
+            return built;
         }
         
         // To add creation date use @PrePersist annotation and:

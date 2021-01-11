@@ -10,36 +10,24 @@
 </head>
 <body>
     <div id="story-id" class="hidden">${team.id}</div>
-    <h1><spring:message code="label.team.view.page.title"/></h1>
+    <h1><spring:message code="label.scrumofscrums.view.page.title"/></h1>
     <div class="well page-content">
-        <h2 id="story-title"><c:out value="${team.name}"/></h2>
+        <h2 id="story-title">
+        	<c:out value="${team.name}"/>
+        </h2>
         
         <div>
             <p><c:out value="${team.members}"/></p>
         </div>
-        <%--
-        <div id="control-group-title" class="control-group">
-           	<label for="story-description"><spring:message code="label.scrumteam.add.page.stories"/>:
-            <c:out value="${team.storyCount}:"/></label>
-            <br>
-            <c:forEach items="${team.stories}" var="item">
-				<label class="checkbox-inline btn btn-default" for="whichTitle-${item.title}">
-				<form:checkbox id="whichTitle-${item.title}" value="${item.title}" path="selectedStories" style="display: none;"/>
-					${item.title}
-					<br>
-			    </label>
-			</c:forEach>
-		</div>
-		 --%>
 		
 		<div id="control-group-title" class="control-group">
            	<label for="story-description"><spring:message code="label.scrumteam.add.page.stories"/>:</label>
             <c:forEach items="${team.stories}" var="item">
 				<label class="checkbox-inline btn btn-default" for="whichTitle-${item.title}">
-				<form:checkbox id="whichTitle-${item.title}" value="${item.title}" path="selectedStories"/>
+					<form:checkbox id="whichTitle-${item.title}" value="${item.title}" path="selectedStories"/>
 					${item.title}
-					<br>
 			    </label>
+			    <br>
 			</c:forEach>
 		</div>
         

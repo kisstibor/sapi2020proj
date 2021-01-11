@@ -30,6 +30,13 @@ public class RepositoryStoryService implements StoryService {
                 .progress(added.getProgress())
                 .build();
 
+        System.out.println(">>>>>> PERSIST: ScrumTeam:"
+    			+ "\n | id:           " + model.getId()
+    			+ "\n | title:        " + model.getTitle()
+    			+ "\n | progress:     " + model.getProgress()
+    			+ "\n | scrum team:   " + model.getScrumTeam()
+    	);
+        
         return repository.save(model);
     }
 
@@ -52,7 +59,7 @@ public class RepositoryStoryService implements StoryService {
     public Story findById(Long id) throws NotFoundException {
         Story found = repository.findOne(id);
         if (found == null) {
-            throw new NotFoundException("No entry found with id: " + id);
+            throw new NotFoundException("No Story entry found with id: " + id);
         }
 
         return found;

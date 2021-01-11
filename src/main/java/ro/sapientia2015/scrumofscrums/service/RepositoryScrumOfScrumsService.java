@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ro.sapientia2015.scrumofscrums.dto.ScrumOfScrumsDTO;
 import ro.sapientia2015.scrumofscrums.model.ScrumOfScrums;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.scrumofscrums.repository.ScrumOfScrumsRepository;
 
 @Service
@@ -21,8 +22,21 @@ public class RepositoryScrumOfScrumsService implements ScrumOfScrumsService {
 	@Transactional
 	@Override
 	public ScrumOfScrums add(ScrumOfScrumsDTO added) {
-		// TODO >>>>>> Auto-generated method stub
-		return null;
+		
+		ScrumOfScrums model = ScrumOfScrums.getBuilder(added.getName())
+				.description(added.getDescription())
+				.startTime(added.getStartTime())
+				//.scrumTeams(added.getScrumTeam())
+				.build();
+
+        System.out.println(">>>>>> PERSIST: ScrumTeam:"
+    			+ "\n | id:          " + model.getId()
+    			+ "\n | name:        " + model.getName()
+    			+ "\n | start time:  " + model.getStartTime()
+    			+ "\n | scrum team:  " + model.getScrumTeams()
+    	);
+        
+        return repository.save(model);
 	}
 
 	@Override

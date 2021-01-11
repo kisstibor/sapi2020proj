@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import ro.sapientia2015.scrumteam.model.ScrumTeam;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -31,12 +32,14 @@ public class ScrumOfScrums {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime startTime;
 	
-	@Column(name = "scrumTeams")
-    private ArrayList<ScrumTeam> scrumTeams;
-	
+	@Column(name = "scrum_teams")
+	@OneToMany(mappedBy = "scrumOfScrums", fetch = FetchType.LAZY) 
+	//@OneToMany(mappedBy = "scrumOfScrums", fetch = FetchType.EAGER)
+    private List<ScrumTeam> scrumTeams;
 	
 	@Version
     private long version;
+	
 	
 	
 	public ScrumOfScrums() {
@@ -64,7 +67,7 @@ public class ScrumOfScrums {
 		return startTime;
 	}
 
-	public ArrayList<ScrumTeam> getScrumTeams() {
+	public List<ScrumTeam> getScrumTeams() {
 		return scrumTeams;
 	}
 	

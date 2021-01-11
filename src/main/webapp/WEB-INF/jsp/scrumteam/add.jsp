@@ -40,11 +40,12 @@
             <div id="control-group-title" class="control-group">
             	<label for="story-description"><spring:message code="label.scrumteam.add.page.stories"/>:</label>
 	            <c:forEach items="${team.stories}" var="item">
-					<label class="checkbox-inline btn btn-default" for="whichTitle-${item.title}">
+					<br><label class="checkbox-inline btn btn-default" for="whichTitle-${item.title}">
 					<form:checkbox id="whichTitle-${item.title}" value="${item.title}" path="selectedStories"/>
 						${item.title}
 						<br>
 				    </label>
+				    <br>
 				</c:forEach>
 			</div>
            

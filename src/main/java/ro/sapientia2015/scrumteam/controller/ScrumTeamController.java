@@ -107,7 +107,9 @@ public class ScrumTeamController {
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findTeamById(@PathVariable("id") Long id, Model model) throws NotFoundException {
     	System.out.println(">>> REQUEST: "+REQUEST_MAPPING_VIEW+" id: "+id+"  GET");
+    	System.out.println(">>> REQUEST: findById("+id+")");
         ScrumTeam found = service.findById(id);
+        System.out.println(">>> REQUEST:  found --> team.name " + (found==null?"null":found.getName()));
         model.addAttribute(MODEL_ATTRIBUTE, found);
         return VIEW_VIEW;
     }

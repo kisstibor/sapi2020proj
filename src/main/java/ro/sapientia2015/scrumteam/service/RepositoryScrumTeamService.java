@@ -28,18 +28,26 @@ public class RepositoryScrumTeamService implements ScrumTeamService {
 		//List<String> selectedStoriesTitle =  added.getSelectedStories();
 			
     	ScrumTeam model = ScrumTeam.getBuilder(added.getName())
-    			.members(added.getMembers().trim())
     			.stories(added.getStories())
     			.build();
 
+    	System.out.println(">>>>>> PERSIST: ScrumTeam:"
+    			+ "\n | id:          " + model.getId()
+    			+ "\n | name:        " + model.getName()
+    			+ "\n | members:     " + model.getMembers()
+    			+ "\n | story count: " + model.getStoryCount()
+    			+ "\n | stories:     " + model.getStories()
+    	);
         return repository.save(model);
     }
 
 
-	@Override
+	@Transactional(rollbackFor = {NotFoundException.class})
+    @Override
 	public ScrumTeam deleteById(Long id) throws NotFoundException {
-		// TODO >>>>>> Auto-generated method stub
-		return null;
+		ScrumTeam deleted = findById(id);
+        repository.delete(deleted);
+        return deleted;
 	}
 
 	@Transactional(readOnly = true)
@@ -50,14 +58,20 @@ public class RepositoryScrumTeamService implements ScrumTeamService {
 
 	@Override
 	public ScrumTeam findById(Long id) throws NotFoundException {
-		// TODO >>>>>> Auto-generated method stub
-		return null;
+		ScrumTeam found = repository.findOne(id);
+        if (found == null) {
+            throw new NotFoundException("No Scrum Team entry found with id: " + id);
+        }
+
+        return found;
 	}
 
 	@Override
 	public ScrumTeam update(ScrumTeamDTO updated) throws NotFoundException {
-		// TODO >>>>>> Auto-generated method stub
-		return null;
+		ScrumTeam model = findById(updated.getId());
+        model.update(updated.getName(), updated.getMembers(), updated.getStories());
+
+        return model;
 	}
 	
 }
