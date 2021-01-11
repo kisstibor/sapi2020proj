@@ -50,8 +50,8 @@ public class StoryController {
     protected static final String REQUEST_MAPPING_LIST = "/";
     protected static final String REQUEST_MAPPING_VIEW = "/story/{id}";
     
-    protected static final String REQUEST_MAPPING_VACATION_LIST = "story/vacation/view";
-    protected static final String REQUEST_MAPPING_VACATION_VIEW = "story/vacation/list";
+    protected static final String REQUEST_MAPPING_VACATION_LIST = "story/vacation/";
+    protected static final String REQUEST_MAPPING_VACATION_VIEW = "/vacation/{id}";
 
     protected static final String VIEW_ADD = "story/add";
     protected static final String VIEW_LIST = "story/list";
@@ -103,7 +103,7 @@ public class StoryController {
     @RequestMapping(value = REQUEST_MAPPING_LIST, method = RequestMethod.GET)
     public String findAll(Model model) {
         List<Story> models = service.findAll();
-        model.addAttribute(MODEL_ATTRIBUTE_VACATION, models);
+        model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
     }
 
@@ -171,7 +171,8 @@ public class StoryController {
     @RequestMapping(value = REQUEST_MAPPING_VACATION_LIST, method = RequestMethod.GET)
     public String findAllVacation(Model model) {
         List<Vacation> models = vacationService.findAll();
-        model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
+        System.out.println(models);
+        model.addAttribute(MODEL_ATTRIBUTE_VACATION, models);
         return VIEW_VACATION_LIST;
     }
 
@@ -195,7 +196,7 @@ public class StoryController {
         return VIEW_UPDATE_VACATION;
     }
 
-    @RequestMapping(value = "/story/vacation/update/{storyId}/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/story/vacation/update/{id}", method = RequestMethod.POST)
     public String updateTimelimit(@Valid @ModelAttribute(MODEL_ATTRIBUTE_VACATION) VacationDTO dto,@PathVariable("id") Long id, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
         if (result.hasErrors()) {
             return VIEW_UPDATE_VACATION;

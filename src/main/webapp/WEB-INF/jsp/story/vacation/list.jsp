@@ -7,7 +7,7 @@
     <title></title>
 </head>
 <body>
-    <h1><spring:message code="label.vacation"/></h1>
+    <h1><spring:message code="label.vacation.view.page.title"/></h1>
     <div>
         <a href="/scrumsapientia/story/vacation/add" id="add-button" class="btn btn-primary"><spring:message code="label.add.vacation.button"/></a>
     </div>
@@ -17,9 +17,9 @@
                 <p><spring:message code="label.vacation.list.empty"/></p>
             </c:when>
             <c:otherwise>
-                <c:forEach items="${ vacations}" var="story">
+                <c:forEach items="${vacations}" var="vacation">
                     <div class="well well-small">
-                        <a href="/scrumsapientia/vacation/${vacation.id}"><c:out value="${vacation.vacationStartDate}"/><c:out value="${vacation.vacationEndDate}"/></a>
+                        <a href="/scrumsapientia/story/vacation/${vacation.id}"><c:out value="${vacation.vacationStartDate}"/><c:out value="${vacation.vacationEndDate}"/></a>
                     </div>
                 </c:forEach>
             </c:otherwise>

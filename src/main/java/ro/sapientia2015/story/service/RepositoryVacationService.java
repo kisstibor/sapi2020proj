@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ro.sapientia2015.story.dto.VacationDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
-import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.model.Vacation;
 import ro.sapientia2015.story.repository.VacationRepository;
 
@@ -60,7 +59,7 @@ public class RepositoryVacationService implements VacationService {
     @Override
     public Vacation update(VacationDTO updated) throws NotFoundException {
         Vacation model = findById(updated.getId());
-        model.update(updated.getVacationEndDate(), updated.getVacationStartDate());
+        model.update(updated.getVacationStartDate(), updated.getVacationEndDate());
 
         return model;
     }
