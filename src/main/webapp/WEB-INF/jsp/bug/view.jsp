@@ -6,7 +6,6 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Bug</title>
-	<script type="text/javascript" src="/static/js/bug.view.js"></script>
 </head>
 <body>
 	<div id="bug-id" class="hidden">${bug.id}</div>
@@ -18,23 +17,8 @@
         </div>
         <div class="action-buttons">
          	<a href="/bug/update/${bug.id}" class="btn btn-primary">Update</a>
-            <a id="delete-bug-link" class="btn btn-primary">Delete</a>
+            <a href="/bug/delete/${bug.id}" class="btn btn-primary">Delete</a>
         </div>
     </div>
-    <script id="template-delete-bug-confirmation-dialog" type="text/x-handlebars-template">
-        <div id="delete-bug-confirmation-dialog" class="modal">
-            <div class="modal-header">
-                <button class="close" data-dismiss="modal">×</button>
-                <h3>Delete bug</h3>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this bug?</p>
-            </div>
-            <div class="modal-footer">
-                <a id="cancel-bug-button" href="#" class="btn">Cancel</a>
-                <a id="delete-bug-button" href="#" class="btn btn-primary">Delete</a>
-            </div>
-        </div>
-    </script>
 </body>
 </html>

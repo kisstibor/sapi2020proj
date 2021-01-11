@@ -31,11 +31,19 @@ import ro.sapientia2015.story.service.BugService;
 @SessionAttributes("bug")
 public class BugController {
 	
-	private static final String MODEL_ATTRIBUTE = "bug";
-	private static final String PATH_LIST = "bug/list";
-	private static final String PATH_VIEW = "bug/view";
-	private static final String PATH_ADD = "bug/add";
-	private static final String PATH_UPDATE = "bug/update";
+	protected static final String MODEL_ATTRIBUTE = "bug";
+	protected static final String MODEL_ATTRIBUTE_LIST = "bugs";
+	protected static final String ID_ATTRIBUTE = "id";
+	protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "Bug added";
+	protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "Bug updated";
+	protected static final String FLASH_MESSAGE_KEY_FEEDBACK = "feedbackMessage";
+	
+	protected static final String REDIRECT_LIST = "list";
+	protected static final String REDIRECT_BUG = "{id}";
+	protected static final String PATH_LIST = "bug/list";
+	protected static final String PATH_VIEW = "bug/view";
+	protected static final String PATH_ADD = "bug/add";
+	protected static final String PATH_UPDATE = "bug/update";
 	
 	@Resource
 	private BugService bugService;
@@ -46,7 +54,7 @@ public class BugController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
     public String listBugs(Model model) {
 		List<Bug> models = bugService.findAll();
-        model.addAttribute("bugs", models);
+        model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
 
         return PATH_LIST;
     }
@@ -73,10 +81,10 @@ public class BugController {
         }
 
         Bug bug = bugService.add(dto);
-        addFeedbackMessage(attributes, "Bug added", bug.getTitle());
-        attributes.addAttribute("id", bug.getId());
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, bug.getTitle());
+        attributes.addAttribute(ID_ATTRIBUTE, bug.getId());
 
-        return createRedirectViewPath("list");
+        return createRedirectViewPath(REDIRECT_LIST);
     }
 	
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
@@ -95,10 +103,10 @@ public class BugController {
         }
 
         Bug bug = bugService.update(dto);
-        addFeedbackMessage(attributes, "Bug updated", bug.getTitle());
-        attributes.addAttribute("id", bug.getId());
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, bug.getTitle());
+        attributes.addAttribute(ID_ATTRIBUTE, bug.getId());
 
-        return createRedirectViewPath("{id}");
+        return createRedirectViewPath(REDIRECT_BUG);
     }
     
     private BugDTO constructFormObjectForUpdateForm(Bug bug) {
@@ -111,16 +119,16 @@ public class BugController {
         return dto;
     }
 	
-	@RequestMapping(value = "/bug/delete/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public String deleteById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
         Bug bug = bugService.delete(id);
         addFeedbackMessage(attributes, "Bug deleted", bug.getTitle());
-        return createRedirectViewPath("list");
+        return createRedirectViewPath("/bug/list");
     }
 	
 	private void addFeedbackMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
         String localizedFeedbackMessage = getMessage(messageCode, messageParameters);
-        attributes.addFlashAttribute("bug.added", localizedFeedbackMessage);
+        attributes.addFlashAttribute(FLASH_MESSAGE_KEY_FEEDBACK, localizedFeedbackMessage);
     }
 	
 	private String getMessage(String messageCode, Object... messageParameters) {
