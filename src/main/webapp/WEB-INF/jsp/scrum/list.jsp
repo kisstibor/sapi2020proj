@@ -11,14 +11,14 @@
     
     <div id="story-list" class="page-content">
         <c:choose>
-            <c:when test="${empty teams}">
-                <p><spring:message code="label.scrumteam.list.empty"/></p>
+            <c:when test="${empty scrums}">
+                <p><spring:message code="label.scrum.list.empty"/></p>
             </c:when>
             <c:otherwise>
-                <c:forEach items="${teams}" var="team">
+                <c:forEach items="${scrums}" var="scrum">
                     <div class="well well-small">
-                        <a href="/scrum/${team.id}">
-                        	<c:out value="${team.title}"/>
+                        <a href="/scrum/${scrum.id}">
+                        	<c:out value="${scrum.title}"/>
                         </a>
                     </div>
                 </c:forEach>

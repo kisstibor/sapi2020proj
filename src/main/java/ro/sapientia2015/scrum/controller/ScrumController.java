@@ -35,9 +35,9 @@ public class ScrumController {
     protected static final String FLASH_MESSAGE_KEY_FEEDBACK = "feedbackMessage";
 
     //add.jsp output model
-    protected static final String MODEL_ATTRIBUTE = "team";
+    protected static final String MODEL_ATTRIBUTE = "scrum";
     //list.jsp input model
-    protected static final String MODEL_ATTRIBUTE_LIST = "teams";
+    protected static final String MODEL_ATTRIBUTE_LIST = "scrums";
 
     protected static final String PARAMETER_ID = "id";
 
@@ -68,7 +68,7 @@ public class ScrumController {
     
     @RequestMapping(value = "/scrum/add", method = RequestMethod.POST)
     public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) ScrumDTO dto, BindingResult result, RedirectAttributes attributes) {
-    	System.out.println("gotcha post /scrumteam/add " + dto.getTitle() + ": " + dto.getMembers());
+    	System.out.println("gotcha post /scrum/add " + dto.getTitle() + ": " + dto.getMembers());
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
@@ -85,6 +85,7 @@ public class ScrumController {
     public String findTeamById(@PathVariable("id") Long id, Model model) throws NotFoundException {
     	System.out.println("gotcha get " + REQUEST_MAPPING_VIEW+" id: "+id);
         Scrum found = service.findById(id);
+        System.out.println("GOTCHA findTeamById " + found.getTitle());
         model.addAttribute(MODEL_ATTRIBUTE, found);
         return VIEW_VIEW;
     }
@@ -94,6 +95,20 @@ public class ScrumController {
     public String findAll(Model model) {
     	System.out.println("gotcha get");
         List<Scrum> models = service.findAll();
+        
+     // ADD DUMMY DATA
+        if (models.size() == 0) {
+    		ScrumDTO s1 = new ScrumDTO();
+    		ScrumDTO s2 = new ScrumDTO();
+    		s1.setTitle("Elso");
+    		s1.setMembers("Alex, Beci, Kamilla");
+    		s2.setTitle("Masodik");
+    		s2.setMembers("Pisti, Tundi, Kati");
+    		service.add(s1);
+        	service.add(s2);
+        	models = service.findAll();
+        }
+        
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
     }

@@ -8,6 +8,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ro.sapientia2015.scrum.model.Scrum;
+import ro.sapientia2015.scrum.service.ScrumService;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
@@ -48,6 +50,9 @@ public class StoryController {
 
     @Resource
     private StoryService service;
+    
+    @Resource
+    private ScrumService scrumService;
 
     @Resource
     private MessageSource messageSource;
@@ -55,6 +60,7 @@ public class StoryController {
     @RequestMapping(value = "/story/add", method = RequestMethod.GET)
     public String showAddForm(Model model) {
         StoryDTO formObject = new StoryDTO();
+        formObject.setAllScrums(scrumService.findAll());
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_ADD;
@@ -66,6 +72,8 @@ public class StoryController {
             return VIEW_ADD;
         }
 
+        System.out.println("gotcha " + dto.getTitle());
+        dto.setAssignedTeam(findScrumByTitle(dto.getTitle()));
         Story added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());
@@ -142,5 +150,14 @@ public class StoryController {
         redirectViewPath.append("redirect:");
         redirectViewPath.append(requestMapping);
         return redirectViewPath.toString();
+    }
+    
+    private Scrum findScrumByTitle(String title) {
+    	for(Scrum s : scrumService.findAll()) {
+    		if (s.getTitle().equals(title)) {
+    			return s;
+    		}
+    	}
+    	return null;
     }
 }

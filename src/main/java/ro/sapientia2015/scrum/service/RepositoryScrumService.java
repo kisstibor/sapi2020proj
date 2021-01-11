@@ -32,16 +32,16 @@ public class RepositoryScrumService implements ScrumService {
 		return null;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<Scrum> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return scrumRepository.findAll();
 	}
 
+	@Transactional(readOnly = true, rollbackFor = {NotFoundException.class})
 	@Override
 	public Scrum findById(Long id) throws NotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		return scrumRepository.findOne(id);
 	}
 
 	@Override

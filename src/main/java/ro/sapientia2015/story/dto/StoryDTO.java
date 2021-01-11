@@ -1,5 +1,7 @@
 package ro.sapientia2015.story.dto;
 
+import java.util.List;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -59,8 +61,28 @@ public class StoryDTO {
         this.assignedTeam = scrum;
     }
     
+    private List<Scrum> allScrums;
     
-    @Override
+    
+    public List<Scrum> getAllScrums() {
+		return allScrums;
+	}
+
+	public void setAllScrums(List<Scrum> allScrums) {
+		this.allScrums = allScrums;
+	}
+	
+	private String selectedScrum;
+
+	public String getSelectedScrum() {
+		return selectedScrum;
+	}
+
+	public void setSelectedScrum(String selectedScrum) {
+		this.selectedScrum = selectedScrum;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
