@@ -19,9 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * @author Kiss Tibor
- */
+
 @Controller
 @SessionAttributes("story")
 public class StoryController {
