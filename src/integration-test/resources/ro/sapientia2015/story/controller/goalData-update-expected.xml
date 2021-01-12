@@ -1,0 +1,4 @@
+<dataset>
+    <goal id="1" goal="Goal I modified" method="Method I"	metrics="Metrics I" 	version="1"/>
+    <goal id="2" goal="Goal II" 		method="Method II" 	metrics="Metrics II" 	version="0"/>
+</dataset>
