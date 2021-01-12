@@ -61,6 +61,7 @@ public class ITStoryControllerTest {
     private static final String FORM_FIELD_DESCRIPTION = "description";
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
+    private static final String FORM_FIELD_POINT = "point";
 
     @Resource
     private WebApplicationContext webApplicationContext;
@@ -82,7 +83,8 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/add.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("point", is(0))));
     }
 
     @Test
@@ -98,7 +100,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "title"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("point", is(0))));
     }
 
     @Test
@@ -120,7 +123,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "description"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("point", is(0))));
     }
 
     @Test
@@ -132,6 +136,7 @@ public class ITStoryControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_POINT, "10")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -152,16 +157,51 @@ public class ITStoryControllerTest {
                         allOf(
                                 hasProperty("id", is(1L)),
                                 hasProperty("description", is("Lorem ipsum")),
-                                hasProperty("title", is("Foo"))
+                                hasProperty("title", is("Foo")),
+                                hasProperty("point", is(10))
                         )
                 )))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasItem(
                         allOf(
                                 hasProperty("id", is(2L)),
                                 hasProperty("description", is("Lorem ipsum")),
-                                hasProperty("title", is("Bar"))
+                                hasProperty("title", is("Bar")),
+                                hasProperty("point", is(11))
                         )
                 )));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void filter() throws Exception {
+    	mockMvc.perform(post("/story/add")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(FORM_FIELD_POINT, "10")
+                .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
+        )
+        .andExpect(status().isOk())
+        .andExpect(view().name(StoryController.VIEW_LIST))
+        .andExpect(forwardedUrl("/WEB-INF/jsp/story/list.jsp"))
+        .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasSize(2)))
+        .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasItem(
+                allOf(
+                        hasProperty("id", is(1L)),
+                        hasProperty("description", is("Lorem ipsum")),
+                        hasProperty("title", is("Foo")),
+                        hasProperty("point", is(10))
+                )
+        )));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void pointList() throws Exception {
+    	mockMvc.perform(get("/"))
+        .andExpect(status().isOk())
+        .andExpect(view().name(StoryController.VIEW_POINT_LIST))
+        .andExpect(forwardedUrl("/WEB-INF/jsp/story/point-list.jsp"))
+        .andExpect(model().attribute("total", is(21)))
+    	.andExpect(model().attribute("average", is(10.5)));
     }
 
     @Test
@@ -173,7 +213,8 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/view.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("Lorem ipsum"))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("point", is(10))));
     }
 
     @Test
@@ -213,7 +254,8 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/update.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("Lorem ipsum"))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("point", is(10))));
     }
 
     @Test
@@ -239,7 +281,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "title"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("point", is(0))));
     }
 
     @Test
@@ -262,7 +305,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "description"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("point", is(0))));
     }
 
     @Test
@@ -275,6 +319,7 @@ public class ITStoryControllerTest {
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_ID, "1")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_POINT, "10")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())

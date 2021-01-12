@@ -19,6 +19,8 @@ public class StoryDTO {
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
+    
+    private int point;
 
     public StoryDTO() {
 
@@ -34,6 +36,14 @@ public class StoryDTO {
 
     public String getDescription() {
         return description;
+    }
+    
+    public int getPoint() {
+    	return point;
+    }
+    
+    public void setPoint(int point) {
+    	this.point = point;
     }
 
     public void setDescription(String description) {

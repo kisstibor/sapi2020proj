@@ -28,6 +28,14 @@
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
             </div>
+              <div id="control-group-point" class="control-group">
+                <label for="story-point"><spring:message code="label.story.point"/>:</label>
+
+                <div class="controls">
+                    <form:input type="number" id="story-point" path="point"/>
+                    <form:errors id="error-point" path="point" cssClass="help-inline"/>
+                </div>
+            </div>
             <div class="action-buttons">
                 <a href="/story/${story.id}" class="btn"><spring:message code="label.cancel"/></a>
                 <button id="update-story-button" type="submit" class="btn btn-primary"><spring:message

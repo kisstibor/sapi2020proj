@@ -33,6 +33,9 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    @Column(name="point", nullable=true)
+    private int point;
 
     @Version
     private long version;
@@ -64,6 +67,10 @@ public class Story {
     public String getTitle() {
         return title;
     }
+    
+    public int getPoint( ) {
+    	return point;
+    }
 
     public long getVersion() {
         return version;
@@ -81,9 +88,10 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, int point) {
         this.description = description;
         this.title = title;
+        this.point = point;
     }
 
     public static class Builder {
@@ -102,6 +110,11 @@ public class Story {
         public Builder description(String description) {
             built.description = description;
             return this;
+        }
+        
+        public Builder point(int point) {
+        	built.point = point;
+        	return this;
         }
     }
 

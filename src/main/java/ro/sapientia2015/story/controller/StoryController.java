@@ -16,8 +16,13 @@ import ro.sapientia2015.story.service.StoryService;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+
 
 /**
  * @author Kiss Tibor
@@ -45,12 +50,43 @@ public class StoryController {
     protected static final String VIEW_LIST = "story/list";
     protected static final String VIEW_UPDATE = "story/update";
     protected static final String VIEW_VIEW = "story/view";
+    protected static final String VIEW_POINT_LIST = "story/point-list";
 
     @Resource
     private StoryService service;
 
     @Resource
     private MessageSource messageSource;
+    
+    @RequestMapping(value = "/point-list", method = RequestMethod.GET)
+    public String pointList(Model model) {
+    	List<Story> models = service.findAll();
+    	int total = 0;
+    	for(Story story: models) {
+    		total += story.getPoint();
+    	}
+    	
+    	model.addAttribute("total", total);
+    	model.addAttribute("average", models.size() > 0 ? total / models.size() : 0);
+
+        return VIEW_POINT_LIST;
+    }
+    
+    @RequestMapping(value = "/story/filter", method = RequestMethod.POST)
+    public String filter(Model model, @RequestParam("point") int point) {
+    	List<Story> models = service.findAll();
+        
+        List<Story> filtered = new ArrayList<Story>();
+        for(Story story: models) {
+    		if(story.getPoint() == point) {
+    			filtered.add(story);
+    		}
+    	}
+        model.addAttribute(MODEL_ATTRIBUTE_LIST, filtered);
+       
+        
+        return VIEW_LIST;
+    }
 
     @RequestMapping(value = "/story/add", method = RequestMethod.GET)
     public String showAddForm(Model model) {
@@ -122,6 +158,7 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        dto.setPoint(updated.getPoint());
 
         return dto;
     }
