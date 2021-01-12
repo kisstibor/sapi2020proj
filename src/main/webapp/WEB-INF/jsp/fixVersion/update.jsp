@@ -16,7 +16,7 @@
                 <label for="story-name"><spring:message code="label.story.name"/>:</label>
 
                 <div class="controls">
-                    <form:input id="story-name" path="name"/>
+                    <form:input id="fixVersion-name" path="name"/>
                     <form:errors id="error-name" path="name" cssClass="help-inline"/>
                 </div>
             </div>
