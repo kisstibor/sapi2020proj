@@ -3,6 +3,9 @@ package ro.sapientia2015.story.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 import javax.persistence.*;
 
@@ -33,6 +36,9 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+//    @Column(name = "timelimit", nullable = true)
+//    private String timelimit;
 
     @Version
     private long version;
@@ -64,6 +70,10 @@ public class Story {
     public String getTitle() {
         return title;
     }
+    
+//    public String getTimelimit() {
+//        return timelimit;
+//    }
 
     public long getVersion() {
         return version;
@@ -85,6 +95,12 @@ public class Story {
         this.description = description;
         this.title = title;
     }
+    
+//    public void update(String description, String title, String timelimit) {
+//        this.description = description;
+//        this.title = title;
+//        this.timelimit = timelimit;
+//    }
 
     public static class Builder {
 
@@ -103,6 +119,11 @@ public class Story {
             built.description = description;
             return this;
         }
+        
+//        public Builder timelimit(String timelimit) {
+//            built.timelimit = timelimit;
+//            return this;
+//        }
     }
 
     @Override

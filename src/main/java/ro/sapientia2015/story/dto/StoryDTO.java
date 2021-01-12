@@ -1,8 +1,11 @@
 package ro.sapientia2015.story.dto;
 
+import java.util.Date;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.DateTime;
 
 import ro.sapientia2015.story.model.Story;
 
@@ -19,6 +22,8 @@ public class StoryDTO {
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
+    
+//    private String timelimit;
 
     public StoryDTO() {
 
@@ -47,6 +52,14 @@ public class StoryDTO {
     public void setTitle(String title) {
         this.title = title;
     }
+    
+//    public String getTimelimit() {
+//        return timelimit;
+//    }
+//
+//    public void setTimelimit(String timelimit) {
+//        this.timelimit = timelimit;
+//    }
 
     @Override
     public String toString() {

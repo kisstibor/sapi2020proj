@@ -25,6 +25,7 @@ import ro.sapientia2015.context.WebContextLoader;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.StoryTimeLimitDTO;
 import ro.sapientia2015.story.model.Story;
 
 import javax.annotation.Resource;
@@ -61,6 +62,7 @@ public class ITStoryControllerTest {
     private static final String FORM_FIELD_DESCRIPTION = "description";
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
+    private static final String FORM_FIELD_TIMELIMIT = "timelimit";
 
     @Resource
     private WebApplicationContext webApplicationContext;
@@ -72,6 +74,83 @@ public class ITStoryControllerTest {
         mockMvc = MockMvcBuilders.webApplicationContextSetup(webApplicationContext)
                 .build();
     }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void showAddTimelimitForm() throws Exception {
+    	Long storyId = 1L;
+        mockMvc.perform(get("/story/timelimit/add/"+storyId))
+                .andExpect(status().isOk())
+                .andExpect(view().name(StoryController.VIEW_TIMELIMIT_ADD))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/story/timelimit/add.jsp"))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(storyId))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT, hasProperty("storyId", is(storyId))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT, hasProperty("id", nullValue())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT, hasProperty("timelimit", isEmptyOrNullString())));           
+    }
+    
+    @Test
+    @ExpectedDatabase(value="storytimelimitData-add-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    public void addTimelimit() throws Exception {
+    	String storyId = "2";
+    	String timelimit = "2022-01-01";
+        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+
+        mockMvc.perform(post("/story/timelimit/add/"+storyId)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(FORM_FIELD_TIMELIMIT, timelimit)
+                .sessionAttr(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT, new StoryTimeLimitDTO())
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(expectedRedirectViewPath))
+                .andExpect(model().attribute(StoryController.PARAMETER_ID, is(storyId)))
+                .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("StoryTimeLimit entry: "+timelimit+" was added.")));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void showUpdateTimelmitForm() throws Exception {
+    	String storyId = "1";
+    	String id = "1";
+        mockMvc.perform(get("/story/timelimit/update/"+storyId+"/"+id))
+                .andExpect(status().isOk())
+                .andExpect(view().name(StoryController.VIEW_UPDATE_TIMELIMIT))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/story/timelimit/update.jsp"))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("Lorem ipsum"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))))
+        		.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT, hasProperty("id", is(1L))))
+        		.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT, hasProperty("timelimit", is("2022-01-01"))))
+        		.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT, hasProperty("storyId", is(1L))));
+    }
+    
+    @Test
+    @ExpectedDatabase(value="storytimelimitData-update-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    public void updateTimelimit() throws Exception {
+        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+
+        mockMvc.perform(post("/story/timelimit/update/{storyId}/{id}", 1L, 1L)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(FORM_FIELD_TIMELIMIT, "2022-02-02")
+                .sessionAttr(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT, new StoryTimeLimitDTO())
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(expectedRedirectViewPath))
+                .andExpect(model().attribute(StoryController.PARAMETER_ID, is("1")))
+                .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("StoryTimeLimit entry: 2022-02-02 was updated.")));
+    }
+    
+    @Test
+    @ExpectedDatabase("storytimelimitData-delete-expected.xml")
+    public void deleteTimelimitById() throws Exception {
+        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        mockMvc.perform(get("/story/timelimit/delete/{storyId}/{id}", 1L, 1L))
+                .andExpect(status().isOk())
+                .andExpect(view().name(expectedRedirectViewPath))
+                .andExpect(model().attribute(StoryController.PARAMETER_ID, is("1")))
+                .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("StoryTimeLimit entry: 2022-01-01 was deleted.")));
+    }
+
 
     @Test
     @ExpectedDatabase("storyData.xml")

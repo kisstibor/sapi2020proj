@@ -20,9 +20,12 @@ import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
 import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.StoryTimeLimitDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.StoryTimeLimit;
 import ro.sapientia2015.story.service.StoryService;
+import ro.sapientia2015.story.service.StoryTimeLimitService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -48,12 +51,15 @@ public class StoryControllerTest {
     private static final String FEEDBACK_MESSAGE = "feedbackMessage";
     private static final String FIELD_DESCRIPTION = "description";
     private static final String FIELD_TITLE = "title";
+    private static final Long STORY_ID = 1L;
 
     private StoryController controller;
 
     private MessageSource messageSourceMock;
 
     private StoryService serviceMock;
+    
+    private StoryTimeLimitService storytimelimitServiceMock;
 
     @Resource
     private Validator validator;
@@ -67,6 +73,63 @@ public class StoryControllerTest {
 
         serviceMock = mock(StoryService.class);
         ReflectionTestUtils.setField(controller, "service", serviceMock);
+        
+        storytimelimitServiceMock = mock(StoryTimeLimitService.class);
+        ReflectionTestUtils.setField(controller, "storytimelimitService", storytimelimitServiceMock);
+    }
+    
+    @Test
+    public void showAddStoryTimeLimitForm() throws NotFoundException {
+        BindingAwareModelMap model = new BindingAwareModelMap();
+
+        String view = controller.showAddTimelimitForm(STORY_ID, model);
+
+        verifyZeroInteractions(messageSourceMock, storytimelimitServiceMock);
+        assertEquals(StoryController.VIEW_TIMELIMIT_ADD, view);
+
+        StoryTimeLimitDTO formObject = (StoryTimeLimitDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE_STORYTIMELIMIT);
+
+        assertNull(formObject.getId());
+        assertNull(formObject.getTimelimit());
+        assertEquals(STORY_ID, formObject.getStoryId());
+    }
+    
+    @Test
+    public void addStoryTimeLimit() {
+    	Long id = 1L, storyId = 1L;
+    	String timelimit = "2022";
+    	
+        StoryTimeLimitDTO formObject = new StoryTimeLimitDTO();
+        formObject.setId(id);
+        formObject.setTimelimit(timelimit);
+        formObject.setStoryId(storyId);
+
+        StoryTimeLimit model = StoryTimeLimit.getBuilder(storyId)
+                .timelimit(timelimit)
+                .build();
+        ReflectionTestUtils.setField(model, "id", id);
+        
+        
+        when(storytimelimitServiceMock.add(formObject)).thenReturn(model);
+
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/timelimit/add/"+storyId);
+        BindingResult result = bindAndValidate(mockRequest, formObject);
+
+        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+        initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_ADDED_TIMELIMIT);
+
+        String view = controller.addTimelimit(formObject, storyId, result, attributes);
+
+        verify(storytimelimitServiceMock, times(1)).add(formObject);
+        verifyNoMoreInteractions(storytimelimitServiceMock);
+
+        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        assertEquals(expectedView, view);
+
+        assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getStoryId());
+
+        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED_TIMELIMIT);
     }
 
     @Test
