@@ -22,6 +22,8 @@ public class ScrumTeamDTO {
 	
 	private List<String> selectedStories;
 	
+	private Integer storyCount;
+	
 	
 	public ScrumTeamDTO() {
 		
@@ -32,6 +34,9 @@ public class ScrumTeamDTO {
 		this.name = from.getName();
 		this.members = from.getMembers();
 		this.stories = from.getStories();
+		this.storyCount = (this.stories == null)
+				? 0
+				: this.stories.size();
 	}
 	
 	public Long getId() {
@@ -76,6 +81,14 @@ public class ScrumTeamDTO {
 
 	public void setSelectedStories(List<String> selectedStories) {
 		this.selectedStories = selectedStories;
+	}
+	
+	public Integer getStoryCount() {
+		return storyCount;
+	}
+	
+	public void setManualStoryCount(Integer num) {
+		storyCount = num;
 	}
 
 	@Override

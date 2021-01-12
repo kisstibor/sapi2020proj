@@ -100,6 +100,9 @@ public class ScrumTeam {
 	}
 
 	public List<Story> getStories() {
+		//if (stories != null) {
+		//	storyCount = stories.size();	// Refresh
+		//}
 		return stories;
 	}
 	
@@ -108,7 +111,7 @@ public class ScrumTeam {
 	}
 	
 	public Integer getStoryCount() {
-		return storyCount;
+		return (stories == null) ? 0 : stories.size();
 	}
 	
 	public ScrumOfScrums getScrumOfScrums() {
@@ -117,6 +120,7 @@ public class ScrumTeam {
 	
 	public void addStory(Story story) {
 		stories.add(story);
+		storyCount = stories.size();
 	}
 
 	private void updateStoriesCSV() {
@@ -132,6 +136,19 @@ public class ScrumTeam {
 			}
 		}
 		storiesSeparated = titles;
+	}
+	
+	public void updateStory(Story story) {
+		if (stories != null) {
+			for (Story s : stories) {
+				if (story.getId() == s.getId()) {
+					stories.remove(s);
+					stories.add(story);
+					storyCount = stories.size();
+					return;
+				}
+			}
+		}
 	}
 	
 
