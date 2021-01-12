@@ -26,6 +26,12 @@ public class RepositoryScrumService implements ScrumService {
 		return scrumRepository.save(scrum);
 	}
 
+	@Transactional
+	@Override
+	public Scrum add(Scrum added) {
+		return scrumRepository.save(added);
+	}
+	
 	@Override
 	public Scrum deleteById(Long id) throws NotFoundException {
 		// TODO Auto-generated method stub
@@ -44,10 +50,18 @@ public class RepositoryScrumService implements ScrumService {
 		return scrumRepository.findOne(id);
 	}
 
-	@Override
-	public Scrum update(ScrumDTO updated) throws NotFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	@Transactional(rollbackFor = {NotFoundException.class})
+    @Override
+    public Scrum update(ScrumDTO updated) throws NotFoundException {
+		Scrum model = findById(updated.getId());
+        model.update(updated.getTitle(), updated.getMembers());
+        return model;
+    }
+    
+    @Transactional(rollbackFor = {NotFoundException.class})
+    @Override
+    public Scrum update(Scrum updated) throws NotFoundException {
+        return scrumRepository.save(updated);
+    }
 
 }

@@ -7,6 +7,9 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 @Entity
 @Table(name = "scrum")
 public class Scrum {
@@ -24,10 +27,12 @@ public class Scrum {
 	private String members;
 	
 	@Column(name = "stories")
-	@OneToMany(mappedBy = "assignedTeam", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "assignedTeam")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Story> stories;
 	
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name="actual_pi_join")
+	@ManyToOne()
 	private PI actualPi;
 	
 	public PI getActualPi() {
@@ -83,4 +88,13 @@ public class Scrum {
             return built;
         }
     }
+
+	public void addStory(Story story) {
+		stories.add(story);
+	}
+
+	public void update(String title, String members) {
+		this.title = title;
+		this.members = members;
+	}
 }

@@ -22,6 +22,8 @@ import ro.sapientia2015.scrum.dto.ScrumDTO;
 import ro.sapientia2015.scrum.model.Scrum;
 import ro.sapientia2015.scrum.service.ScrumService;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.service.StoryService;
 
 @Controller
 @SessionAttributes("scrum")
@@ -55,6 +57,9 @@ public class ScrumController {
     private ScrumService service;
     
     @Resource
+    private StoryService storyService;
+    
+    @Resource
     private MessageSource messageSource;
     
     @RequestMapping(value = "/scrum/add", method = RequestMethod.GET)
@@ -62,7 +67,7 @@ public class ScrumController {
     	System.out.println("gotcha get /scrum/add");
         ScrumDTO formObject = new ScrumDTO();
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
-
+        
         return VIEW_ADD;
     }
     
@@ -85,7 +90,9 @@ public class ScrumController {
     public String findTeamById(@PathVariable("id") Long id, Model model) throws NotFoundException {
     	System.out.println("gotcha get " + REQUEST_MAPPING_VIEW+" id: "+id);
         Scrum found = service.findById(id);
-        System.out.println("GOTCHA findTeamById " + found.getTitle());
+        for(Story f : found.getStories()) {
+        	System.out.println("GOTCHA found " + f);
+        }
         model.addAttribute(MODEL_ATTRIBUTE, found);
         return VIEW_VIEW;
     }

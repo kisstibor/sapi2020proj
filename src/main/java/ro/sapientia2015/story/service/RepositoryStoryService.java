@@ -32,6 +32,13 @@ public class RepositoryStoryService implements StoryService {
         return repository.save(model);
     }
 
+    @Transactional
+    @Override
+	public Story add(Story added) {
+		Story model = repository.save(added);
+		return model;
+	}
+    
     @Transactional(rollbackFor = {NotFoundException.class})
     @Override
     public Story deleteById(Long id) throws NotFoundException {
@@ -65,4 +72,13 @@ public class RepositoryStoryService implements StoryService {
 
         return model;
     }
+
+	@Override
+	public Story update(Story updated) throws NotFoundException {
+		/*updatedModel.update(updatedModel.getName(), updatedModel.getMembers(), updatedModel.getStories());
+
+        return updatedModel;*/
+		updated.update(updated.getDescription(), updated.getTitle(), updated.getAssignedTeam());
+		return updated;
+	}
 }

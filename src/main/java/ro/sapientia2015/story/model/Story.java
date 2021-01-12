@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 
 import ro.sapientia2015.scrum.model.Scrum;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 /**
@@ -36,7 +38,8 @@ public class Story {
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name="assigned_team_join")
+    @ManyToOne()
     private Scrum assignedTeam;
     
     @Version
@@ -94,6 +97,12 @@ public class Story {
         this.description = description;
         this.title = title;
     }
+    
+    public void update(String description, String title, Scrum assignedTeam) {
+        this.description = description;
+        this.title = title;
+        this.assignedTeam = assignedTeam;
+    }
 
     public static class Builder {
 
@@ -112,10 +121,24 @@ public class Story {
             built.description = description;
             return this;
         }
+        
+        public Builder assignedTeam(Scrum scrum) {
+            built.assignedTeam = scrum;
+            return this;
+        }
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+	public static Scrum filterScrumByName(List<Scrum> scrums, String selectedScrum) {
+		for (Scrum s : scrums) {
+			if (s.getTitle().equals(selectedScrum)) {
+				return s;
+			}
+		}
+		return null;
+	}
 }

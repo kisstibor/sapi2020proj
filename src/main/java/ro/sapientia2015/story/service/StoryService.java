@@ -17,6 +17,7 @@ public interface StoryService {
      * @return  The added to-do entry.
      */
     public Story add(StoryDTO added);
+    public Story add(Story added);
 
     /**
      * Deletes a to-do entry.
@@ -47,4 +48,5 @@ public interface StoryService {
      * @throws NotFoundException    If no to-do entry is found with the given id.
      */
     public Story update(StoryDTO updated) throws NotFoundException;
+    public Story update(Story updated) throws NotFoundException;
 }

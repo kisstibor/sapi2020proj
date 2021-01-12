@@ -12,7 +12,7 @@
     <h1><spring:message code="label.scrum.add.page.title"/></h1>
     <div class="well page-content">
     
-        <form:form action="/scrum/add" commandName="team" method="POST" enctype="utf8">
+        <form:form action="/scrum/add" commandName="scrum" method="POST" enctype="utf8">
         
             <div id="control-group-title" class="control-group">
                 <label for="story-title"><spring:message code="label.scrum.add.page.name"/>:</label>

@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ro.sapientia2015.scrum.dto.ScrumDTO;
 import ro.sapientia2015.scrum.model.Scrum;
 import ro.sapientia2015.scrum.service.ScrumService;
 import ro.sapientia2015.story.dto.StoryDTO;
@@ -68,15 +69,45 @@ public class StoryController {
 
     @RequestMapping(value = "/story/add", method = RequestMethod.POST)
     public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) {
+        
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
+        
+        Scrum assignedTeam = Story.filterScrumByName(
+        		scrumService.findAll(), 
+        		dto.getSelectedScrum()
+        );
+        
+        System.out.println("gotcha " + (assignedTeam == null ? "NULL LETT" : "ADDED " + assignedTeam.getTitle()));
+        System.out.println("gotcha DTO: " + dto.getSelectedScrum());
+        
+        Story story = Story.getBuilder(dto.getTitle())
+    			.assignedTeam(assignedTeam)
+    			.build();
+        
+        System.out.println("gotcha before persist story " + story.getId() + " - " + story.getAssignedTeam());
+        
+        // have unique id
+        Story storyWId = service.add(story);
+        
+        System.out.println("gotcha after persist story " + storyWId.getId() + " - " + storyWId.getAssignedTeam());
+        
+        if (assignedTeam != null) {
+        	assignedTeam.addStory(storyWId);
+        	System.out.println("gotcha after ... story " + storyWId.getId() + " - " + storyWId.getAssignedTeam());
+        	
+        	try {
+    			scrumService.update(assignedTeam);
+    			System.out.println("gotcha after EVERTRHING story " + storyWId.getId() + " - " + storyWId.getAssignedTeam());
+    		} catch (NotFoundException e) {
+    			e.printStackTrace();
+    		}
+        }
 
-        System.out.println("gotcha " + dto.getTitle());
-        dto.setAssignedTeam(findScrumByTitle(dto.getTitle()));
-        Story added = service.add(dto);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
-        attributes.addAttribute(PARAMETER_ID, added.getId());
+
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, storyWId.getTitle());
+        attributes.addAttribute(PARAMETER_ID, storyWId.getId());
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
@@ -152,7 +183,7 @@ public class StoryController {
         return redirectViewPath.toString();
     }
     
-    private Scrum findScrumByTitle(String title) {
+    private Scrum findScrumByStoryTitle(String title) {
     	for(Scrum s : scrumService.findAll()) {
     		if (s.getTitle().equals(title)) {
     			return s;

@@ -12,10 +12,12 @@
     <div class="well page-content">
         <h2 id="story-title"><c:out value="${scrum.title}"/></h2>
         <div>
-            <p><c:out value="${scrum.members}"/></p>
+            <p><b>Members:</b> <c:out value="${scrum.members}"/></p>
         </div>
         <div>
-        	<p><c:out value="${scrum.stories}"/></p>
+        	<c:forEach items="${scrum.stories}" var="story">
+        		<p><c:out value="${story.title}"/></p>
+        	</c:forEach>
         </div>
         <div class="action-buttons">
             <a href="/story/update/${scrum.id}" class="btn btn-primary"><spring:message code="label.update.scrum.link"/></a>

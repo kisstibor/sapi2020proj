@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import ro.sapientia2015.scrum.model.Scrum;
 
 
@@ -24,7 +27,8 @@ public class PI {
 	private String description;
 	
 	@Column(name = "scrums")
-	@OneToMany(mappedBy = "actualPi", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "actualPi")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Scrum> scrums;
 	
 	public PI() {
