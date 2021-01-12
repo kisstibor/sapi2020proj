@@ -33,6 +33,9 @@
                         <ul class="nav">
                             <li><a href="/"><spring:message code="label.navigation.homepage.link"/></a></li>
                         </ul>
+                        <ul class="nav">
+                            <li><a href="/fixVersions"><spring:message code="label.navigation.fixVersions.link"/></a></li>
+                        </ul>
                     </div>
                 </div>
             </div>

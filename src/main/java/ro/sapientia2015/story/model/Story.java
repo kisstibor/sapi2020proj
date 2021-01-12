@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 /**
@@ -33,6 +35,10 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    @OneToOne
+    @JoinColumn(name = "fix_version")
+    private FixVersion fixVersion;
 
     @Version
     private long version;
@@ -68,6 +74,10 @@ public class Story {
     public long getVersion() {
         return version;
     }
+    
+    public FixVersion getFixVersion() {
+    	return fixVersion;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -81,9 +91,10 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, FixVersion fixVersion) {
         this.description = description;
         this.title = title;
+        this.fixVersion = fixVersion;
     }
 
     public static class Builder {
@@ -101,6 +112,11 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder fixVersion(FixVersion fixVersion) {
+            built.fixVersion = fixVersion;
             return this;
         }
     }

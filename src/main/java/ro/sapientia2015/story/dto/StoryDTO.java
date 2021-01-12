@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import ro.sapientia2015.story.model.FixVersion;
 import ro.sapientia2015.story.model.Story;
 
 /**
@@ -19,6 +20,8 @@ public class StoryDTO {
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
+    
+    private long fixVersion;
 
     public StoryDTO() {
 
@@ -46,6 +49,14 @@ public class StoryDTO {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    public long getFixVersion() {
+        return fixVersion;
+    }
+
+    public void setFixVersion(long fixVersion) {
+        this.fixVersion = fixVersion;
     }
 
     @Override
