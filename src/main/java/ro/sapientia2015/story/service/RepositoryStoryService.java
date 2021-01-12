@@ -23,21 +23,33 @@ public class RepositoryStoryService implements StoryService {
 
     @Transactional
     @Override
-    public Story add(StoryDTO added) {
+    public Story add(StoryDTO added) { 							// story.scrumTeam WILL NOT BE null
 
         Story model = Story.getBuilder(added.getTitle())
                 .description(added.getDescription())
                 .progress(added.getProgress())
                 .build();
 
-        System.out.println(">>>>>> PERSIST: ScrumTeam:"
-    			+ "\n | id:           " + model.getId()
-    			+ "\n | title:        " + model.getTitle()
-    			+ "\n | progress:     " + model.getProgress()
-    			+ "\n | scrum team:   " + model.getScrumTeam()
-    	);
+        log("before", model);
         
-        return repository.save(model);
+        Story ret = repository.save(model);
+        
+        log("after", ret);
+        
+        return ret;
+    }
+    
+    @Transactional
+    @Override
+    public Story add(Story addedModel) {
+
+    	log("before", addedModel);
+        
+    	Story ret = repository.save(addedModel);
+    	
+    	log("after", ret);
+    	
+        return ret;
     }
 
     @Transactional(rollbackFor = {NotFoundException.class})
@@ -73,4 +85,39 @@ public class RepositoryStoryService implements StoryService {
 
         return model;
     }
+    
+    @Transactional(rollbackFor = {NotFoundException.class})
+    @Override
+    public Story update(Story updatedModel) throws NotFoundException {
+    	
+    	log("BEFORE UPDATE", updatedModel);
+    	
+    	/* updatedModel.update(
+    			updatedModel.getTitle(),
+    			updatedModel.getDescription(),
+    			updatedModel.getProgress(),
+    			updatedModel.getScrumTeam()
+    			);*/
+    	//if (updatedModel.getScrumTeam() != null) { //*// uncomment
+    		repository.save(updatedModel);
+    	//}
+        return updatedModel;
+    }
+    
+    private void log(String smg, Story model) {
+    	System.out.println(">>>>>> ("+smg+")PERSIST: Story:"
+    			+ "\n | id:           " + model.getId()
+    			+ "\n | title:        " + model.getTitle()
+    			+ "\n | progress:     " + model.getProgress()
+    			+ "\n | scrum team:   " + (model.getScrumTeam()==null?"null":model.getScrumTeam())
+    	);
+    	if (model.getScrumTeam() != null) {
+	    	System.out.println(">>>>>> ("+smg+") PERSIST: Story.ScrumTeam:"
+	    			+ "\n |  | id:          " + model.getScrumTeam().getId()
+	    			+ "\n |  | name:        " + model.getScrumTeam().getName()
+	    			+ "\n |  | members:     " + model.getScrumTeam().getMembers()
+	    			+ "\n |  | story count: " + model.getScrumTeam().getStoryCount()
+	    	);
+    	}
+	}
 }

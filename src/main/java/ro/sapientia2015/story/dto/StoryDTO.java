@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import ro.sapientia2015.scrumteam.model.ScrumTeam;
 import ro.sapientia2015.story.model.Story;
 
 /**

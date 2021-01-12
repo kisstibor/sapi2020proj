@@ -12,21 +12,31 @@
     <div id="story-id" class="hidden">${team.id}</div>
     <h1><spring:message code="label.scrumofscrums.view.page.title"/></h1>
     <div class="well page-content">
-        <h2 id="story-title">
-        	<c:out value="${team.name}"/>
-        </h2>
+    
+        <div>
+            <p>
+            	<b>Team name:</b>
+            	<c:out value="${team.name}"/>
+            </p>
+        </div>
         
         <div>
-            <p><c:out value="${team.members}"/></p>
+        	<p>
+        		<b>Members:</b>
+        		<c:out value="${team.members}"/>
+        	</p>
         </div>
 		
 		<div id="control-group-title" class="control-group">
            	<label for="story-description"><spring:message code="label.scrumteam.add.page.stories"/>:</label>
-            <c:forEach items="${team.stories}" var="item">
-				<label class="checkbox-inline btn btn-default" for="whichTitle-${item.title}">
-					<form:checkbox id="whichTitle-${item.title}" value="${item.title}" path="selectedStories"/>
-					${item.title}
+            <c:forEach items="${team.stories}" var="story">
+            	<c:out value="${story.id}.) ${story.title}"/>
+				<%--
+				<label class="checkbox-inline btn btn-default" for="whichTitle-${story.title}">
+					<form:checkbox id="whichTitle-${story.title}" value="${story.title}" path="selectedStories"/>
+					${story.title}
 			    </label>
+			     --%>
 			    <br>
 			</c:forEach>
 		</div>

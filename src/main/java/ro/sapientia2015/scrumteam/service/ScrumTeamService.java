@@ -9,6 +9,7 @@ import ro.sapientia2015.story.exception.NotFoundException;
 public interface ScrumTeamService {
 	
     public ScrumTeam add(ScrumTeamDTO added);
+    public ScrumTeam add(ScrumTeam addedModel);
 
     public ScrumTeam deleteById(Long id) throws NotFoundException;
 
@@ -17,4 +18,5 @@ public interface ScrumTeamService {
     public ScrumTeam findById(Long id) throws NotFoundException;
 
     public ScrumTeam update(ScrumTeamDTO updated) throws NotFoundException;
+    public ScrumTeam update(ScrumTeam updatedModel) throws NotFoundException;
 }

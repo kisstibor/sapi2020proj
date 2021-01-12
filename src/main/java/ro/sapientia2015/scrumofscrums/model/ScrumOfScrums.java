@@ -1,5 +1,7 @@
 package ro.sapientia2015.scrumofscrums.model;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -33,8 +35,10 @@ public class ScrumOfScrums {
     private DateTime startTime;
 	
 	@Column(name = "scrum_teams")
-	@OneToMany(mappedBy = "scrumOfScrums", fetch = FetchType.LAZY) 
+	//@OneToMany(mappedBy = "scrumOfScrums", fetch = FetchType.LAZY) 
 	//@OneToMany(mappedBy = "scrumOfScrums", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "scrumOfScrums")
+	@LazyCollection(LazyCollectionOption.FALSE)
     private List<ScrumTeam> scrumTeams;
 	
 	@Version

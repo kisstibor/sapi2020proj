@@ -26,19 +26,32 @@ public class RepositoryScrumTeamService implements ScrumTeamService {
     public ScrumTeam add(ScrumTeamDTO added) {
     	//List<String> members = Arrays.asList(added.getMembers().trim().replace(" ", "").split(","));
 		//List<String> selectedStoriesTitle =  added.getSelectedStories();
-			
+		
     	ScrumTeam model = ScrumTeam.getBuilder(added.getName())
+    			.members(added.getMembers())
     			.stories(added.getStories())
     			.build();
 
-    	System.out.println(">>>>>> PERSIST: ScrumTeam:"
-    			+ "\n | id:          " + model.getId()
-    			+ "\n | name:        " + model.getName()
-    			+ "\n | members:     " + model.getMembers()
-    			+ "\n | story count: " + model.getStoryCount()
-    			+ "\n | stories:     " + model.getStories()
-    	);
-        return repository.save(model);
+    	log("before", model);
+    	
+    	ScrumTeam ret = repository.save(model);
+    	
+    	log("after", ret);
+    	
+        return ret;
+    }
+	
+	@Transactional
+    @Override
+    public ScrumTeam add(ScrumTeam addedModel) {
+
+		log("before", addedModel);
+    	
+    	ScrumTeam ret = repository.save(addedModel);
+    	
+    	log("before", ret);
+    	
+        return ret;
     }
 
 
@@ -72,6 +85,34 @@ public class RepositoryScrumTeamService implements ScrumTeamService {
         model.update(updated.getName(), updated.getMembers(), updated.getStories());
 
         return model;
+	}
+	
+	@Override
+	public ScrumTeam update(ScrumTeam updatedModel) throws NotFoundException {
+		updatedModel.update(updatedModel.getName(), updatedModel.getMembers(), updatedModel.getStories());
+
+        return updatedModel;
+	}
+	
+	private void log(String smg, ScrumTeam model) {
+		System.out.println(">>>>>> ("+smg+") PERSIST: ScrumTeam:"
+    			+ "\n | id:          " + model.getId()
+    			+ "\n | name:        " + model.getName()
+    			+ "\n | members:     " + model.getMembers()
+    			+ "\n | story count: " + model.getStoryCount()
+    			+ "\n | stories:     " + (model.getStories() != null?"null":"")
+    	);
+		if (model.getStories() != null) {
+	    	for (Story s : model.getStories()) {
+	    		System.out.println(
+	    		    " |  |_______________"
+	    		+ "\n |  | id: " + s.getId() 
+	    		+ "\n |  | title:       " + s.getTitle() 
+	    		+ "\n |  | description: " + s.getDescription() 
+	    		+ "\n |  | scrumTeam:   " + s.getScrumTeam()
+	    		);
+	    	}
+		}
 	}
 	
 }

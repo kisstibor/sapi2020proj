@@ -23,6 +23,17 @@ public class ScrumTeamDTO {
 	private List<String> selectedStories;
 	
 	
+	public ScrumTeamDTO() {
+		
+	}
+	
+	public void setFrom(ScrumTeam from) {
+		this.id = from.getId();
+		this.name = from.getName();
+		this.members = from.getMembers();
+		this.stories = from.getStories();
+	}
+	
 	public Long getId() {
 		return id;
 	}

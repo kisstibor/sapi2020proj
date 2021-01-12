@@ -5,7 +5,10 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import org.joda.time.DateTime;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import ro.sapientia2015.scrumofscrums.model.ScrumOfScrums;
 import ro.sapientia2015.story.model.Story;
@@ -31,16 +34,22 @@ public class ScrumTeam {
     //	joinColumns={@JoinColumn(name="id1")},
     //	inverseJoinColumns=@JoinColumn(name="id2"))
 	@Column(name = "stories")
-	@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.LAZY)
+	//@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.LAZY)
 	//@OneToMany(mappedBy = "scrumTeam", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "scrumTeam")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Story> stories;
 	
 	private String storiesSeparated;
 	
 	private Integer storyCount;
 	
-	//@ManyToOne(cascade = CascadeType.PERSIST)
-	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="SCRUM_OF_SCRUMS_ID")
+	@ManyToOne()
+//    @ManyToOne(cascade = javax.persistence.CascadeType.PERSIST)
+	//@ManyToOne(cascade = CascadeType.ALL)
+	//@ManyToOne(cascade = CascadeType.REMOVE)
+//	@Cascade(CascadeType.SAVE_UPDATE)
 	private ScrumOfScrums scrumOfScrums;
 	
 	@Version
@@ -58,10 +67,12 @@ public class ScrumTeam {
 	
 	public static List<Story> filterStoriesByTitle(List<Story> stories, List<String> titles) {
 		List<Story> ret = new ArrayList<Story>();
-		for (String t : titles) {
-			Story found = getStoryByTitle(stories, t);
-			if (found != null) {
-				ret.add(found);
+		if (titles != null) {
+			for (String t : titles) {
+				Story found = getStoryByTitle(stories, t);
+				if (found != null) {
+					ret.add(found);
+				}
 			}
 		}
 		return ret;
@@ -103,15 +114,21 @@ public class ScrumTeam {
 	public ScrumOfScrums getScrumOfScrums() {
 		return scrumOfScrums;
 	}
+	
+	public void addStory(Story story) {
+		stories.add(story);
+	}
 
 	private void updateStoriesCSV() {
 		String titles = "";
-		int i = 0;
-		for(Story s : stories) {
-			titles += s.getTitle();
-			i++;
-			if (i != stories.size()) {
-				titles += ", ";
+		if (stories != null) {
+			int i = 0;
+			for(Story s : stories) {
+				titles += s.getTitle();
+				i++;
+				if (i != stories.size()) {
+					titles += ", ";
+				}
 			}
 		}
 		storiesSeparated = titles;
@@ -140,7 +157,9 @@ public class ScrumTeam {
         
         public Builder stories(List<Story> stories) {
             built.stories = stories;
-            built.storyCount = stories.size();
+            if (stories !=null) {
+            	built.storyCount = stories.size();
+            }
             built.updateStoriesCSV();
             return this;
         }

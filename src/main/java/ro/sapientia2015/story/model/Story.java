@@ -3,6 +3,8 @@ package ro.sapientia2015.story.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import ro.sapientia2015.scrumteam.model.ScrumTeam;
 
@@ -39,8 +41,12 @@ public class Story {
     @Column(name = "progress")
     private Integer progress;
     
-    //@ManyToOne(cascade = CascadeType.PERSIST)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="SCRUM_TEAM_ID")
+    @ManyToOne()
+//    @ManyToOne(cascade = javax.persistence.CascadeType.PERSIST)
+    //@ManyToOne(cascade = CascadeType.REMOVE)
+    //@ManyToOne(cascade = CascadeType.ALL)
+//    @Cascade(CascadeType.SAVE_UPDATE)
     private ScrumTeam scrumTeam;
 
     @Version
@@ -85,6 +91,10 @@ public class Story {
     public ScrumTeam getScrumTeam() {
     	return scrumTeam;
     }
+    
+    public void setScrumTeam(ScrumTeam scrumTeam) {
+    	this.scrumTeam = scrumTeam;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -103,6 +113,13 @@ public class Story {
         this.title = title;
     }
 
+    public void update(String title, String description, Integer progress, ScrumTeam scrumTeam) {
+    	this.title = title;
+    	this.description = description;
+    	this.progress = progress;
+    	this.scrumTeam = scrumTeam;
+    }
+    
     public static class Builder {
 
         private Story built;

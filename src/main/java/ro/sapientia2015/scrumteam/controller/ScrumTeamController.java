@@ -30,6 +30,8 @@ import ro.sapientia2015.story.service.StoryService;
 @SessionAttributes("scrumteam")
 public class ScrumTeamController {
 
+	private final boolean INSERT_DUMMY_DATA = true;
+	
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.scrumteam.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.scrumteam.updated";
     protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.scrumteam.deleted";
@@ -79,27 +81,85 @@ public class ScrumTeamController {
         
         // Log inputs
         System.out.println(">>> SELECTED STORIES: ");
-        for(String title : dto.getSelectedStories()) {
-        	System.out.println("object>>> " + title);
+        if (dto.getSelectedStories() != null) {
+	        for(String title : dto.getSelectedStories()) {
+	        	System.out.println("object>>> " + title);
+	        }
         }
         
         // put selected stories into model
-        List<Story> storyObjs = ScrumTeam.filterStoriesByTitle(
+        List<Story> selectedStoryObjects = ScrumTeam.filterStoriesByTitle(
         		storyService.findAll(), 
         		dto.getSelectedStories()
         );
         
-        // Log selected objects
+    //    dto.setStories(selectedStoryObjects);
+        ScrumTeam scrumTeam = ScrumTeam.getBuilder(dto.getName())
+    			.members(dto.getMembers())
+    			.stories(dto.getStories())
+    			.build();
+        
+        // Save ScrumTeam
+        ScrumTeam added = service.add(scrumTeam);// TO HERE
+        
+        
+        // Connect selected Stories to ScrumTeams
         System.out.println(">>> SELECTED STORIES: ");
-        for(Story s : storyObjs) {
-        	System.out.println("input>>> id: " + s.getId() + " -> title: " + s.getTitle());
+        for(Story s : selectedStoryObjects) {
+        	System.out.println("input>>> Connect Story (id: " + s.getId() + " -> title: " + s.getTitle() +") --to--> Scrum-Team");
+        	s.setScrumTeam(scrumTeam);	//*// uncomment
+        	
+        	try {
+				storyService.update(s);
+			} catch (NotFoundException e) {
+				System.out.println(">>> ERROR can't update Stories after persisting ScrumTeams");
+				e.printStackTrace();
+			}
         }
         
-        dto.setStories(storyObjs);
+        // Save ScrumTeam
+        //ScrumTeam added = service.add(scrumTeam);// TO HERE
+        ScrumTeam added2 = service.add(added); // FROM HERE
+        
+        // TESZT (NOT)
+        for (Story s : storyService.findAll()) {
+        	System.out.println("input>>> id: " + s.getId() + " -> title: " + s.getTitle() 
+    		+ ",   TESZT: TEAM: " + (s.getScrumTeam()==null?"null":s.getScrumTeam().getId() + "). " + s.getScrumTeam().getName()
+    		));
+        	//save s
+        }
+        
+        // TESZT
+        //for (Story s : storyService.findAll()) {
+        //	System.out.println("input>>> id: " + s.getId() + " -> title: " + s.getTitle() 
+        //		+ ",   TESZT: TEAM: " + (s.getScrumTeam()==null?"null":s.getId() + "). " + s.getTitle()
+        //		));
+        //}
+        
+        /*// Update ScrumTeam
+        try {
+			ScrumTeam updatedScrumTeam = service.update(scrumTeam);
+		} catch (NotFoundException e) {
+			System.out.println(">>> ERROR >>> Can't update ScrumTeam after updated Stories");
+			e.printStackTrace();
+		}*/
+        
 
-        ScrumTeam added = service.add(dto);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getName());
-        attributes.addAttribute(PARAMETER_ID, added.getId());
+        
+        /*
+        // Persist (Update) Story objects with scrum-team
+        for (Story s : selectedStoryObjects) {
+        	s.setScrumTeam(added);
+        	try {
+				storyService.update(s);
+			} catch (NotFoundException e) {
+				System.out.println(">>> ERROR can't update Stories after persisting ScrumTeams");
+				e.printStackTrace();
+			}
+        }
+        */
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added2.getName());
+        attributes.addAttribute(PARAMETER_ID, added2.getId());
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
     
@@ -109,8 +169,28 @@ public class ScrumTeamController {
     	System.out.println(">>> REQUEST: "+REQUEST_MAPPING_VIEW+" id: "+id+"  GET");
     	System.out.println(">>> REQUEST: findById("+id+")");
         ScrumTeam found = service.findById(id);
-        System.out.println(">>> REQUEST:  found --> team.name " + (found==null?"null":found.getName()));
-        model.addAttribute(MODEL_ATTRIBUTE, found);
+        
+        // Find stories relating to this ScrumTeam
+        System.out.println(">>> Search stories for team.name: " + found.getName());
+        for (Story story : storyService.findAll()) {
+        	System.out.println(">>>   | story.team: " + (story.getScrumTeam()==null?"null":story.getScrumTeam()) );
+        	if (story.getScrumTeam() != null) {
+	        	if (story.getScrumTeam().getId() == found.getId()) {
+	        		found.addStory(story);
+	        	}
+        	} else {
+        		System.out.println(">>> WARNING >>> No related Stories found for ScrumTeam: " + found.getName());
+        	}
+        }
+
+        System.out.println(">>> found --> team.name: " + (found==null?"null":found.getName()));
+        for(Story s : found.getStories()) {
+        	System.out.println(">>> | story:  id: " + s.getId() + ", title: " + s.getTitle());
+        }
+        
+        ScrumTeamDTO foundDTO = new ScrumTeamDTO();
+        foundDTO.setFrom(found);
+        model.addAttribute(MODEL_ATTRIBUTE, foundDTO);
         return VIEW_VIEW;
     }
     
@@ -120,29 +200,32 @@ public class ScrumTeamController {
     	System.out.println(">>> REQUEST: /  GET");
         List<ScrumTeam> models = service.findAll();
         
-        // ADD DUMMY DATA
-        if (models.size() == 0) {
-        	List<Story> stories = storyService.findAll();
-        	if (stories.size() > 2) {
-        		ScrumTeamDTO s1 = new ScrumTeamDTO();
-        		ScrumTeamDTO s2 = new ScrumTeamDTO();
-        		List<Story> sl1 = new ArrayList<Story>();
-        		List<Story> sl2 = new ArrayList<Story>();
-        		sl1.add(stories.get(0));
-        		sl1.add(stories.get(1));
-        		s1.setName("Alpha");
-        		s1.setMembers("Albert, Adam, alkesz Alamer");
-        		s1.setStories(sl1);
-        		sl2.add(stories.get(2));
-        		s2.setName("Beta");
-        		s2.setMembers("Bela, Bob, Bill Bow");
-        		s2.setStories(sl2);
-        		service.add(s1);
-            	service.add(s2);
-            	models = service.findAll();
-        	}
+        if (INSERT_DUMMY_DATA) {
+	        // ADD DUMMY DATA
+	        if (models.size() == 0) {
+	        	List<Story> stories = storyService.findAll();
+	        	if (stories.size() > 2) {
+	        		ScrumTeamDTO s1 = new ScrumTeamDTO();
+	        		ScrumTeamDTO s2 = new ScrumTeamDTO();
+	        		List<Story> sl1 = new ArrayList<Story>();
+	        		List<Story> sl2 = new ArrayList<Story>();
+	        		sl1.add(stories.get(0));
+	        		sl1.add(stories.get(1));
+	        		s1.setName("Alpha");
+	        		s1.setMembers("Albert, Adam, alkesz Alamer");
+	        		s1.setStories(sl1);
+	        		sl2.add(stories.get(2));
+	        		s2.setName("Beta");
+	        		s2.setMembers("Bela, Bob, Bill Bow");
+	        		s2.setStories(sl2);
+	        		service.add(s1);
+	            	service.add(s2);
+	            	models = service.findAll();
+	        	}
+	        }
         }
         //
+        
         
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
