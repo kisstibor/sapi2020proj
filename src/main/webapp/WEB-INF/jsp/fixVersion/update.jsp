@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="action-buttons">
-                <a href="/fixVersion/${fixVersion.id}" class="btn"><spring:message code="label.cancel"/></a>
+                <a href="/fixVersion/${fixVersion.id}" id="cancel" class="btn"><spring:message code="label.cancel"/></a>
                 <button id="update-fixVersion-button" type="submit" class="btn btn-primary"><spring:message
                         code="label.update.fixVersion.button"/></button>
             </div>

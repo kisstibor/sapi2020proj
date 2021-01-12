@@ -18,7 +18,7 @@
             </c:when>
             <c:otherwise>
                 <c:forEach items="${ fixVersions}" var="fixVersion">
-                    <div class="well well-small">
+                    <div class="well well-small" name="versions">
                         <a href="/fixVersion/${fixVersion.id}"><c:out value="${fixVersion.name}"/></a>
                     </div>
                 </c:forEach>
