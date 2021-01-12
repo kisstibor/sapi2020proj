@@ -5,6 +5,9 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +19,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.web.server.MockMvc;
+import org.springframework.test.web.server.MvcResult;
 import org.springframework.test.web.server.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -26,9 +30,11 @@ import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.StoryStatus;
 
 import javax.annotation.Resource;
 
+import static junit.framework.Assert.assertNull;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
@@ -36,6 +42,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.flash;
@@ -43,6 +50,9 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.f
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;
+
+import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * This test uses the annotation based application context configuration.
@@ -82,7 +92,8 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/add.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute("dueDate", nullValue()));
     }
 
     @Test
@@ -91,6 +102,7 @@ public class ITStoryControllerTest {
         mockMvc.perform(post("/story/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
+                .param("dueDate", "2020-10-10")
         )
                 .andExpect(status().isOk())
                 .andExpect(view().name(StoryController.VIEW_ADD))
@@ -98,7 +110,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "title"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute("dueDate", nullValue()));
     }
 
     @Test
@@ -112,6 +125,8 @@ public class ITStoryControllerTest {
                 .param(FORM_FIELD_DESCRIPTION, description)
                 .param(FORM_FIELD_TITLE, title)
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
+                .param("dueDate", "2020-10-10")
+                
         )
                 .andExpect(status().isOk())
                 .andExpect(view().name(StoryController.VIEW_ADD))
@@ -120,7 +135,29 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "description"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))))
+                .andExpect(model().attribute("dueDate",nullValue()));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void addWhenThereisNoDueDate() throws Exception {
+        mockMvc.perform(post("/story/add")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(FORM_FIELD_DESCRIPTION, "description")
+                .param(FORM_FIELD_TITLE, "title")
+                .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
+                .param("dueDate", "")
+                
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(StoryController.VIEW_ADD))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/story/add.jsp"))
+                .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "dueDate"))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("description"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("title"))))
+                .andExpect(model().attribute("dueDate",nullValue()));
     }
 
     @Test
@@ -132,6 +169,7 @@ public class ITStoryControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_TITLE, "title")
+                .param("dueDate", "2020-10-10")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -152,14 +190,20 @@ public class ITStoryControllerTest {
                         allOf(
                                 hasProperty("id", is(1L)),
                                 hasProperty("description", is("Lorem ipsum")),
-                                hasProperty("title", is("Foo"))
+                                hasProperty("title", is("Foo")),
+                                hasProperty("status", is(StoryStatus.TODO)),
+                                hasProperty("dueDate", is("21 October 2012, 11:13")),
+                                hasProperty("comments", hasSize(2))
                         )
                 )))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasItem(
                         allOf(
                                 hasProperty("id", is(2L)),
                                 hasProperty("description", is("Lorem ipsum")),
-                                hasProperty("title", is("Bar"))
+                                hasProperty("title", is("Bar")),
+                                hasProperty("status", is(StoryStatus.TODO)),
+                                hasProperty("dueDate", is("21 October 2012, 11:13")),
+                                hasProperty("comments", hasSize(0))
                         )
                 )));
     }
@@ -167,13 +211,22 @@ public class ITStoryControllerTest {
     @Test
     @ExpectedDatabase("storyData.xml")
     public void findById() throws Exception {
-        mockMvc.perform(get("/story/{id}", 1L))
+    	MvcResult result =mockMvc.perform(get("/story/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(view().name(StoryController.VIEW_VIEW))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/view.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("Lorem ipsum"))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("status", is(StoryStatus.TODO))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("dueDate", is("21 October 2012, 11:13"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("comments", hasSize(2))))
+                .andReturn();
+        //ObjectMapper mapper = new ObjectMapper(); hasSize(3) hasProperty("status", is("To Do")),
+
+        //Story story = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<Story>() {});
+        
+        //assertEquals(story.getComments().size(),1);
     }
 
     @Test
@@ -213,7 +266,8 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/update.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("Lorem ipsum"))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("status", is(StoryStatus.TODO))));
     }
 
     @Test
@@ -239,7 +293,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "title"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("status", nullValue())));
     }
 
     @Test
@@ -253,6 +308,7 @@ public class ITStoryControllerTest {
                 .param(FORM_FIELD_DESCRIPTION, description)
                 .param(FORM_FIELD_ID, "1")
                 .param(FORM_FIELD_TITLE, title)
+                .param("status", "TODO")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -262,7 +318,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "description"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("status", is(StoryStatus.TODO))));
     }
 
     @Test
@@ -275,6 +332,7 @@ public class ITStoryControllerTest {
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_ID, "1")
                 .param(FORM_FIELD_TITLE, "title")
+                .param("status", "INPROGRESS")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -296,6 +354,16 @@ public class ITStoryControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(view().name(ErrorController.VIEW_NOT_FOUND))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/error/404.jsp"));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData-delete-expected2.xml")
+    public void deleteByIdWithComments() throws Exception {
+        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
+        mockMvc.perform(get("/story/delete/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(view().name(expectedRedirectViewPath))
+                .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("Story entry: Foo was deleted.")));
     }
 }
 

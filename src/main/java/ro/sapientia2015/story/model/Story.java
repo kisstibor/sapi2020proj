@@ -3,6 +3,13 @@ package ro.sapientia2015.story.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -30,12 +37,41 @@ public class Story {
     @Column(name = "modification_time", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modificationTime;
+    
+    @Column(name = "status_modification_time", nullable = false)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime statusModificationTime;
+    
+    @Column(name = "due_date", nullable = false)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime dueDate;
+    
+    @Column(name = "todo_time", nullable = false)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDurationAsString")
+    private Duration todoStatusTime;
+    
+    @Column(name = "progress_time", nullable = false)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDurationAsString")
+    private Duration progressStatusTime;
+    
+    @Column(name = "testing_time", nullable = false)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDurationAsString")
+    private Duration testingStatusTime;
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StoryStatus status;
 
     @Version
     private long version;
+    
+    
+    @Column(name = "comment")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "story", cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
     public Story() {
 
@@ -48,6 +84,10 @@ public class Story {
     public Long getId() {
         return id;
     }
+    /*
+    public Sprint getSprint() {
+        return sprint;
+    }*/
 
     public DateTime getCreationTime() {
         return creationTime;
@@ -60,6 +100,75 @@ public class Story {
     public DateTime getModificationTime() {
         return modificationTime;
     }
+    
+    public String getStatusModificationTime() {
+        return statusModificationTime.toString(DateTimeFormat.forPattern("dd MMMM yyyy, HH:mm"));
+    }
+    
+    public String getDueDate() {
+        return dueDate.minusHours(3).toString(DateTimeFormat.forPattern("dd MMMM yyyy, HH:mm"));
+    }
+    
+    public DateTime getDueDateAsDateTime() {
+        return dueDate;
+    }
+    
+   /* public void setDueDate(String date) {
+    	this.dueDate = DateTime.parse(date, DateTimeFormat.forPattern("yyyy-MM-dd"));
+    }*/
+    
+    /*
+    public void setDueDate(DateTime date) {
+    	this.dueDate = date;
+    }*/
+    
+    public String getTodoStatusTime() {
+    	PeriodFormatter formatter = new PeriodFormatterBuilder()
+    		     .appendDays()
+    		     .appendSuffix("d")
+    		     .appendHours()
+    		     .appendSuffix("h")
+    		     .appendMinutes()
+    		     .appendSuffix("m")
+    		     .appendSeconds()
+    		     .appendSuffix("s")
+    		     .toFormatter();
+    	if(todoStatusTime == null)
+    		return null;
+        return formatter.print(todoStatusTime.toPeriod());
+    }
+    
+    public String getProgressStatusTime() {
+    	PeriodFormatter formatter = new PeriodFormatterBuilder()
+    		     .appendDays()
+    		     .appendSuffix("d")
+    		     .appendHours()
+    		     .appendSuffix("h")
+    		     .appendMinutes()
+    		     .appendSuffix("m")
+    		     .appendSeconds()
+    		     .appendSuffix("s")
+    		     .toFormatter();
+    	if(progressStatusTime == null)
+    		return null;
+        return formatter.print(progressStatusTime.toPeriod());
+    }
+    
+    public String getTestingStatusTime() {
+    	PeriodFormatter formatter = new PeriodFormatterBuilder()
+    		     .appendDays()
+    		     .appendSuffix("d")
+    		     .appendHours()
+    		     .appendSuffix("h")
+    		     .appendMinutes()
+    		     .appendSuffix("m")
+    		     .appendSeconds()
+    		     .appendSuffix("s")
+    		     .toFormatter();
+    	if(testingStatusTime == null)
+    		return null;
+        return formatter.print(testingStatusTime.toPeriod());
+    }
 
     public String getTitle() {
         return title;
@@ -67,6 +176,46 @@ public class Story {
 
     public long getVersion() {
         return version;
+    }
+    
+    public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+	
+	public boolean addComment(Comment comment) {
+		return this.comments.add(comment);
+	}
+	
+	public void removeComment(Comment comment) {
+		int index = comments.indexOf(comment);
+		comments.remove(index);
+	}
+	
+	public StoryStatus getStatus() {
+        return status;
+    }
+	
+	public void setStatus(StoryStatus newStatus) {////////////////////
+		Duration diff = new Duration(statusModificationTime,DateTime.now());
+		switch(status) {
+			case TODO:
+				todoStatusTime = todoStatusTime.withDurationAdded(diff, 1);
+				break;
+			case INPROGRESS:
+				progressStatusTime = progressStatusTime.withDurationAdded(diff, 1);
+				break;
+			case UNDERTESTING:
+				testingStatusTime = testingStatusTime.withDurationAdded(diff, 1);
+				break;
+			case DONE:
+				return;
+		}
+		statusModificationTime = DateTime.now();
+        status = newStatus;
     }
 
     @PrePersist
@@ -93,6 +242,12 @@ public class Story {
         public Builder(String title) {
             built = new Story();
             built.title = title;
+            built.comments = new ArrayList<Comment>();
+            built.status = StoryStatus.TODO;
+            built.statusModificationTime = DateTime.now();
+            built.todoStatusTime = Duration.ZERO;
+            built.progressStatusTime = Duration.ZERO;
+            built.testingStatusTime = Duration.ZERO;
         }
 
         public Story build() {
@@ -101,6 +256,11 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder dueDate(DateTime date) {
+            built.dueDate = date;
             return this;
         }
     }

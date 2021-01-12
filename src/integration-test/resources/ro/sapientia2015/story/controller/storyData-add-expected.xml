@@ -1,6 +1,30 @@
 <dataset>
-    <story id="1" description="Lorem ipsum" title="Foo" version="0"/>
-    <story id="2" description="Lorem ipsum" title="Bar" version="0"/>
-    <story id="3" description="description" title="title" version="0"/>
+    <story id="1"
+      description="Lorem ipsum"
+       todo_time="PT0S"
+       progress_time="PT0S"
+       testing_time="PT0S"
+        title="Foo"
+        status="TODO"
+         version="0"
+         />
+    <story id="2"
+      description="Lorem ipsum"
+       todo_time="PT0S"
+       progress_time="PT0S"
+       testing_time="PT0S"
+        title="Bar"
+        status="TODO"
+         version="0"
+         />
+    <story id="3"
+      description="description"
+       todo_time="PT0S"
+       progress_time="PT0S"
+       testing_time="PT0S"
+        title="title"
+        status="TODO"
+         version="0"
+         />
 </dataset>
 

@@ -1,5 +1,5 @@
 <dataset>
-    <story id="1"
+    <story id="2"
      creation_time="2012-10-21 11:13:28"
       description="Lorem ipsum"
        modification_time="2012-10-21 11:13:28"
@@ -8,24 +8,11 @@
        todo_time="PT0S"
        progress_time="PT0S"
        testing_time="PT0S"
-        title="Foo"
+        title="Bar"
         status="TODO"
          version="0"
-         />
-    <comment id="1"
-	creation_time="2012-10-21 11:13:28"
-	 message="message test"
-	  modification_time="2012-10-21 11:13:28"
-	  story="1"
-	    version="0"
-	    /> 
-	    <comment id="2"
-	creation_time="2012-10-21 11:13:28"
-	 message="message test 2"
-	  modification_time="2012-10-21 11:13:28"
-	  story="1"
-	    version="0"
-	    />  
+         />  
+         <comment/>
     <sprint id="1" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" modification_time="2012-10-21 11:13:28" title="Bar" version="0"/>
 	<sprint_stories />
 </dataset>

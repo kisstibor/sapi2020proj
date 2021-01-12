@@ -1,5 +1,10 @@
 package ro.sapientia2015.story.service;
 
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,9 +32,22 @@ public class RepositoryStoryServiceTest {
     private RepositoryStoryService service;
 
     private StoryRepository repositoryMock;
+    
+    private PeriodFormatter formatter;
 
     @Before
     public void setUp() {
+    	formatter = new PeriodFormatterBuilder()
+      		     .appendDays()
+      		     .appendSuffix("d")
+      		     .appendHours()
+      		     .appendSuffix("h")
+      		     .appendMinutes()
+      		     .appendSuffix("m")
+      		     .appendSeconds()
+      		     .appendSuffix("s")
+      		     .toFormatter();
+    	
         service = new RepositoryStoryService();
 
         repositoryMock = mock(StoryRepository.class);
@@ -38,7 +56,7 @@ public class RepositoryStoryServiceTest {
 
     @Test
     public void add() {
-        StoryDTO dto = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        StoryDTO dto = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE, StoryTestUtil.STATUS);
 
         service.add(dto);
 
@@ -51,11 +69,16 @@ public class RepositoryStoryServiceTest {
         assertNull(model.getId());
         assertEquals(dto.getDescription(), model.getDescription());
         assertEquals(dto.getTitle(), model.getTitle());
+        assertEquals(dto.getStatus(), model.getStatus());
+        assertEquals(dto.getDueDate(), model.getDueDateAsDateTime());
+        assertEquals(formatter.print(Duration.ZERO.toPeriod()), model.getTodoStatusTime());
+        assertEquals(formatter.print(Duration.ZERO.toPeriod()), model.getProgressStatusTime());
+        assertEquals(formatter.print(Duration.ZERO.toPeriod()), model.getTestingStatusTime());
     }
 
     @Test
     public void deleteById() throws NotFoundException {
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE);
         when(repositoryMock.findOne(StoryTestUtil.ID)).thenReturn(model);
 
         Story actual = service.deleteById(StoryTestUtil.ID);
@@ -92,7 +115,7 @@ public class RepositoryStoryServiceTest {
 
     @Test
     public void findById() throws NotFoundException {
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE);
         when(repositoryMock.findOne(StoryTestUtil.ID)).thenReturn(model);
 
         Story actual = service.findById(StoryTestUtil.ID);
@@ -115,11 +138,15 @@ public class RepositoryStoryServiceTest {
 
     @Test
     public void update() throws NotFoundException {
-        StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED, StoryTestUtil.DUEDATE, StoryTestUtil.STATUS_UPDATED_1);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE);
+        DateTime creationTIme = DateTime.now();
         when(repositoryMock.findOne(dto.getId())).thenReturn(model);
-
+        
+        pause(100000);
+        
         Story actual = service.update(dto);
+        DateTime updateTime = DateTime.now();
 
         verify(repositoryMock, times(1)).findOne(dto.getId());
         verifyNoMoreInteractions(repositoryMock);
@@ -127,16 +154,27 @@ public class RepositoryStoryServiceTest {
         assertEquals(dto.getId(), actual.getId());
         assertEquals(dto.getDescription(), actual.getDescription());
         assertEquals(dto.getTitle(), actual.getTitle());
+        assertEquals(dto.getStatus(), actual.getStatus());
+        assertEquals(formatter.print(new Period(creationTIme,updateTime)), actual.getTodoStatusTime());
     }
 
     @Test(expected = NotFoundException.class)
     public void updateWhenIsNotFound() throws NotFoundException {
-        StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
+        StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED,StoryTestUtil.DUEDATE, StoryTestUtil.STATUS_UPDATED_1);
         when(repositoryMock.findOne(dto.getId())).thenReturn(null);
 
         service.update(dto);
 
         verify(repositoryMock, times(1)).findOne(dto.getId());
         verifyNoMoreInteractions(repositoryMock);
+    }
+    
+    private void pause(long timeInMillis) {
+        try {
+            Thread.currentThread().sleep(timeInMillis);
+        }
+        catch (InterruptedException e) {
+            //Do Nothing
+        }
     }
 }

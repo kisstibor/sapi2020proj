@@ -20,6 +20,12 @@
                     <form:errors id="error-title" path="title" cssClass="help-inline"/>
                 </div>
             </div>
+            <form:select path="status" id="StatusEnum">
+            	<form:options items="${StatusEnum}" itemLabel="displayName" />
+			    <!--   <c:forEach var="StatusEnumValue" items="${StatusEnum}" >
+			         <form:option value="${StatusEnumValue}">${StatusEnumValue}</form:option>
+			     </c:forEach> -->
+			</form:select>
             <div id="control-group-description" class="control-group">
                 <label for="story-description"><spring:message code="label.story.description"/>:</label>
 

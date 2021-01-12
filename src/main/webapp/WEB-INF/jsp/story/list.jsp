@@ -18,8 +18,21 @@
             </c:when>
             <c:otherwise>
                 <c:forEach items="${ stories}" var="story">
-                    <div class="well well-small">
-                        <a href="/story/${story.id}"><c:out value="${story.title}"/></a>
+                	<c:choose>
+			            <c:when test="${story.getDueDateAsDateTime().isBeforeNow()}">
+			                <div style="background-color: #ff000075; display:flow-root;" class="well well-small">
+			            </c:when>
+			            <c:otherwise>
+			                <div style="background-color: aquamarine; display:flow-root;" class="well well-small">
+			            </c:otherwise>
+			        </c:choose>
+                    	<div style="float: left;">
+                        <a  href="/story/${story.id}"><h4><c:out value="${story.title}"/></h4></a>
+                        <p><c:out value="${story.status.getDisplayName()}"/></p>
+                        </div><div style="float: right;">
+                        <p>Comments: <c:out value="${story.comments.size()}"/></p>
+                        <p><c:out value="${story.dueDate}"/></p>
+                        </div>
                     </div>
                 </c:forEach>
             </c:otherwise>
