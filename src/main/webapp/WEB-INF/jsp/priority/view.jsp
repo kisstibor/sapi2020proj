@@ -14,7 +14,7 @@
         <h2 id="priority-name"><c:out value="${priority.name}"/></h2>
         
         <div class="action-buttons">
-            <a href="/priority/update/${priority.id}" class="btn btn-primary"><spring:message code="Update"/></a>
+            <a id="action-update-button" href="/priority/update/${priority.id}" class="btn btn-primary"><spring:message code="Update"/></a>
             <a href="/priority/delete/${priority.id}" id="delete-priority-link" class="btn btn-primary"><spring:message code="Delete"/></a>
         </div>
     </div>

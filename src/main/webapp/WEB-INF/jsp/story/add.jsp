@@ -30,7 +30,7 @@
             </div>
              <div id="control-group-priority" class="control-group">
                 <label for="story-priority"><spring:message code="Priority"/>:</label>
-                <form:select name='priorities' path="priorityId">  
+                <form:select id="story-priority" name='priorities' path="priorityId">  
 				       <form:options items="${priorities}" itemLabel="name" itemValue="id"/>   
 				</form:select>
             </div>

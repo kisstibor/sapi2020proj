@@ -19,7 +19,7 @@
             <c:otherwise>
                 <c:forEach items="${priorities}" var="priority">
                     <div class="well well-small">
-                        <a href="/priority/${priority.id}"><c:out value="${priority.name}"/></a>
+                        <a id="priority-${priority.id}"  href="/priority/${priority.id}"><c:out value="${priority.name}"/></a>
                     </div>
                 </c:forEach>
             </c:otherwise>
