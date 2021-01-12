@@ -4,13 +4,14 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 <head>
-    <title></title>
+    <title><spring:message code="label.story.add.page.title"/></title>
     <script type="text/javascript" src="/static/js/story.form.js"></script>
 </head>
 <body>
-    <h1><spring:message code="label.story.add.page.title"/></h1>
+    <h1 id="page-title"><spring:message code="label.story.add.page.title"/></h1>
     <div class="well page-content">
         <form:form action="/story/add" commandName="story" method="POST" enctype="utf8">
+
             <div id="control-group-title" class="control-group">
                 <label for="story-title"><spring:message code="label.story.title"/>:</label>
 

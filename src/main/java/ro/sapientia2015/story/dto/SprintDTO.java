@@ -20,13 +20,13 @@ public class SprintDTO {
     private String description;
 
     private Sprint.Builder builder = new Sprint.Builder();
-    
+
     @NotEmpty
     @Length(max = 20)
     private String title;
 
     private List<Story> stories;
-    
+
     public SprintDTO() {
 
     }
@@ -55,7 +55,7 @@ public class SprintDTO {
         this.title = title;
     }
 
-    
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

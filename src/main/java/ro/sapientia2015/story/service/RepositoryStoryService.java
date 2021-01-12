@@ -1,5 +1,6 @@
 package ro.sapientia2015.story.service;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +54,8 @@ public class RepositoryStoryService implements StoryService {
         if (found == null) {
             throw new NotFoundException("No entry found with id: " + id);
         }
+
+        Hibernate.initialize(found.getComments());
 
         return found;
     }

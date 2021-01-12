@@ -4,10 +4,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 <head>
-    <title></title>
+    <title><spring:message code="label.story.list.page.title"/></title>
 </head>
 <body>
-    <h1><spring:message code="label.story.list.page.title"/></h1>
+    <h1 id="page-title"><spring:message code="label.story.list.page.title"/></h1>
     <div>
         <a href="/story/add" id="add-button" class="btn btn-primary"><spring:message code="label.add.story.link"/></a>
     </div>
@@ -19,7 +19,7 @@
             <c:otherwise>
                 <c:forEach items="${ stories}" var="story">
                     <div class="well well-small">
-                        <a href="/story/${story.id}"><c:out value="${story.title}"/></a>
+                        <a id="story-${story.id}" href="/story/${story.id}"><c:out value="${story.title}"/></a>
                     </div>
                 </c:forEach>
             </c:otherwise>
