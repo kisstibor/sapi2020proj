@@ -17,9 +17,16 @@
                 <p><spring:message code="label.story.list.empty"/></p>
             </c:when>
             <c:otherwise>
+            	<div class="well well-small">
+                        <spring:message code="label.list.story.table.title"/>
+                        <spring:message code="label.list.story.table.time"/>
+                    </div>
                 <c:forEach items="${ stories}" var="story">
                     <div class="well well-small">
-                        <a href="/story/${story.id}"><c:out value="${story.title}"/></a>
+                        <a href="/story/${story.id}">
+                        	<p id="list-story-element-title"><c:out value="${story.title}"/></p>
+                        	<p id="list-story-element-time"><c:out value="${story.time} hour(s)"/></p>
+                        </a>
                     </div>
                 </c:forEach>
             </c:otherwise>

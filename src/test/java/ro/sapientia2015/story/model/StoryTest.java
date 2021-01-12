@@ -12,6 +12,7 @@ public class StoryTest {
 
     private String TITLE = "title";
     private String DESCRIPTION = "description";
+    private String TIME = "time";
 
     @Test
     public void buildWithMandatoryInformation() {
@@ -21,6 +22,7 @@ public class StoryTest {
         assertNull(built.getCreationTime());
         assertNull(built.getDescription());
         assertNull(built.getModificationTime());
+        assertNull(built.getTime());
         assertEquals(TITLE, built.getTitle());
         assertEquals(0L, built.getVersion());
     }
@@ -29,6 +31,7 @@ public class StoryTest {
     public void buildWithAllInformation() {
         Story built = Story.getBuilder(TITLE)
                 .description(DESCRIPTION)
+                .time(TIME)
                 .build();
 
         assertNull(built.getId());
@@ -36,6 +39,7 @@ public class StoryTest {
         assertEquals(DESCRIPTION, built.getDescription());
         assertNull(built.getModificationTime());
         assertEquals(TITLE, built.getTitle());
+        assertEquals(TIME, built.getTime());
         assertEquals(0L, built.getVersion());
     }
 
@@ -49,6 +53,7 @@ public class StoryTest {
         assertNull(story.getDescription());
         assertNotNull(story.getModificationTime());
         assertNull(story.getTitle());
+        assertNull(story.getTime());
         assertEquals(0L, story.getVersion());
         assertEquals(story.getCreationTime(), story.getModificationTime());
     }
@@ -67,6 +72,7 @@ public class StoryTest {
         assertNull(story.getDescription());
         assertNotNull(story.getModificationTime());
         assertNull(story.getTitle());
+        assertNull(story.getTime());
         assertEquals(0L, story.getVersion());
         assertTrue(story.getModificationTime().isAfter(story.getCreationTime()));
     }
