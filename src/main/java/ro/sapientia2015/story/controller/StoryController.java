@@ -26,7 +26,7 @@ import java.util.Locale;
 @SessionAttributes("story")
 public class StoryController {
 
-	private final boolean INSERT_DUMMY_DATA = true;
+	private final boolean INSERT_DUMMY_DATA = false;
 	
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.story.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";

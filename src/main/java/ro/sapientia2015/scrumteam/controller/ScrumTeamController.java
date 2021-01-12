@@ -30,7 +30,7 @@ import ro.sapientia2015.story.service.StoryService;
 @SessionAttributes("scrumteam")
 public class ScrumTeamController {
 
-	private final boolean INSERT_DUMMY_DATA = true;
+	private final boolean INSERT_DUMMY_DATA = false;
 	
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.scrumteam.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.scrumteam.updated";
@@ -52,12 +52,11 @@ public class ScrumTeamController {
     protected static final String VIEW_UPDATE = "scrumteam/update";
     protected static final String VIEW_VIEW = "scrumteam/view";
     
-
-    @Resource
-    private StoryService storyService;
-    
     @Resource
     private ScrumTeamService service;
+    
+    @Resource
+    private StoryService storyService;
     
     @Resource
     private MessageSource messageSource;
@@ -66,7 +65,19 @@ public class ScrumTeamController {
     public String showAddTeamForm(Model model) {
     	System.out.println(">>> REQUEST: /scrumteam/add  GET");
         ScrumTeamDTO formObject = new ScrumTeamDTO();
-        formObject.setStories(storyService.findAll());
+        
+        List<Story> allStories = storyService.findAll();
+        List<Story> unasignedStories = new ArrayList<Story>();
+        
+        if (allStories != null) {
+	        for (Story story : allStories) {
+	        	if (story.getScrumTeam() == null) {
+	        		unasignedStories.add(story);
+	        	}
+	        }
+        }
+        
+        formObject.setStories(unasignedStories);
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_ADD;
@@ -100,7 +111,7 @@ public class ScrumTeamController {
     			.build();
         
         // Save ScrumTeam
-        ScrumTeam added = service.add(scrumTeam);// TO HERE
+        service.add(scrumTeam);// TO HERE
         
         
         // Connect selected Stories to ScrumTeams
@@ -139,98 +150,6 @@ public class ScrumTeamController {
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
     
-    
-//    @RequestMapping(value = "/scrumteam/add", method = RequestMethod.POST)
-//    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) ScrumTeamDTO dto, BindingResult result, RedirectAttributes attributes) {
-//    	System.out.println(">>> REQUEST: /scrumteam/add  POST: " + dto.getName() + " " + dto.getMembers());
-//        if (result.hasErrors()) {
-//            return VIEW_ADD;
-//        }
-//        
-//        // Log inputs
-//        System.out.println(">>> SELECTED STORIES: ");
-//        if (dto.getSelectedStories() != null) {
-//	        for(String title : dto.getSelectedStories()) {
-//	        	System.out.println("object>>> " + title);
-//	        }
-//        }
-//        
-//        // put selected stories into model
-//        List<Story> selectedStoryObjects = ScrumTeam.filterStoriesByTitle(
-//        		storyService.findAll(), 
-//        		dto.getSelectedStories()
-//        );
-//        
-//        //dto.setStories(selectedStoryObjects);
-//        ScrumTeam scrumTeam = ScrumTeam.getBuilder(dto.getName())
-//    			.members(dto.getMembers())
-//    			.stories(dto.getStories())
-//    			.build();
-//        
-//        // Save ScrumTeam
-//        ScrumTeam added = service.add(scrumTeam);// TO HERE
-//        
-//        
-//        // Connect selected Stories to ScrumTeams
-//        System.out.println(">>> SELECTED STORIES: ");
-//        for(Story s : selectedStoryObjects) {
-//        	System.out.println("input>>> Connect Story (id: " + s.getId() + " -> title: " + s.getTitle() +") --to--> Scrum-Team");
-//        	s.setScrumTeam(scrumTeam);	//*// uncomment
-//        	
-//        	try {
-//				storyService.update(s);
-//			} catch (NotFoundException e) {
-//				System.out.println(">>> ERROR can't update Stories after persisting ScrumTeams");
-//				e.printStackTrace();
-//			}
-//        }
-//        
-//        // Save ScrumTeam
-//        //ScrumTeam added = service.add(scrumTeam);// TO HERE
-//        ScrumTeam added2 = service.add(added); // FROM HERE
-//        
-//        // TESZT (NOT)
-//        for (Story s : storyService.findAll()) {
-//        	System.out.println("input>>> id: " + s.getId() + " -> title: " + s.getTitle() 
-//    		+ ",   TESZT: TEAM: " + (s.getScrumTeam()==null?"null":s.getScrumTeam().getId() + "). " + s.getScrumTeam().getName()
-//    		));
-//        	//save s
-//        }
-//        
-//        // TESZT
-//        //for (Story s : storyService.findAll()) {
-//        //	System.out.println("input>>> id: " + s.getId() + " -> title: " + s.getTitle() 
-//        //		+ ",   TESZT: TEAM: " + (s.getScrumTeam()==null?"null":s.getId() + "). " + s.getTitle()
-//        //		));
-//        //}
-//        
-//        /*// Update ScrumTeam
-//        try {
-//			ScrumTeam updatedScrumTeam = service.update(scrumTeam);
-//		} catch (NotFoundException e) {
-//			System.out.println(">>> ERROR >>> Can't update ScrumTeam after updated Stories");
-//			e.printStackTrace();
-//		}*/
-//        
-//
-//        
-//        /*
-//        // Persist (Update) Story objects with scrum-team
-//        for (Story s : selectedStoryObjects) {
-//        	s.setScrumTeam(added);
-//        	try {
-//				storyService.update(s);
-//			} catch (NotFoundException e) {
-//				System.out.println(">>> ERROR can't update Stories after persisting ScrumTeams");
-//				e.printStackTrace();
-//			}
-//        }
-//        */
-//        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added2.getName());
-//        attributes.addAttribute(PARAMETER_ID, added2.getId());
-//        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
-//    }
-//    
     
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findTeamById(@PathVariable("id") Long id, Model model) throws NotFoundException {
@@ -301,49 +220,52 @@ public class ScrumTeamController {
     }
     
 
-    /*    
-    @RequestMapping(value = "/story/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/scrumteam/delete/{id}", method = RequestMethod.GET)
     public String deleteById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
-        Story deleted = storyService.deleteById(id);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED, deleted.getTitle());
+    	System.out.println(">>> REQUEST: /scrumteam/delete/{" + id + "}  - GET");
+    	ScrumTeam deleted = service.deleteById(id);
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED, deleted.getName());
         return createRedirectViewPath(REQUEST_MAPPING_LIST);
     }
    
 
 
 
-    @RequestMapping(value = "/story/update/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/scrumteam/update/{id}", method = RequestMethod.GET)
     public String showUpdateForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
-        Story updated = storyService.findById(id);
-        StoryDTO formObject = constructFormObjectForUpdateForm(updated);
+    	System.out.println(">>> REQUEST: /scrumteam/update/{" + id + "}  - GET");
+        ScrumTeam updated = service.findById(id);
+        ScrumTeamDTO formObject = constructFormObjectForUpdateForm(updated);
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_UPDATE;
     }
 
-    @RequestMapping(value = "/story/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
-        if (result.hasErrors()) {
+    @RequestMapping(value = "/scrumteam/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute(MODEL_ATTRIBUTE) ScrumTeamDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
+    	System.out.println(">>> REQUEST: /scrumteam/update/   - POST");
+    	if (result.hasErrors()) {
             return VIEW_UPDATE;
         }
 
-        Story updated = storyService.update(dto);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
+        ScrumTeam updated = service.update(dto);
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getName());
         attributes.addAttribute(PARAMETER_ID, updated.getId());
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
 
-    private StoryDTO constructFormObjectForUpdateForm(Story updated) {
-        StoryDTO dto = new StoryDTO();
+    private ScrumTeamDTO constructFormObjectForUpdateForm(ScrumTeam updated) {
+    	ScrumTeamDTO dto = new ScrumTeamDTO();
 
         dto.setId(updated.getId());
-        dto.setDescription(updated.getDescription());
-        dto.setTitle(updated.getTitle());
+        dto.setName(updated.getName());
+        dto.setMembers(updated.getMembers());
+        dto.setStories(updated.getStories());
 
         return dto;
     }
-    */
+    
 
     private void addFeedbackMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
         String localizedFeedbackMessage = getMessage(messageCode, messageParameters);

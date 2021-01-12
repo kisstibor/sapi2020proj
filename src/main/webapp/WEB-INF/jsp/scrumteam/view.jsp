@@ -28,7 +28,11 @@
         </div>
 		
 		<div id="control-group-title" class="control-group">
-           	<label for="story-description"><spring:message code="label.scrumteam.add.page.stories"/>:</label>
+           	<label for="story-description">
+	           	<b>
+	           		<spring:message code="label.scrumteam.add.page.stories"/>:       		
+	           	</b>
+           	</label>
             <c:forEach items="${team.stories}" var="story">
             	<c:out value="${story.id}.) ${story.title}"/>
 				<%--
@@ -42,8 +46,8 @@
 		</div>
         
         <div class="action-buttons">
-            <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
-            <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
+            <a href="/scrumteam/update/${team.id}" class="btn btn-primary"><spring:message code="label.update.scrumteam.link"/></a>
+            <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.scrumteam.link"/></a>
         </div>
     </div>
     <script id="template-delete-scrumteam-confirmation-dialog" type="text/x-handlebars-template">
@@ -57,7 +61,7 @@
             </div>
             <div class="modal-footer">
                 <a id="cancel-scrumteam-button" href="#" class="btn"><spring:message code="label.cancel"/></a>
-                <a id="delete-scrumteam-button" href="#" class="btn btn-primary"><spring:message code="label.delete.story.button"/></a>
+                <a id="delete-scrumteam-button" href="#" class="btn btn-primary"><spring:message code="label.delete.scrumteam.button"/></a>
             </div>
         </div>
     </script>
