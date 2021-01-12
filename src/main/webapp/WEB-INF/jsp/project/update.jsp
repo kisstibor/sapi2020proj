@@ -13,40 +13,40 @@
         <form:form action="/project/update" commandName="project" method="POST" enctype="utf8">
             <form:hidden path="id"/>
             <div id="control-group-title" class="control-group">
-                <label for="story-title"><spring:message code="label.project.name"/>:</label>
+                <label for="project-name"><spring:message code="label.project.name"/>:</label>
 
                 <div class="controls">
-                    <form:input id="story-title" path="name"/>
+                    <form:input id="project-name" path="name"/>
                     <form:errors id="error-title" path="name" cssClass="help-inline"/>
                 </div>
             </div>
             <div id="control-group-description" class="control-group">
-                <label for="story-description"><spring:message code="label.project.productOwner"/>:</label>
+                <label for="project-productowner"><spring:message code="label.project.productOwner"/>:</label>
 
                 <div class="controls">
-                    <form:textarea id="story-description" path="productOwner"/>
+                    <form:textarea id="project-productowner" path="productOwner"/>
                     <form:errors id="error-description" path="productOwner" cssClass="help-inline"/>
                 </div>
             </div>
             <div id="control-group-description" class="control-group">
-                <label for="story-description"><spring:message code="label.project.scrumMaster"/>:</label>
+                <label for="project-scrummaster"><spring:message code="label.project.scrumMaster"/>:</label>
 
                 <div class="controls">
-                    <form:textarea id="story-description" path="scrumMaster"/>
+                    <form:textarea id="project-scrummaster" path="scrumMaster"/>
                     <form:errors id="error-description" path="scrumMaster" cssClass="help-inline"/>
                 </div>
             </div>
             <div id="control-group-description" class="control-group">
-                <label for="story-description"><spring:message code="label.project.teamMembers"/>:</label>
+                <label for="project-members"><spring:message code="label.project.teamMembers"/>:</label>
 
                 <div class="controls">
-                    <form:textarea id="story-description" path="members"/>
+                    <form:textarea id="project-members" path="members"/>
                     <form:errors id="error-description" path="members" cssClass="help-inline"/>
                 </div>
             </div>
             <div class="action-buttons">
                 <a href="/project/${project.id}" class="btn"><spring:message code="label.cancel"/></a>
-                <button id="update-story-button" type="submit" class="btn btn-primary"><spring:message
+                <button id="update-project-button" type="submit" class="btn btn-primary"><spring:message
                         code="label.update.story.button"/></button>
             </div>
         </form:form>
