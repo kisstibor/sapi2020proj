@@ -19,7 +19,7 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "ro.sapientia2015.story.repository")
+@EnableJpaRepositories(basePackages = {"ro.sapientia2015.story.repository", "ro.sapientia2015.project.repository"})
 public class PersistenceContext {
 
     protected static final String PROPERTY_NAME_DATABASE_DRIVER = "db.driver";
@@ -33,7 +33,7 @@ public class PersistenceContext {
     private static final String PROPERTY_NAME_HIBERNATE_NAMING_STRATEGY = "hibernate.ejb.naming_strategy";
     private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
 
-    private static final String PROPERTY_PACKAGES_TO_SCAN = "ro.sapientia2015.story.model";
+    private static final String[] PROPERTY_PACKAGES_TO_SCAN = {"ro.sapientia2015.story.model", "ro.sapientia2015.project.model"};
 
     @Resource
     private Environment environment;
