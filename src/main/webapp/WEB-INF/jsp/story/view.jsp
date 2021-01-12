@@ -14,6 +14,7 @@
         <h2 id="story-title"><c:out value="${story.title}"/></h2>
         <div>
             <p><c:out value="${story.description}"/></p>
+            <p id="story-point"><c:out value="${story.point}"/></p>
         </div>
         <div class="action-buttons">
             <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
