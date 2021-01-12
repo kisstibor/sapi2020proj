@@ -1,0 +1,6 @@
+<dataset>
+    <user id="1" type="Lorem ipsum" name="Foo" version="0"/>
+    <user id="2" type="Lorem ipsum" name="Bar" version="0"/>
+    <user id="3" type="description" name="title" version="0"/>
+</dataset>
+

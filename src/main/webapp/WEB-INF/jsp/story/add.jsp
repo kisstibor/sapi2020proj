@@ -10,7 +10,8 @@
 <body>
     <h1><spring:message code="label.story.add.page.title"/></h1>
     <div class="well page-content">
-        <form:form action="/story/add" commandName="story" method="POST" enctype="utf8">
+        <form:form action="/scrumsapientia/story/add" commandName="story" method="POST" enctype="utf8">
+        
             <div id="control-group-title" class="control-group">
                 <label for="story-title"><spring:message code="label.story.title"/>:</label>
 
@@ -18,6 +19,7 @@
                     <form:input id="story-title" path="title"/>
                     <form:errors id="error-title" path="title" cssClass="help-inline"/>
                 </div>
+                
             </div>
             <div id="control-group-description" class="control-group">
                 <label for="story-description"><spring:message code="label.story.description"/>:</label>
