@@ -42,4 +42,5 @@
     </bean>
 
     <jpa:repositories base-package="ro.sapientia2015.story.repository"/>
+    <jpa:repositories base-package="ro.sapientia2015.project.repository"/>
 </beans>

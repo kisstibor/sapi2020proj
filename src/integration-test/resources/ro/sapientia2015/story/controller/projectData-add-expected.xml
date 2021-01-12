@@ -1,0 +1,5 @@
+<dataset>
+    <project id="1" description="Lorem ipsum" title="Foo" version="0"/>
+    <project id="2" description="Lorem ipsum" title="Bar" version="0"/>
+    <project id="3" description="description" title="title" version="0"/>
+</dataset>

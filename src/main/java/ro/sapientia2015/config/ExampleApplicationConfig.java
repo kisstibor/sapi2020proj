@@ -33,7 +33,7 @@ public class ExampleApplicationConfig implements WebApplicationInitializer {
         FilterRegistration.Dynamic sitemesh = servletContext.addFilter("sitemesh", new ConfigurableSiteMeshFilter());
         EnumSet<DispatcherType> sitemeshDispatcherTypes = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD);
         sitemesh.addMappingForUrlPatterns(sitemeshDispatcherTypes, true, "*.jsp");
-
+        	
         servletContext.addListener(new ContextLoaderListener(rootContext));
     }
 }

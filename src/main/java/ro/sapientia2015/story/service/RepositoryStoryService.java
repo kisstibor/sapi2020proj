@@ -62,7 +62,7 @@ public class RepositoryStoryService implements StoryService {
     public Story update(StoryDTO updated) throws NotFoundException {
         Story model = findById(updated.getId());
         model.update(updated.getDescription(), updated.getTitle());
-
+        
         return model;
     }
 }
