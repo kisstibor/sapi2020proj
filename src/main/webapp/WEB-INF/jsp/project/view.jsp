@@ -13,7 +13,7 @@
 		<spring:message code="label.project.view.page.title" />
 	</h1>
 	<div class="well page-content">
-		<h2 id="story-title">
+		<h2 id="project-name">
 			<c:out value="${project.name}" />
 		</h2>
 		<div>

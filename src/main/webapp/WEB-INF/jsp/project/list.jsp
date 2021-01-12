@@ -15,7 +15,7 @@
 			class="btn btn-primary"><spring:message
 				code="label.add.story.link" /></a>
 	</div>
-	<div id="story-list" class="page-content">
+	<div id="project-list" class="page-content">
 		<c:choose>
 			<c:when test="${empty projects}">
 				<p>
