@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="2.8" jmeter="2.13.20180731">
+  <hashTree>
+    <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="Test Fragment" enabled="false"/>
+    <hashTree>
+      <SizeAssertion guiclass="SizeAssertionGui" testclass="SizeAssertion" testname="Size Assertion" enabled="true">
+        <stringProp name="Assertion.test_field">SizeAssertion.response_network_size</stringProp>
+        <stringProp name="SizeAssertion.size">11</stringProp>
+        <intProp name="SizeAssertion.operator">3</intProp>
+      </SizeAssertion>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
