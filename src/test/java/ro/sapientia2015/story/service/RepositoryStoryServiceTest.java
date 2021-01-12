@@ -9,6 +9,7 @@ import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.repository.FixVersionRepository;
 import ro.sapientia2015.story.repository.StoryRepository;
 import ro.sapientia2015.story.service.RepositoryStoryService;
 
@@ -27,6 +28,8 @@ public class RepositoryStoryServiceTest {
     private RepositoryStoryService service;
 
     private StoryRepository repositoryMock;
+    
+    private FixVersionRepository fixVersionRepositoryMock;
 
     @Before
     public void setUp() {
@@ -34,11 +37,14 @@ public class RepositoryStoryServiceTest {
 
         repositoryMock = mock(StoryRepository.class);
         ReflectionTestUtils.setField(service, "repository", repositoryMock);
+        
+        fixVersionRepositoryMock = mock(FixVersionRepository.class);
+        ReflectionTestUtils.setField(service, "versionRepository", fixVersionRepositoryMock);
     }
 
     @Test
     public void add() {
-        StoryDTO dto = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        StoryDTO dto = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.FIXVERSIONID);
 
         service.add(dto);
 
@@ -55,7 +61,7 @@ public class RepositoryStoryServiceTest {
 
     @Test
     public void deleteById() throws NotFoundException {
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.FIXVERSION);
         when(repositoryMock.findOne(StoryTestUtil.ID)).thenReturn(model);
 
         Story actual = service.deleteById(StoryTestUtil.ID);
@@ -92,7 +98,7 @@ public class RepositoryStoryServiceTest {
 
     @Test
     public void findById() throws NotFoundException {
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.FIXVERSION);
         when(repositoryMock.findOne(StoryTestUtil.ID)).thenReturn(model);
 
         Story actual = service.findById(StoryTestUtil.ID);
@@ -115,8 +121,8 @@ public class RepositoryStoryServiceTest {
 
     @Test
     public void update() throws NotFoundException {
-        StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
-        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED, StoryTestUtil.FIXVERSIONID);
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.FIXVERSION);
         when(repositoryMock.findOne(dto.getId())).thenReturn(model);
 
         Story actual = service.update(dto);
@@ -131,7 +137,7 @@ public class RepositoryStoryServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void updateWhenIsNotFound() throws NotFoundException {
-        StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED);
+        StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED, StoryTestUtil.FIXVERSIONID);
         when(repositoryMock.findOne(dto.getId())).thenReturn(null);
 
         service.update(dto);

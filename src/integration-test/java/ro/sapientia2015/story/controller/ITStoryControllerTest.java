@@ -74,7 +74,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void showAddForm() throws Exception {
         mockMvc.perform(get("/story/add"))
                 .andExpect(status().isOk())
@@ -86,7 +86,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void addEmpty() throws Exception {
         mockMvc.perform(post("/story/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -102,7 +102,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void addWhenTitleAndDescriptionAreTooLong() throws Exception {
         String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
         String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
@@ -141,7 +141,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void findAll() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
@@ -165,7 +165,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void findById() throws Exception {
         mockMvc.perform(get("/story/{id}", 1L))
                 .andExpect(status().isOk())
@@ -177,7 +177,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void findByIdWhenIsNotFound() throws Exception {
         mockMvc.perform(get("/story/{id}", 3L))
                 .andExpect(status().isNotFound())
@@ -186,7 +186,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData-delete-expected.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData-delete-expected.xml")
     public void deleteById() throws Exception {
         String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
         mockMvc.perform(get("/story/delete/{id}", 2L))
@@ -196,7 +196,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void deleteByIdWhenIsNotFound() throws Exception {
         mockMvc.perform(get("/story/delete/{id}", 3L))
                 .andExpect(status().isNotFound())
@@ -205,7 +205,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void showUpdateForm() throws Exception {
         mockMvc.perform(get("/story/update/{id}", 1L))
                 .andExpect(status().isOk())
@@ -217,7 +217,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void showUpdateFormWhenIsNotFound() throws Exception {
         mockMvc.perform(get("/story/update/{id}", 3L))
                 .andExpect(status().isNotFound())
@@ -226,7 +226,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void updateEmpty() throws Exception {
         mockMvc.perform(post("/story/update")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -243,7 +243,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void updateWhenTitleAndDescriptionAreTooLong() throws Exception {
         String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
         String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
@@ -284,7 +284,7 @@ public class ITStoryControllerTest {
     }
 
     @Test
-    @ExpectedDatabase("storyData.xml")
+    @ExpectedDatabase(assertionMode=DatabaseAssertionMode.NON_STRICT, value="storyData.xml")
     public void updateWhenIsNotFound() throws Exception {
         mockMvc.perform(post("/story/update")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)

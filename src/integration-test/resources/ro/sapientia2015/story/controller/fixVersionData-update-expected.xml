@@ -1,0 +1,4 @@
+<dataset>
+    <fix_version id="1" name="name" version="1"/>
+    <fix_version id="2" name="Bar" version="0"/>
+</dataset>

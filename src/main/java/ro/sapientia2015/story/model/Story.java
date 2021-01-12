@@ -37,6 +37,7 @@ public class Story {
     private String title;
     
     @OneToOne
+    @JoinColumn(name = "fix_version")
     private FixVersion fixVersion;
 
     @Version

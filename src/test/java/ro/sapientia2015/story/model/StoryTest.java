@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import ro.sapientia2015.story.model.Story;
 import static junit.framework.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Kiss Tibor
@@ -21,20 +22,24 @@ public class StoryTest {
         assertNull(built.getCreationTime());
         assertNull(built.getDescription());
         assertNull(built.getModificationTime());
+        assertNull(built.getFixVersion());
         assertEquals(TITLE, built.getTitle());
         assertEquals(0L, built.getVersion());
     }
 
     @Test
     public void buildWithAllInformation() {
+    	FixVersion fixVersion = mock(FixVersion.class);
         Story built = Story.getBuilder(TITLE)
                 .description(DESCRIPTION)
+                .fixVersion(fixVersion)
                 .build();
 
         assertNull(built.getId());
         assertNull(built.getCreationTime());
         assertEquals(DESCRIPTION, built.getDescription());
         assertNull(built.getModificationTime());
+        assertNotNull(built.getFixVersion());
         assertEquals(TITLE, built.getTitle());
         assertEquals(0L, built.getVersion());
     }
@@ -49,6 +54,7 @@ public class StoryTest {
         assertNull(story.getDescription());
         assertNotNull(story.getModificationTime());
         assertNull(story.getTitle());
+        assertNull(story.getFixVersion());
         assertEquals(0L, story.getVersion());
         assertEquals(story.getCreationTime(), story.getModificationTime());
     }
@@ -67,6 +73,7 @@ public class StoryTest {
         assertNull(story.getDescription());
         assertNotNull(story.getModificationTime());
         assertNull(story.getTitle());
+        assertNull(story.getFixVersion());
         assertEquals(0L, story.getVersion());
         assertTrue(story.getModificationTime().isAfter(story.getCreationTime()));
     }

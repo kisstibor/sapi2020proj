@@ -12,7 +12,7 @@ public class FixVersionDTO {
 	private Long id;
 
     @NotEmpty
-    @Length(max = FixVersion.MAX_LENGTH_TITLE)
+    @Length(max = FixVersion.MAX_LENGTH_NAME)
     private String name;
     
     public FixVersionDTO() {
