@@ -31,6 +31,12 @@ public interface StoryService {
      * @return
      */
     public List<Story> findAll();
+    
+    /**
+     * Finds stories based on title contents.
+     * @param text The text to search for.
+     */
+    public List<Story> findByTitle(String text) throws NotFoundException;
 
     /**
      * Finds a to-do entry.

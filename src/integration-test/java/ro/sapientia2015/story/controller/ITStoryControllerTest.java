@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import ro.sapientia2015.common.controller.ErrorController;
 import ro.sapientia2015.config.ExampleApplicationContext;
 import ro.sapientia2015.context.WebContextLoader;
+import ro.sapientia2015.story.CommonTestUtil;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
@@ -61,6 +62,7 @@ public class ITStoryControllerTest {
     private static final String FORM_FIELD_DESCRIPTION = "description";
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
+    private static final String FORM_FIELD_USER_ID = "userId";
 
     @Resource
     private WebApplicationContext webApplicationContext;
@@ -82,7 +84,14 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/add.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("users", hasItem(
+                        allOf(
+                                hasProperty("id", is(1L)),
+                                hasProperty("username", is("user1")),
+                                hasProperty("password", is("password1"))
+                        )
+                ))));
     }
 
     @Test
@@ -98,19 +107,22 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "title"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", nullValue())));
     }
 
     @Test
     @ExpectedDatabase("storyData.xml")
     public void addWhenTitleAndDescriptionAreTooLong() throws Exception {
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
-
+        String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+        String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        Long userId = 2L;
+        
         mockMvc.perform(post("/story/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, description)
                 .param(FORM_FIELD_TITLE, title)
+                .param(FORM_FIELD_USER_ID, userId.toString())
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -120,18 +132,20 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "description"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", is(userId))));
     }
 
     @Test
     @ExpectedDatabase(value="storyData-add-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
     public void add() throws Exception {
-        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        String expectedRedirectViewPath = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
 
         mockMvc.perform(post("/story/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_USER_ID, "1")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -147,21 +161,48 @@ public class ITStoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name(StoryController.VIEW_LIST))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/list.jsp"))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasSize(2)))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasItem(
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasSize(2))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasItem(
                         allOf(
                                 hasProperty("id", is(1L)),
                                 hasProperty("description", is("Lorem ipsum")),
                                 hasProperty("title", is("Foo"))
                         )
-                )))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_LIST, hasItem(
+                ))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasItem(
                         allOf(
                                 hasProperty("id", is(2L)),
                                 hasProperty("description", is("Lorem ipsum")),
                                 hasProperty("title", is("Bar"))
                         )
-                )));
+                ))));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void findByTitle() throws Exception {
+        mockMvc.perform(get("/stories").param(StoryController.PARAMETER_QUERY, "foo"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(StoryController.VIEW_LIST))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/story/list.jsp"))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasSize(1))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_STORY_LIST, hasProperty("stories", hasItem(
+                        allOf(
+                                hasProperty("id", is(1L)),
+                                hasProperty("description", is("Lorem ipsum")),
+                                hasProperty("title", is("Foo"))
+                        )
+                ))));
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void findByTitleWhenIsNotFound() throws Exception {
+    	String expectedRedirectViewPath = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
+        mockMvc.perform(get("/stories").param(StoryController.PARAMETER_QUERY, "missing"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(expectedRedirectViewPath))
+                .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("No stories found matching query: missing")));
     }
 
     @Test
@@ -188,7 +229,7 @@ public class ITStoryControllerTest {
     @Test
     @ExpectedDatabase("storyData-delete-expected.xml")
     public void deleteById() throws Exception {
-        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
+        String expectedRedirectViewPath = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
         mockMvc.perform(get("/story/delete/{id}", 2L))
                 .andExpect(status().isOk())
                 .andExpect(view().name(expectedRedirectViewPath))
@@ -213,7 +254,8 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/update.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("Lorem ipsum"))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", is(1L))));
     }
 
     @Test
@@ -239,20 +281,23 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "title"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", nullValue())));
     }
 
     @Test
     @ExpectedDatabase("storyData.xml")
     public void updateWhenTitleAndDescriptionAreTooLong() throws Exception {
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+        String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        Long userId = 2L;
 
         mockMvc.perform(post("/story/update")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, description)
                 .param(FORM_FIELD_ID, "1")
                 .param(FORM_FIELD_TITLE, title)
+                .param(FORM_FIELD_USER_ID, userId.toString())
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -262,19 +307,21 @@ public class ITStoryControllerTest {
                 .andExpect(model().attributeHasFieldErrors(StoryController.MODEL_ATTRIBUTE, "description"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is(description))))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is(title))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("userId", is(userId))));
     }
 
     @Test
     @ExpectedDatabase(value="storyData-update-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
     public void update() throws Exception {
-        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        String expectedRedirectViewPath = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
 
         mockMvc.perform(post("/story/update")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_ID, "1")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_USER_ID, "2")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isOk())
@@ -291,6 +338,7 @@ public class ITStoryControllerTest {
                 .param(FORM_FIELD_DESCRIPTION, "description")
                 .param(FORM_FIELD_ID, "3")
                 .param(FORM_FIELD_TITLE, "title")
+                .param(FORM_FIELD_USER_ID, "2")
                 .sessionAttr(StoryController.MODEL_ATTRIBUTE, new StoryDTO())
         )
                 .andExpect(status().isNotFound())

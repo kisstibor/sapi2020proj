@@ -2,6 +2,7 @@ package ro.sapientia2015.story.model;
 
 import org.junit.Test;
 
+import ro.sapientia2015.story.CommonTestUtil;
 import ro.sapientia2015.story.model.Story;
 import static junit.framework.Assert.*;
 
@@ -12,6 +13,7 @@ public class StoryTest {
 
     private String TITLE = "title";
     private String DESCRIPTION = "description";
+    private User USER = new User();
 
     @Test
     public void buildWithMandatoryInformation() {
@@ -29,6 +31,7 @@ public class StoryTest {
     public void buildWithAllInformation() {
         Story built = Story.getBuilder(TITLE)
                 .description(DESCRIPTION)
+                .user(USER)
                 .build();
 
         assertNull(built.getId());
@@ -36,6 +39,7 @@ public class StoryTest {
         assertEquals(DESCRIPTION, built.getDescription());
         assertNull(built.getModificationTime());
         assertEquals(TITLE, built.getTitle());
+        assertEquals(USER, built.getUser());
         assertEquals(0L, built.getVersion());
     }
 
@@ -58,7 +62,7 @@ public class StoryTest {
         Story story = new Story();
         story.prePersist();
 
-        pause(1000);
+        CommonTestUtil.pause(1000);
 
         story.preUpdate();
 
@@ -70,13 +74,5 @@ public class StoryTest {
         assertEquals(0L, story.getVersion());
         assertTrue(story.getModificationTime().isAfter(story.getCreationTime()));
     }
-
-    private void pause(long timeInMillis) {
-        try {
-            Thread.currentThread().sleep(timeInMillis);
-        }
-        catch (InterruptedException e) {
-            //Do Nothing
-        }
-    }
+    
 }

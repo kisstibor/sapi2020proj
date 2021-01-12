@@ -1,9 +1,24 @@
 package ro.sapientia2015.story.controller;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.MutablePropertyValues;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
@@ -12,57 +27,40 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.validation.support.BindingAwareModelMap;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import ro.sapientia2015.story.CommonTestUtil;
 import ro.sapientia2015.story.StoryTestUtil;
+import ro.sapientia2015.story.UserTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
-import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.StoryListDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.User;
 import ro.sapientia2015.story.service.StoryService;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import ro.sapientia2015.story.service.UserService;
 
 /**
  * @author Kiss Tibor
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {UnitTestContext.class})
-public class StoryControllerTest {
+public class StoryControllerTest extends ControllerTestBase {
 
-    private static final String FEEDBACK_MESSAGE = "feedbackMessage";
     private static final String FIELD_DESCRIPTION = "description";
     private static final String FIELD_TITLE = "title";
 
     private StoryController controller;
 
-    private MessageSource messageSourceMock;
-
     private StoryService serviceMock;
-
-    @Resource
-    private Validator validator;
 
     @Before
     public void setUp() {
+    	super.setUp();
+    	
         controller = new StoryController();
 
-        messageSourceMock = mock(MessageSource.class);
         ReflectionTestUtils.setField(controller, "messageSource", messageSourceMock);
 
         serviceMock = mock(StoryService.class);
@@ -72,17 +70,25 @@ public class StoryControllerTest {
     @Test
     public void showAddStoryForm() {
         BindingAwareModelMap model = new BindingAwareModelMap();
+        List<User> expectedUsers = new ArrayList<User>();
 
+        UserService userServiceMock = mock(UserService.class);
+        ReflectionTestUtils.setField(controller, "userService", userServiceMock);
+        
+        when(userServiceMock.findAll()).thenReturn(expectedUsers);
         String view = controller.showAddForm(model);
 
-        verifyZeroInteractions(messageSourceMock, serviceMock);
+        verify(userServiceMock, times(1)).findAll();
+        verifyZeroInteractions(messageSourceMock, serviceMock, userServiceMock);
         assertEquals(StoryController.VIEW_ADD, view);
 
-        StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+        Map<String, Object> modelMap = model.asMap();
+		StoryDTO formObject = (StoryDTO) modelMap.get(StoryController.MODEL_ATTRIBUTE);
 
         assertNull(formObject.getId());
         assertNull(formObject.getDescription());
         assertNull(formObject.getTitle());
+        assertEquals(expectedUsers, formObject.getUsers());
     }
 
     @Test
@@ -104,12 +110,12 @@ public class StoryControllerTest {
         verify(serviceMock, times(1)).add(formObject);
         verifyNoMoreInteractions(serviceMock);
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        String expectedView = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
         assertEquals(expectedView, view);
 
         assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
 
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
+        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED, ControllerBase.FLASH_MESSAGE_KEY_FEEDBACK);
     }
 
     @Test
@@ -126,13 +132,13 @@ public class StoryControllerTest {
         verifyZeroInteractions(serviceMock, messageSourceMock);
 
         assertEquals(StoryController.VIEW_ADD, view);
-        assertFieldErrors(result, FIELD_TITLE);
+        CommonTestUtil.assertFieldErrors(result, FIELD_TITLE);
     }
 
     @Test
     public void addWithTooLongDescriptionAndTitle() {
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+        String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
 
         StoryDTO formObject = StoryTestUtil.createFormObject(null, description, title);
 
@@ -146,7 +152,7 @@ public class StoryControllerTest {
         verifyZeroInteractions(serviceMock, messageSourceMock);
 
         assertEquals(StoryController.VIEW_ADD, view);
-        assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
+        CommonTestUtil.assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
     }
 
     @Test
@@ -163,9 +169,9 @@ public class StoryControllerTest {
         verify(serviceMock, times(1)).deleteById(StoryTestUtil.ID);
         verifyNoMoreInteractions(serviceMock);
 
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_DELETED);
+        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_DELETED, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
+        String expectedView = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_LIST);
         assertEquals(expectedView, view);
     }
 
@@ -196,7 +202,44 @@ public class StoryControllerTest {
         verifyZeroInteractions(messageSourceMock);
 
         assertEquals(StoryController.VIEW_LIST, view);
-        assertEquals(models, model.asMap().get(StoryController.MODEL_ATTRIBUTE_LIST));
+        StoryListDTO dto = (StoryListDTO)model.asMap().get(StoryController.MODEL_ATTRIBUTE_STORY_LIST);
+        assertEquals(models, dto.getStories());
+    }
+    
+    @Test
+    public void findByTitle() throws NotFoundException {
+    	BindingAwareModelMap model = new BindingAwareModelMap();
+    	RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+    	
+    	List<Story> models = new ArrayList<Story>();
+    	when(serviceMock.findByTitle(StoryTestUtil.QUERY_TEXT)).thenReturn(models);
+    	
+    	String view = controller.findByTitle(StoryTestUtil.QUERY_TEXT, model, attributes);
+    	
+    	verify(serviceMock, times(1)).findByTitle(StoryTestUtil.QUERY_TEXT);
+    	verifyNoMoreInteractions(serviceMock);
+    	verifyZeroInteractions(messageSourceMock);
+    	
+    	assertEquals(StoryController.VIEW_LIST, view);
+    	StoryListDTO dto = (StoryListDTO)model.asMap().get(StoryController.MODEL_ATTRIBUTE_STORY_LIST);
+    	assertEquals(models, dto.getStories());
+    	assertEquals(StoryTestUtil.QUERY_TEXT, dto.getQuery());
+    }
+    
+    @Test
+    public void findByTitleWhenIsNotFound() throws NotFoundException {
+    	BindingAwareModelMap model = new BindingAwareModelMap();
+    	RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+    	
+    	when(serviceMock.findByTitle(StoryTestUtil.QUERY_TEXT)).thenThrow(new NotFoundException(""));
+    	initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_NO_RESULTS);
+    	
+    	String view = controller.findByTitle(StoryTestUtil.QUERY_TEXT, model, attributes);
+    	
+    	verify(serviceMock, times(1)).findByTitle(StoryTestUtil.QUERY_TEXT);
+    	verifyNoMoreInteractions(serviceMock);
+    	
+    	assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_NO_RESULTS, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
     }
 
     @Test
@@ -233,13 +276,19 @@ public class StoryControllerTest {
     public void showUpdateStoryForm() throws NotFoundException {
         BindingAwareModelMap model = new BindingAwareModelMap();
 
-        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, UserTestUtil.createModel(UserTestUtil.ID, UserTestUtil.USERNAME, UserTestUtil.PASSWORD));
         when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
+        
+        List<User> expectedUsersList = new ArrayList<User>();
+        UserService userServiceMock = mock(UserService.class);
+        ReflectionTestUtils.setField(controller, "userService", userServiceMock);
+        when(userServiceMock.findAll()).thenReturn(expectedUsersList);
 
         String view = controller.showUpdateForm(StoryTestUtil.ID, model);
 
         verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
-        verifyNoMoreInteractions(serviceMock);
+        verify(userServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(serviceMock, userServiceMock);
         verifyZeroInteractions(messageSourceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
@@ -249,6 +298,38 @@ public class StoryControllerTest {
         assertEquals(updated.getId(), formObject.getId());
         assertEquals(updated.getDescription(), formObject.getDescription());
         assertEquals(updated.getTitle(), formObject.getTitle());
+        assertEquals(updated.getUser().getId(), formObject.getUserId());
+        assertEquals(expectedUsersList, formObject.getUsers());
+    }
+    
+    @Test
+    public void showUpdateStoryFormWhenUserNull() throws NotFoundException {
+        BindingAwareModelMap model = new BindingAwareModelMap();
+
+        Story updated = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, null);
+        when(serviceMock.findById(StoryTestUtil.ID)).thenReturn(updated);
+        
+        List<User> expectedUsersList = new ArrayList<User>();
+        UserService userServiceMock = mock(UserService.class);
+        ReflectionTestUtils.setField(controller, "userService", userServiceMock);
+        when(userServiceMock.findAll()).thenReturn(expectedUsersList);
+
+        String view = controller.showUpdateForm(StoryTestUtil.ID, model);
+
+        verify(serviceMock, times(1)).findById(StoryTestUtil.ID);
+        verify(userServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(serviceMock, userServiceMock);
+        verifyZeroInteractions(messageSourceMock);
+
+        assertEquals(StoryController.VIEW_UPDATE, view);
+
+        StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+
+        assertEquals(updated.getId(), formObject.getId());
+        assertEquals(updated.getDescription(), formObject.getDescription());
+        assertEquals(updated.getTitle(), formObject.getTitle());
+        assertEquals(null, formObject.getUserId());
+        assertEquals(expectedUsersList, formObject.getUsers());
     }
 
     @Test(expected = NotFoundException.class)
@@ -283,12 +364,12 @@ public class StoryControllerTest {
         verify(serviceMock, times(1)).update(formObject);
         verifyNoMoreInteractions(serviceMock);
 
-        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        String expectedView = CommonTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
         assertEquals(expectedView, view);
 
         assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
-
-        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_UPDATED);
+        
+        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_UPDATED, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
     }
 
     @Test
@@ -305,13 +386,13 @@ public class StoryControllerTest {
         verifyZeroInteractions(messageSourceMock, serviceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
-        assertFieldErrors(result, FIELD_TITLE);
+        CommonTestUtil.assertFieldErrors(result, FIELD_TITLE);
     }
 
     @Test
     public void updateWhenDescriptionAndTitleAreTooLong() throws NotFoundException {
-        String description = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
-        String title = StoryTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
+        String description = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_DESCRIPTION + 1);
+        String title = CommonTestUtil.createStringWithLength(Story.MAX_LENGTH_TITLE + 1);
 
         StoryDTO formObject = StoryTestUtil.createFormObject(StoryTestUtil.ID, description, title);
 
@@ -325,7 +406,7 @@ public class StoryControllerTest {
         verifyZeroInteractions(messageSourceMock, serviceMock);
 
         assertEquals(StoryController.VIEW_UPDATE, view);
-        assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
+        CommonTestUtil.assertFieldErrors(result, FIELD_DESCRIPTION, FIELD_TITLE);
     }
 
     @Test(expected = NotFoundException.class)
@@ -346,38 +427,6 @@ public class StoryControllerTest {
         verifyZeroInteractions(messageSourceMock);
     }
 
-    private void assertFeedbackMessage(RedirectAttributes attributes, String messageCode) {
-        assertFlashMessages(attributes, messageCode, StoryController.FLASH_MESSAGE_KEY_FEEDBACK);
-    }
-
-    private void assertFieldErrors(BindingResult result, String... fieldNames) {
-        assertEquals(fieldNames.length, result.getFieldErrorCount());
-        for (String fieldName : fieldNames) {
-            assertNotNull(result.getFieldError(fieldName));
-        }
-    }
-
-    private void assertFlashMessages(RedirectAttributes attributes, String messageCode, String flashMessageParameterName) {
-        Map<String, ?> flashMessages = attributes.getFlashAttributes();
-        Object message = flashMessages.get(flashMessageParameterName);
-
-        assertNotNull(message);
-        flashMessages.remove(message);
-        assertTrue(flashMessages.isEmpty());
-
-        verify(messageSourceMock, times(1)).getMessage(eq(messageCode), any(Object[].class), any(Locale.class));
-        verifyNoMoreInteractions(messageSourceMock);
-    }
-
-    private BindingResult bindAndValidate(HttpServletRequest request, Object formObject) {
-        WebDataBinder binder = new WebDataBinder(formObject);
-        binder.setValidator(validator);
-        binder.bind(new MutablePropertyValues(request.getParameterMap()));
-        binder.getValidator().validate(binder.getTarget(), binder.getBindingResult());
-        return binder.getBindingResult();
-    }
-
-    private void initMessageSourceForFeedbackMessage(String feedbackMessageCode) {
-        when(messageSourceMock.getMessage(eq(feedbackMessageCode), any(Object[].class), any(Locale.class))).thenReturn(FEEDBACK_MESSAGE);
-    }
+    
+    
 }

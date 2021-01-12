@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.StoryListDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.repository.UserRepository;
 import ro.sapientia2015.story.service.StoryService;
+import ro.sapientia2015.story.service.UserService;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -24,19 +27,18 @@ import java.util.Locale;
  */
 @Controller
 @SessionAttributes("story")
-public class StoryController {
+public class StoryController extends ControllerBase {
 
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.story.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";
     protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.story.deleted";
-
-    protected static final String FLASH_MESSAGE_KEY_ERROR = "errorMessage";
-    protected static final String FLASH_MESSAGE_KEY_FEEDBACK = "feedbackMessage";
+    protected static final String FEEDBACK_MESSAGE_KEY_NO_RESULTS = "feedback.message.story.noResults";
 
     protected static final String MODEL_ATTRIBUTE = "story";
-    protected static final String MODEL_ATTRIBUTE_LIST = "stories";
+    protected static final String MODEL_ATTRIBUTE_STORY_LIST = "storyList";
 
     protected static final String PARAMETER_ID = "id";
+    protected static final String PARAMETER_QUERY = "query";
 
     protected static final String REQUEST_MAPPING_LIST = "/";
     protected static final String REQUEST_MAPPING_VIEW = "/story/{id}";
@@ -48,13 +50,14 @@ public class StoryController {
 
     @Resource
     private StoryService service;
-
+    
     @Resource
-    private MessageSource messageSource;
+    private UserService userService;
 
     @RequestMapping(value = "/story/add", method = RequestMethod.GET)
     public String showAddForm(Model model) {
         StoryDTO formObject = new StoryDTO();
+        formObject.setUsers(this.userService.findAll());
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_ADD;
@@ -82,9 +85,25 @@ public class StoryController {
 
     @RequestMapping(value = REQUEST_MAPPING_LIST, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<Story> models = service.findAll();
-        model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
+        StoryListDTO dto = new StoryListDTO();
+        dto.setStories(service.findAll());
+        model.addAttribute(MODEL_ATTRIBUTE_STORY_LIST, dto);
         return VIEW_LIST;
+    }
+    
+    @RequestMapping(value = "/stories", method = RequestMethod.GET)
+    public String findByTitle(@RequestParam(value = PARAMETER_QUERY, required = false) String query, Model model, RedirectAttributes attributes) {
+    	try {
+    		StoryListDTO dto = new StoryListDTO();
+			dto.setStories(service.findByTitle(query));
+			dto.setQuery(query);
+			model.addAttribute(MODEL_ATTRIBUTE_STORY_LIST, dto);
+    	}
+    	catch (NotFoundException ex) {
+    		addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_NO_RESULTS, query);
+    		return createRedirectViewPath(REQUEST_MAPPING_LIST);
+    	}
+    	return VIEW_LIST;
     }
 
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
@@ -98,6 +117,7 @@ public class StoryController {
     public String showUpdateForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
         Story updated = service.findById(id);
         StoryDTO formObject = constructFormObjectForUpdateForm(updated);
+        formObject.setUsers(userService.findAll());
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_UPDATE;
@@ -122,25 +142,11 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        if (updated.getUser() != null) {
+        	dto.setUserId(updated.getUser().getId());
+        }
 
         return dto;
     }
-
-    private void addFeedbackMessage(RedirectAttributes attributes, String messageCode, Object... messageParameters) {
-        String localizedFeedbackMessage = getMessage(messageCode, messageParameters);
-        attributes.addFlashAttribute(FLASH_MESSAGE_KEY_FEEDBACK, localizedFeedbackMessage);
-    }
-
-    private String getMessage(String messageCode, Object... messageParameters) {
-        Locale current = LocaleContextHolder.getLocale();
-        return messageSource.getMessage(messageCode, messageParameters, current);
-    }
-
-
-    private String createRedirectViewPath(String requestMapping) {
-        StringBuilder redirectViewPath = new StringBuilder();
-        redirectViewPath.append("redirect:");
-        redirectViewPath.append(requestMapping);
-        return redirectViewPath.toString();
-    }
+    
 }

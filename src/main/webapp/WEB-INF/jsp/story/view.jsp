@@ -14,9 +14,17 @@
         <h2 id="story-title"><c:out value="${story.title}"/></h2>
         <div>
             <p><c:out value="${story.description}"/></p>
-        </div>
+			<c:if test="${not empty story.user}">
+				<br />
+				<p>
+					<spring:message code="label.story.assignedTo" />
+					:&nbsp;
+					<span id="assignedTo"><c:out value="${story.user.username}" /></span>
+				</p>
+			</c:if>
+		</div>
         <div class="action-buttons">
-            <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
+            <a id="action-update-button" href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
             <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
         </div>
     </div>

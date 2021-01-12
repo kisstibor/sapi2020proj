@@ -28,6 +28,18 @@
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
             </div>
+            <div id="control-group-user" class="control-group">
+				<label for="story-user"><spring:message
+						code="label.story.assignedTo" />:</label>
+
+				<div class="controls">
+					<form:select id="story-user" path="userId">
+						<spring:message code="label.pleaseSelect" var="pleaseSelectText" />
+						<form:option value="" label="${pleaseSelectText}" />
+						<form:options items="${story.users}" itemValue="id" itemLabel="username" />
+					</form:select>
+				</div>
+			</div>
             <div class="action-buttons">
                 <a href="/story/${story.id}" class="btn"><spring:message code="label.cancel"/></a>
                 <button id="update-story-button" type="submit" class="btn btn-primary"><spring:message
