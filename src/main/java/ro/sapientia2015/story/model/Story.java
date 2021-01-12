@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 /**
@@ -36,6 +38,10 @@ public class Story {
 
     @Version
     private long version;
+    
+    @ManyToOne
+    @JoinColumn(name="priority_id",nullable=true)
+    private Priority priority;
 
     public Story() {
 
@@ -48,6 +54,14 @@ public class Story {
     public Long getId() {
         return id;
     }
+    
+    public Priority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Priority priority) {
+		this.priority = priority;
+	}
 
     public DateTime getCreationTime() {
         return creationTime;
@@ -81,9 +95,10 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, Priority priority) {
         this.description = description;
         this.title = title;
+        this.priority = priority;
     }
 
     public static class Builder {
@@ -103,6 +118,13 @@ public class Story {
             built.description = description;
             return this;
         }
+        
+        public Builder priority(Priority priority) {
+            built.priority = priority;
+            return this;
+        }
+      
+        
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import ro.sapientia2015.story.PriorityTestUtil;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
@@ -88,6 +89,23 @@ public class RepositoryStoryServiceTest {
         verifyNoMoreInteractions(repositoryMock);
 
         assertEquals(models, actual);
+    }
+    
+    @Test
+    public void findByPriorityId()
+    {
+    	List<Story> models = new ArrayList<Story>();
+    	
+    	when(repositoryMock.findAll()).thenReturn(models);
+    	
+    	 List<Story> actual = service.findByPriorityId(PriorityTestUtil.ID);
+    	 
+         verify(repositoryMock, times(1)).findAll();
+         verifyNoMoreInteractions(repositoryMock);
+
+         assertEquals(models, actual);
+    	
+    	
     }
 
     @Test

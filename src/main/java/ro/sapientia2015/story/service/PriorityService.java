@@ -2,21 +2,24 @@ package ro.sapientia2015.story.service;
 
 import java.util.List;
 
+import ro.sapientia2015.story.dto.PriorityDTO;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.model.Priority;
 import ro.sapientia2015.story.model.Story;
 
 /**
- * @author Kiss Tibor
+ * @author Kapas Krisztina
  */
-public interface StoryService {
+public interface PriorityService 
+{
 
     /**
      * Adds a new to-do entry.
      * @param added The information of the added to-do entry.
      * @return  The added to-do entry.
      */
-    public Story add(StoryDTO added);
+    public Priority add( PriorityDTO added );
 
     /**
      * Deletes a to-do entry.
@@ -24,13 +27,13 @@ public interface StoryService {
      * @return  The deleted to-do entry.
      * @throws NotFoundException    if no to-do entry is found with the given id.
      */
-    public Story deleteById(Long id) throws NotFoundException;
+    public Priority deleteById( Long id ) throws NotFoundException;
 
     /**
      * Returns a list of to-do entries.
      * @return
      */
-    public List<Story> findAll();
+    public List<Priority> findAll();
 
     /**
      * Finds a to-do entry.
@@ -38,15 +41,13 @@ public interface StoryService {
      * @return  The found to-entry.
      * @throws NotFoundException    if no to-do entry is found with the given id.
      */
-    public Story findById(Long id) throws NotFoundException;
+    public Priority findById( Long id ) throws NotFoundException;
 
     /**
      * Updates the information of a to-do entry.
-     * @param updated   The information of the updated to-do entry.
+     * @param updated   The StoryController2information of the updated to-do entry.
      * @return  The updated to-do entry.
      * @throws NotFoundException    If no to-do entry is found with the given id.
      */
-    public Story update(StoryDTO updated) throws NotFoundException;
-
-	public List<Story> findByPriorityId(Long priorityId);
+    public Priority update( PriorityDTO updated ) throws NotFoundException;
 }
