@@ -104,7 +104,7 @@ public class BoardController {
     }
     
     @RequestMapping(value = "/board/delete/{id}", method = RequestMethod.GET)
-    public String deleteTask(@PathVariable("id") Long id, Model model, RedirectAttributes attributes) throws NotFoundException {
+    public String deleteTask(@PathVariable("id") Long id,  RedirectAttributes attributes) throws NotFoundException {
         Task deleted = service.findById(id);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED, deleted.getTitle());
         service.deleteById(id);
@@ -149,7 +149,7 @@ public class BoardController {
         return messageSource.getMessage(messageCode, messageParameters, current);
     }
     
-    private TaskDTO constructFormObjectForUpdateForm(Task updated) {
+    TaskDTO constructFormObjectForUpdateForm(Task updated) {
         TaskDTO dto = new TaskDTO();
 
         dto.setId(updated.getId());

@@ -44,10 +44,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.m
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.view;
 
-/**
- * This test uses the annotation based application context configuration.
- * @author Kiss Tibor
- */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = WebContextLoader.class, classes = {ExampleApplicationContext.class})
 //@ContextConfiguration(loader = WebContextLoader.class, locations = {"classpath:exampleApplicationContext.xml"})
