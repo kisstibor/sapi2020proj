@@ -1,0 +1,6 @@
+<dataset>
+    <task id="1" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" title="Foo" status="todo"/>
+    <task id="2" creation_time="2012-10-21 11:13:28" description="Lorem ipsum"  title="Bar" status="todo"/>
+    <task id="1" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" title="Bar" status="todo"/>
+</dataset>
+

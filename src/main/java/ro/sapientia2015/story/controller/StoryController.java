@@ -65,7 +65,8 @@ public class StoryController {
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
-
+        System.out.println("We have problems here.");
+    	System.out.println(dto.toString());
         Story added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());
