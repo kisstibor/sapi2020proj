@@ -22,7 +22,9 @@ import java.util.Properties;
 @ComponentScan(basePackages = {
         "ro.sapientia2015.common.controller",
         "ro.sapientia2015.story.controller",
-        "ro.sapientia2015.story.service"
+        "ro.sapientia2015.story.service",
+        "ro.sapientia2015.project.contoller",
+        "ro.sapientia2015.project.service"
 })
 @Import({PersistenceContext.class})
 @PropertySource("classpath:application.properties")

@@ -33,7 +33,7 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
-
+    
     @Version
     private long version;
 
