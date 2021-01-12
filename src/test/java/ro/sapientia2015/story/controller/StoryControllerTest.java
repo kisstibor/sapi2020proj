@@ -37,6 +37,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
 /**
@@ -89,6 +90,7 @@ public class StoryControllerTest {
         assertNull(formObject.getId());
         assertNull(formObject.getDescription());
         assertNull(formObject.getTitle());
+        assertEquals(0, formObject.getFixVersion());
     }
 
     @Test
@@ -255,6 +257,7 @@ public class StoryControllerTest {
         assertEquals(updated.getId(), formObject.getId());
         assertEquals(updated.getDescription(), formObject.getDescription());
         assertEquals(updated.getTitle(), formObject.getTitle());
+        assertEquals((Long)updated.getFixVersion().getId(), (Long)formObject.getFixVersion());
     }
 
     @Test(expected = NotFoundException.class)
