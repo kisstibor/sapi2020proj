@@ -1,125 +1,136 @@
 package ro.sapientia2015.story.controller;
 
+import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.LogDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
-import ro.sapientia2015.story.model.Story;
-import ro.sapientia2015.story.service.StoryService;
-
-import javax.annotation.Resource;
-import javax.validation.Valid;
-
-import java.util.List;
-import java.util.Locale;
-
+import ro.sapientia2015.story.model.Log;
+import ro.sapientia2015.story.service.LogService;
 
 @Controller
-@SessionAttributes("story")
-public class StoryController {
+@SessionAttributes("log")
+public class LogController {
 
-    protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.story.added";
-    protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";
-    protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.story.deleted";
+    protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.log.added";
+    protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.log.updated";
+    protected static final String FEEDBACK_MESSAGE_KEY_DELETED = "feedback.message.log.deleted";
 
     protected static final String FLASH_MESSAGE_KEY_ERROR = "errorMessage";
     protected static final String FLASH_MESSAGE_KEY_FEEDBACK = "feedbackMessage";
 
-    protected static final String MODEL_ATTRIBUTE = "story";
-    protected static final String MODEL_ATTRIBUTE_LIST = "stories";
+    protected static final String MODEL_ATTRIBUTE = "log";
+    protected static final String MODEL_ATTRIBUTE_LIST = "logs";
 
     protected static final String PARAMETER_ID = "id";
+    protected static final String PARAMETER_STATUS = "status";
+    protected static final String PARAMETER_ASSIGNTO = "assignTo";
+    protected static final String PARAMETER_DOC = "doc";
 
-    protected static final String REQUEST_MAPPING_LIST = "/";
-    protected static final String REQUEST_MAPPING_VIEW = "/story/{id}";
+    protected static final String REQUEST_MAPPING_LIST = "/log";
+    protected static final String REQUEST_MAPPING_VIEW = "/log/{id}";
 
-    protected static final String VIEW_ADD = "story/add";
-    protected static final String VIEW_LIST = "story/list";
-    protected static final String VIEW_UPDATE = "story/update";
-    protected static final String VIEW_VIEW = "story/view";
+    protected static final String VIEW_ADD = "log/add";
+    protected static final String VIEW_LIST = "log/list";
+    protected static final String VIEW_UPDATE = "log/update";
+    protected static final String VIEW_VIEW = "log/view";
 
     @Resource
-    private StoryService service;
+    private LogService service;
 
     @Resource
     private MessageSource messageSource;
 
-    @RequestMapping(value = "/story/add", method = RequestMethod.GET)
+    @RequestMapping(value = "/log/add", method = RequestMethod.GET)
     public String showAddForm(Model model) {
-        StoryDTO formObject = new StoryDTO();
+        LogDTO formObject = new LogDTO();
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_ADD;
     }
 
-    @RequestMapping(value = "/story/add", method = RequestMethod.POST)
-    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) {
+    @RequestMapping(value = "/log/add", method = RequestMethod.POST)
+    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) LogDTO dto, BindingResult result, RedirectAttributes attributes) {
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
 
-        Story added = service.add(dto);
+        Log added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
 
-    @RequestMapping(value = "/story/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/log/delete/{id}", method = RequestMethod.GET)
     public String deleteById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
-        Story deleted = service.deleteById(id);
+        Log deleted = service.deleteById(id);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED, deleted.getTitle());
         return createRedirectViewPath(REQUEST_MAPPING_LIST);
     }
 
     @RequestMapping(value = REQUEST_MAPPING_LIST, method = RequestMethod.GET)
     public String findAll(Model model) {
-        List<Story> models = service.findAll();
+        List<Log> models = service.findAll();
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
     }
 
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
-        Story found = service.findById(id);
+        Log found = service.findById(id);
         model.addAttribute(MODEL_ATTRIBUTE, found);
         return VIEW_VIEW;
     }
 
-    @RequestMapping(value = "/story/update/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/log/update/{id}", method = RequestMethod.GET)
     public String showUpdateForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
-        Story updated = service.findById(id);
-        StoryDTO formObject = constructFormObjectForUpdateForm(updated);
+        Log updated = service.findById(id);
+        LogDTO formObject = constructFormObjectForUpdateForm(updated);
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
         return VIEW_UPDATE;
     }
 
-    @RequestMapping(value = "/story/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
+    @RequestMapping(value = "/log/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute(MODEL_ATTRIBUTE) LogDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
         if (result.hasErrors()) {
             return VIEW_UPDATE;
         }
 
-        Story updated = service.update(dto);
+        Log updated = service.update(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED, updated.getTitle());
         attributes.addAttribute(PARAMETER_ID, updated.getId());
+        attributes.addAttribute(PARAMETER_ASSIGNTO,updated.getAssignTo());
+        attributes.addAttribute(PARAMETER_STATUS,updated.getStatus());
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
 
-    private StoryDTO constructFormObjectForUpdateForm(Story updated) {
-        StoryDTO dto = new StoryDTO();
+    private LogDTO constructFormObjectForUpdateForm(Log updated) {
+    	LogDTO dto = new LogDTO();
 
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        dto.setAssignTo(updated.getAssignTo());
+        dto.setStatus(updated.getStatus());
+        dto.setDoc(updated.getDoc());
 
         return dto;
     }

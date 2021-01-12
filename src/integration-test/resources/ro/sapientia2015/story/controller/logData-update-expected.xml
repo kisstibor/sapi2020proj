@@ -1,0 +1,5 @@
+<dataset>
+    <log id="1" description="description" title="title" assignto="a12" status="s12" version="1"/>
+    <log id="2" description="description" title="title2" assignto="a22" status="s22" version="1"/>
+</dataset>
+
