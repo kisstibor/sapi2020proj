@@ -103,8 +103,8 @@ public class ScrumController {
     	System.out.println("gotcha get");
         List<Scrum> models = service.findAll();
         
-     // ADD DUMMY DATA
-        if (models.size() == 0) {
+        //dummy data
+        /*if (models.size() == 0) {
     		ScrumDTO s1 = new ScrumDTO();
     		ScrumDTO s2 = new ScrumDTO();
     		s1.setTitle("Elso");
@@ -114,7 +114,7 @@ public class ScrumController {
     		service.add(s1);
         	service.add(s2);
         	models = service.findAll();
-        }
+        }*/
         
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;

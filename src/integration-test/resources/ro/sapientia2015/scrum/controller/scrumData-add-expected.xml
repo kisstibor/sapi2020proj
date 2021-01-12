@@ -1,0 +1,5 @@
+<dataset>
+    <story id="1" members="Lorem, Ipsum" title="Foo" version="0"/>
+    <story id="2" members="LoreM, iPsum" title="Bar" version="0"/>
+    <story id="3" members="Lorem" title="Ipsum" version="0"/>
+</dataset>
