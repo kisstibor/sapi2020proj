@@ -17,14 +17,14 @@
         </div>
         <div>
         	<!--<spring:message code="label.update.story.description" />-->
-            <p><c:out value="${story.description}"/></p>
+            <p id="story-description"><c:out value="${story.description}"/></p>
         </div>
         <div>
         	<spring:message code="label.update.story.time" />
-        	<c:out value="${story.time} hour(s)" />
+        	<p id="story-time"><c:out value="${story.time} hour(s)" /></p>
         </div>
         <div class="action-buttons">
-            <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
+            <a href="/story/update/${story.id}" class="btn btn-primary" id="update-button"><spring:message code="label.update.story.link"/></a>
             <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
         </div>
     </div>
