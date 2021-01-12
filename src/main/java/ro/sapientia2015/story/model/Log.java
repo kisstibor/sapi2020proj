@@ -22,8 +22,8 @@ public class Log {
 
     public static final int MAX_LENGTH_DESCRIPTION = 500;
     public static final int MAX_LENGTH_TITLE = 100;
-    public static final int MAX_LENGTH_STATUS = 50;
-    public static final int MAX_LENGTH_ASSIGNTO = 80;
+    public static final int MAX_LENGTH_STATUS = 100;
+    public static final int MAX_LENGTH_ASSIGNTO = 100;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,7 +43,7 @@ public class Log {
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
     
-    @Column(name = "assign_to", nullable = false, length = MAX_LENGTH_ASSIGNTO)
+    @Column(name = "assignto", nullable = false, length = MAX_LENGTH_ASSIGNTO)
     private String assignTo;
     
     @Column(name = "status", nullable = false, length = MAX_LENGTH_STATUS)

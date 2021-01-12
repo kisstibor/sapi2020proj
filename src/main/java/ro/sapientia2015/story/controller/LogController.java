@@ -39,7 +39,7 @@ public class LogController {
 
     protected static final String PARAMETER_ID = "id";
     protected static final String PARAMETER_STATUS = "status";
-    protected static final String PARAMETER_ASSIGNTO = "assignTO";
+    protected static final String PARAMETER_ASSIGNTO = "assignTo";
     protected static final String PARAMETER_DOC = "doc";
 
     protected static final String REQUEST_MAPPING_LIST = "/log";
