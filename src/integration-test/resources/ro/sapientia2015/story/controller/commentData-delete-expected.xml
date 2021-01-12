@@ -26,13 +26,6 @@
         status="TODO"
          version="0"
          />
-    <comment id="1"
-	creation_time="2012-10-21 11:13:28"
-	 message="message test"
-	  modification_time="2012-10-21 11:13:28"
-	  story="1"
-	    version="0"
-	    />     
 	    <comment id="2"
 	creation_time="2012-10-21 11:13:28"
 	 message="message test 2"

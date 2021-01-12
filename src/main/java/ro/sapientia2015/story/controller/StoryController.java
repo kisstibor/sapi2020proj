@@ -1,5 +1,6 @@
 package ro.sapientia2015.story.controller;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -66,11 +67,15 @@ public class StoryController {
     }
 
     @RequestMapping(value = "/story/add", method = RequestMethod.POST)
-    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) StoryDTO dto,@RequestParam(value="dueDate") @DateTimeFormat(pattern ="yyyy-MM-dd") LocalDate date, BindingResult result, RedirectAttributes attributes) {
+    public String add(@ModelAttribute(MODEL_ATTRIBUTE) @Valid StoryDTO dto, BindingResult result,@RequestParam(value="dueDate") @DateTimeFormat(pattern ="yyyy-MM-dd") LocalDate date, RedirectAttributes attributes) {
         if (result.hasErrors()) {
             return VIEW_ADD;
         }
-        dto.setDueDate(date.toDate());
+        if(date == null) {
+        	result.rejectValue("dueDate", "error.user", "Not a valid date!");
+        	return VIEW_ADD;
+        }
+        dto.setDueDate(date.toDate());//LocalDate.now().toDate());
         Story added = service.add(dto);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED, added.getTitle());
         attributes.addAttribute(PARAMETER_ID, added.getId());

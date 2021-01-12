@@ -40,7 +40,7 @@ public class Sprint {
     private long version;
 
     @Column(name = "story")
-    @OneToMany
+    @OneToMany( cascade = CascadeType.ALL)
     private List<Story> stories;
 
     public Sprint() {

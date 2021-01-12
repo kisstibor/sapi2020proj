@@ -41,8 +41,7 @@ public class RepositoryCommentService implements CommentService {
 	@Override
 	public Comment deleteById(Long id) throws NotFoundException {
 		Comment deleted = findById(id);
-		int index = deleted.getStory().getComments().indexOf(deleted);
-		deleted.getStory().getComments().remove(index);
+		deleted.getStory().removeComment(deleted);
         repository.delete(deleted);
         return deleted;
 	}

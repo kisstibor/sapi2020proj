@@ -140,11 +140,13 @@ public class RepositoryStoryServiceTest {
     public void update() throws NotFoundException {
         StoryDTO dto = StoryTestUtil.createFormObject(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION_UPDATED, StoryTestUtil.TITLE_UPDATED, StoryTestUtil.DUEDATE, StoryTestUtil.STATUS_UPDATED_1);
         Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.DUEDATE);
-        DateTime creationTIme = model.getModificationTime();
+        DateTime creationTIme = DateTime.now();
         when(repositoryMock.findOne(dto.getId())).thenReturn(model);
-
+        
+        pause(100000);
+        
         Story actual = service.update(dto);
-        DateTime updateTime = actual.getModificationTime();
+        DateTime updateTime = DateTime.now();
 
         verify(repositoryMock, times(1)).findOne(dto.getId());
         verifyNoMoreInteractions(repositoryMock);
@@ -165,5 +167,14 @@ public class RepositoryStoryServiceTest {
 
         verify(repositoryMock, times(1)).findOne(dto.getId());
         verifyNoMoreInteractions(repositoryMock);
+    }
+    
+    private void pause(long timeInMillis) {
+        try {
+            Thread.currentThread().sleep(timeInMillis);
+        }
+        catch (InterruptedException e) {
+            //Do Nothing
+        }
     }
 }

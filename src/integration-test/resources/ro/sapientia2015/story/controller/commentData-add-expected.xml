@@ -1,0 +1,20 @@
+<dataset>
+
+    <comment id="1"
+	 message="message test"
+	  story="1"
+	    version="0"
+	    />     
+	    <comment id="2"
+	 message="message test 2"
+	  story="1"
+	    version="0"
+	    />
+	    <comment id="3"
+	 message="test text for message"
+	  story="1"
+	    version="0"
+	    />    
+    
+</dataset>
+

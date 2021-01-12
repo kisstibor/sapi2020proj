@@ -65,7 +65,7 @@ public class CommentController {
     @RequestMapping(value = "/comment/add", method = RequestMethod.POST)
     public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) CommentDTO dto, BindingResult result, RedirectAttributes attributes) {
         if (result.hasErrors()) {
-            return VIEW_ADD+"/"+dto.getStoryId();
+            return VIEW_ADD;
         }
 
         Comment added = service.add(dto);

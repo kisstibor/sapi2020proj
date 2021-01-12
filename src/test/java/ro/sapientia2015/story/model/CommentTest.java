@@ -7,6 +7,7 @@ import static junit.framework.Assert.assertTrue;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.junit.Test;
@@ -22,7 +23,6 @@ public class CommentTest {
         assertNull(built.getId());
         assertNull(built.getCreationTime());
         assertNull(built.getMessage());
-        assertNull(built.getModificationTime());
         assertEquals(0L, built.getVersion());
         assertNull(built.getStory());
     }
@@ -34,7 +34,6 @@ public class CommentTest {
         assertNull(built.getId());
         assertNull(built.getCreationTime());
         assertEquals(MESSAGE, built.getMessage());
-        assertNull(built.getModificationTime());
         assertEquals(0L, built.getVersion());
         assertNull(built.getStory());
     }
@@ -49,7 +48,7 @@ public class CommentTest {
         assertNull(comment.getMessage());
         assertNotNull(comment.getModificationTime());
         assertEquals(0L, comment.getVersion());
-        assertEquals(comment.getCreationTime(), comment.getModificationTime());
+        assertEquals(comment.getCreationTime().toString(DateTimeFormat.forPattern("dd MMMM yyyy, HH:mm")), comment.getModificationTime());
         assertNull(comment.getStory());
     }
     

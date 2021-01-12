@@ -61,11 +61,13 @@ public class Story {
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private StoryStatus status;
 
     @Version
     private long version;
+    
     
     @Column(name = "comment")
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "story", cascade = CascadeType.ALL)
@@ -82,6 +84,10 @@ public class Story {
     public Long getId() {
         return id;
     }
+    /*
+    public Sprint getSprint() {
+        return sprint;
+    }*/
 
     public DateTime getCreationTime() {
         return creationTime;
@@ -100,7 +106,7 @@ public class Story {
     }
     
     public String getDueDate() {
-        return dueDate.toString(DateTimeFormat.forPattern("dd MMMM yyyy, HH:mm"));
+        return dueDate.minusHours(3).toString(DateTimeFormat.forPattern("dd MMMM yyyy, HH:mm"));
     }
     
     public DateTime getDueDateAsDateTime() {
@@ -127,6 +133,8 @@ public class Story {
     		     .appendSeconds()
     		     .appendSuffix("s")
     		     .toFormatter();
+    	if(todoStatusTime == null)
+    		return null;
         return formatter.print(todoStatusTime.toPeriod());
     }
     
@@ -141,6 +149,8 @@ public class Story {
     		     .appendSeconds()
     		     .appendSuffix("s")
     		     .toFormatter();
+    	if(progressStatusTime == null)
+    		return null;
         return formatter.print(progressStatusTime.toPeriod());
     }
     
@@ -155,6 +165,8 @@ public class Story {
     		     .appendSeconds()
     		     .appendSuffix("s")
     		     .toFormatter();
+    	if(testingStatusTime == null)
+    		return null;
         return formatter.print(testingStatusTime.toPeriod());
     }
 
@@ -176,6 +188,11 @@ public class Story {
 	
 	public boolean addComment(Comment comment) {
 		return this.comments.add(comment);
+	}
+	
+	public void removeComment(Comment comment) {
+		int index = comments.indexOf(comment);
+		comments.remove(index);
 	}
 	
 	public StoryStatus getStatus() {
@@ -227,7 +244,7 @@ public class Story {
             built.title = title;
             built.comments = new ArrayList<Comment>();
             built.status = StoryStatus.TODO;
-            //built.statusModificationTime = DateTime.now();
+            built.statusModificationTime = DateTime.now();
             built.todoStatusTime = Duration.ZERO;
             built.progressStatusTime = Duration.ZERO;
             built.testingStatusTime = Duration.ZERO;

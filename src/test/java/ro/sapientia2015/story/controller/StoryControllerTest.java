@@ -101,7 +101,7 @@ public class StoryControllerTest {
 
         initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
 
-        String view = controller.add(formObject, StoryTestUtil.DUEDATE.toLocalDate(), result, attributes);
+        String view = controller.add(formObject, result, StoryTestUtil.DUEDATE.toLocalDate(), attributes);
 
         verify(serviceMock, times(1)).add(formObject);
         verifyNoMoreInteractions(serviceMock);
@@ -123,7 +123,7 @@ public class StoryControllerTest {
 
         RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        String view = controller.add(formObject,null , result, attributes);
+        String view = controller.add(formObject, result, null, attributes);
 
         verifyZeroInteractions(serviceMock, messageSourceMock);
 
@@ -143,7 +143,7 @@ public class StoryControllerTest {
 
         RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
 
-        String view = controller.add(formObject,StoryTestUtil.DUEDATE.toLocalDate(), result, attributes);
+        String view = controller.add(formObject, result, StoryTestUtil.DUEDATE.toLocalDate(), attributes);
 
         verifyZeroInteractions(serviceMock, messageSourceMock);
 

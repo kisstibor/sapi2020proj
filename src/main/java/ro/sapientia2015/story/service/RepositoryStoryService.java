@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.repository.SprintRepository;
 import ro.sapientia2015.story.repository.StoryRepository;
 
 import javax.annotation.Resource;
@@ -20,6 +21,9 @@ public class RepositoryStoryService implements StoryService {
 
     @Resource
     private StoryRepository repository;
+    
+    @Resource
+    private SprintRepository sprintRepository;
 
     @Transactional
     @Override
