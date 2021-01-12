@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title></title>
@@ -27,6 +28,15 @@
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
             </div>
+            
+            <div id="control-group-title" class="control-group">
+            	<label for="story-description"><spring:message code="label.story.add.page.scrum"/>:</label>
+            	<c:forEach items="${story.allScrums}" var="item">
+           			<form:radiobutton value = "${item.title}" path="selectedScrum"/>
+           			${item.title}
+            	</c:forEach>
+            </div>
+            
             <div class="action-buttons">
                 <a href="/" class="btn"><spring:message code="label.cancel"/></a>
                 <button id="add-story-button" type="submit" class="btn btn-primary"><spring:message
