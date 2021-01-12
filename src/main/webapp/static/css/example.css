@@ -18,3 +18,7 @@
     float: right;
     position: relative;
 }
+
+.error-message {
+	color: red;
+}
