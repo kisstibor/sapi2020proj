@@ -5,7 +5,7 @@
 <html>
 <head>
     <title></title>
-    <script type="text/javascript" src="/static/js/story.view.js"></script>
+    <script type="text/javascript" src="/scrumsapientia/static/js/story.view.js"></script>
 </head>
 <body>
     <div id="vacation-id" class="hidden">${vacation.id}</div>
@@ -20,10 +20,10 @@
     </div>
     <div class="action-buttons">
             <a href="/scrumsapientia/story/vacation/update/${id}" class="btn btn-primary"><spring:message code="label.update.vacation.link"/></a>
-            <a id="delete-vacation-link" class="btn btn-primary"><spring:message code="label.delete.vacation.link"/></a>
-        </div>
+             <a href="/scrumsapientia/story/vacation/delete/${id}" id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
         
-       <script id="template-delete-story-confirmation-dialog" type="text/x-handlebars-template">
+    </div>
+    <script id="template-delete-story-confirmation-dialog" type="text/x-handlebars-template">
         <div id="delete-story-confirmation-dialog" class="modal">
             <div class="modal-header">
                 <button class="close" data-dismiss="modal">×</button>
@@ -39,4 +39,4 @@
         </div>
     </script>
 </body>
-</html> 
+</html>

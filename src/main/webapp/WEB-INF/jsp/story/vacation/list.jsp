@@ -13,13 +13,13 @@
     </div>
     <div id="vacation-list" class="page-content">
         <c:choose>
-            <c:when test="${empty vacations}">
+            <c:when test="${empty vacation}">
                 <p><spring:message code="label.vacation.list.empty"/></p>
             </c:when>
             <c:otherwise>
-                <c:forEach items="${vacations}" var="vacation">
+                <c:forEach items="${vacation}" var="vacation">
                     <div class="well well-small">
-                        <a href="/scrumsapientia/story/vacation/${vacation.id}"><c:out value="${vacation.vacationStartDate}"/><c:out value="${vacation.vacationEndDate}"/></a>
+                        <a href="/scrumsapientia/vacation/${vacation.id}"><c:out value="${vacation.vacationStartDate}"/><c:out value="${vacation.vacationEndDate}"/></a>
                     </div>
                 </c:forEach>
             </c:otherwise>

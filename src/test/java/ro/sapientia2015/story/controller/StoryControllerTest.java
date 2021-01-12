@@ -20,9 +20,12 @@ import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.config.UnitTestContext;
 import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.VacationDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.Vacation;
 import ro.sapientia2015.story.service.StoryService;
+import ro.sapientia2015.story.service.VacationService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +57,8 @@ public class StoryControllerTest {
     private MessageSource messageSourceMock;
 
     private StoryService serviceMock;
+    
+    private VacationService vacationServiceMock;
 
     @Resource
     private Validator validator;
@@ -67,6 +72,65 @@ public class StoryControllerTest {
 
         serviceMock = mock(StoryService.class);
         ReflectionTestUtils.setField(controller, "service", serviceMock);
+        
+        vacationServiceMock = mock(VacationService.class);
+        ReflectionTestUtils.setField(controller, "vacationService", vacationServiceMock);
+        
+    }
+    
+    @Test
+    public void showAddVacationForm() throws NotFoundException {
+        BindingAwareModelMap model = new BindingAwareModelMap();
+
+        String view = controller.showAddVacationForm(model);
+
+        verifyZeroInteractions(messageSourceMock, vacationServiceMock);
+        assertEquals(StoryController.VIEW_VACATION_ADD, view);
+
+        VacationDTO formObject = (VacationDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE_VACATION);
+
+        assertNull(formObject.getId());
+        assertNull(formObject.getVacationStartDate());
+        assertNull(formObject.getVacationEndDate());
+//       assertEquals(1L, formObject.getId());
+    }
+    
+
+    @Test
+    public void addVacation() {
+    	Long id = 1L;
+    	String startDate = "2020";
+    	String endDate = "2021";
+
+    	VacationDTO formObject = new VacationDTO();
+        formObject.setId(id);
+        formObject.setVacationStartDate(startDate);
+        formObject.setVacationEndDate(endDate);
+
+        Vacation model = Vacation.getBuilder(startDate, endDate)
+                .build();
+        ReflectionTestUtils.setField(model, "id", id);
+
+
+        when(vacationServiceMock.add(formObject)).thenReturn(model);
+
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/vacation/add/"+id);
+        BindingResult result = bindAndValidate(mockRequest, formObject);
+
+        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+        initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_ADDED_VACATION);
+
+        String view = controller.add(formObject, result, attributes);
+
+        verify(vacationServiceMock, times(1)).add(formObject);
+        verifyNoMoreInteractions(vacationServiceMock);
+
+        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VACATION_VIEW);
+        assertEquals(expectedView, view);
+
+        assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
+
     }
 
     @Test

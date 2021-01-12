@@ -160,7 +160,7 @@ public class StoryController {
     
     
     @RequestMapping(value = "/story/vacation/delete/{id}", method = RequestMethod.GET)
-    public String deleteTimelimitById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
+    public String deleteVacationById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
         Vacation deleted = vacationService.deleteById(id);
         addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED_VACATION, deleted.getId());
         attributes.addAttribute(PARAMETER_ID, id);
