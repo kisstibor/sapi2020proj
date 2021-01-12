@@ -36,7 +36,7 @@ public class StoryTimeLimit {
     @Column(name = "timelimit", nullable = false)
     private String timelimit;
     
-    @Column(name = "storyId", nullable = false)
+    @Column(name = "story_id", nullable = false)
     private Long storyId;
 
     @Version

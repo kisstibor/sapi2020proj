@@ -37,8 +37,8 @@ public class Story {
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
     
-    @Column(name = "timelimit", nullable = true)
-    private String timelimit;
+//    @Column(name = "timelimit", nullable = true)
+//    private String timelimit;
 
     @Version
     private long version;
@@ -71,9 +71,9 @@ public class Story {
         return title;
     }
     
-    public String getTimelimit() {
-        return timelimit;
-    }
+//    public String getTimelimit() {
+//        return timelimit;
+//    }
 
     public long getVersion() {
         return version;
@@ -96,11 +96,11 @@ public class Story {
         this.title = title;
     }
     
-    public void update(String description, String title, String timelimit) {
-        this.description = description;
-        this.title = title;
-        this.timelimit = timelimit;
-    }
+//    public void update(String description, String title, String timelimit) {
+//        this.description = description;
+//        this.title = title;
+//        this.timelimit = timelimit;
+//    }
 
     public static class Builder {
 
@@ -120,10 +120,10 @@ public class Story {
             return this;
         }
         
-        public Builder timelimit(String timelimit) {
-            built.timelimit = timelimit;
-            return this;
-        }
+//        public Builder timelimit(String timelimit) {
+//            built.timelimit = timelimit;
+//            return this;
+//        }
     }
 
     @Override

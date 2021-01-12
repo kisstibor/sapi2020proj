@@ -23,7 +23,7 @@ public class StoryDTO {
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
     
-    private String timelimit;
+//    private String timelimit;
 
     public StoryDTO() {
 
@@ -53,13 +53,13 @@ public class StoryDTO {
         this.title = title;
     }
     
-    public String getTimelimit() {
-        return timelimit;
-    }
-
-    public void setTimelimit(String timelimit) {
-        this.timelimit = timelimit;
-    }
+//    public String getTimelimit() {
+//        return timelimit;
+//    }
+//
+//    public void setTimelimit(String timelimit) {
+//        this.timelimit = timelimit;
+//    }
 
     @Override
     public String toString() {

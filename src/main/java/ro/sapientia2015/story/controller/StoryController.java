@@ -150,7 +150,7 @@ public class StoryController {
         }
         dto.setStoryId(storyId);
         StoryTimeLimit added = storytimelimitService.add(dto);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED_TIMELIMIT);
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_ADDED_TIMELIMIT, added.getTimelimit());
     	attributes.addAttribute(PARAMETER_ID, added.getStoryId());
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
@@ -159,7 +159,7 @@ public class StoryController {
     @RequestMapping(value = "/story/timelimit/delete/{storyId}/{id}", method = RequestMethod.GET)
     public String deleteTimelimitById(@PathVariable("id") Long id, @PathVariable("storyId") Long storyId, RedirectAttributes attributes) throws NotFoundException {
         StoryTimeLimit deleted = storytimelimitService.deleteById(id);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED_TIMELIMIT, deleted.getId());
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_DELETED_TIMELIMIT, deleted.getTimelimit());
         attributes.addAttribute(PARAMETER_ID, storyId);
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
     }
@@ -183,7 +183,7 @@ public class StoryController {
         }
 
         StoryTimeLimit updated = storytimelimitService.update(dto);
-        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED_TIMELIMIT, updated.getId());
+        addFeedbackMessage(attributes, FEEDBACK_MESSAGE_KEY_UPDATED_TIMELIMIT, updated.getTimelimit());
         attributes.addAttribute(PARAMETER_ID, storyId);
 
         return createRedirectViewPath(REQUEST_MAPPING_VIEW);
