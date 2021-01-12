@@ -90,6 +90,7 @@ public class StoryController {
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
         Story found = service.findById(id);
+        
         model.addAttribute(MODEL_ATTRIBUTE, found);
         return VIEW_VIEW;
     }

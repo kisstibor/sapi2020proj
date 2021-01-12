@@ -4,10 +4,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 <head>
-    <title></title>
+    <title><spring:message code="label.internalservererror.page.title"/></title>
 </head>
 <body>
-    <h1><spring:message code="label.internalservererror.page.title"/></h1>
+    <h1 id="page-title"><spring:message code="label.internalservererror.page.title"/></h1>
     <div class="page-content">
         <p><spring:message code="label.internalservererror.page.message"/></p>
     </div>

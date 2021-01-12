@@ -3,7 +3,7 @@
     <story id="2" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" modification_time="2012-10-21 11:13:28" title="Bar" version="0"/>
     <sprint id="1" creation_time="2012-10-21 11:13:28" description="Lorem ipsum" modification_time="2012-10-21 11:13:28" title="Bar" version="0"/>
     <sprint_stories stories="1" sprint="1"/>
-    <comment  id="1" message="test" story="1" creation_time="2012-10-21 11:13:28" modification_time="2012-10-21 11:13:28"  version="0"/>
-	<comment  id="2" message="comment 2..." story="1" creation_time="2012-10-21 11:13:28" modification_time="2012-10-21 11:13:28"  version="0"/>
+    <comment  id="1" message="test" story="1"   version="0"/>
+	<comment  id="2" message="comment 2..." story="1"  version="0"/>
+	<comment  id="3" message="message" story="1" version="0"/>
 </dataset>
-

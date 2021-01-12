@@ -1,9 +1,12 @@
 package ro.sapientia2015.story.dto;
 
+import java.util.List;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import ro.sapientia2015.story.model.Comment;
 import ro.sapientia2015.story.model.Story;
 
 /**
@@ -19,6 +22,8 @@ public class StoryDTO {
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
+
+    private List<Comment> comments;
 
     public StoryDTO() {
 
@@ -52,4 +57,12 @@ public class StoryDTO {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
 }
