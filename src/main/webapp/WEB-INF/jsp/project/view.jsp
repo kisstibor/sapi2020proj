@@ -49,7 +49,7 @@
 
 		<div class="action-buttons">
 			<a href="/project/update/${project.id}"
-				class="btn btn-primary"><spring:message
+				id="update-project-link" class="btn btn-primary"><spring:message
 					code="label.update.story.link" /></a> <a
 				href="/project/delete/${project.id}"
 				id="delete-project-link" class="btn btn-primary"><spring:message

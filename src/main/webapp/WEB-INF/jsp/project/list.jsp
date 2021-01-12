@@ -26,7 +26,7 @@
 				<p>Project name - Product owner</p>
 				<c:forEach items="${projects}" var="project">
 					<div class="well well-small">
-						<a href="/project/${project.id}"><c:out
+						<a id="project-name-owner" href="/project/${project.id}"><c:out
 								value="${project.name} - ${project.productOwner}" /></a>
 					</div>
 				</c:forEach>
