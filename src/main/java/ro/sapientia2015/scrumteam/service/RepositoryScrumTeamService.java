@@ -95,23 +95,28 @@ public class RepositoryScrumTeamService implements ScrumTeamService {
 	}
 	
 	private void log(String smg, ScrumTeam model) {
-		System.out.println(">>>>>> ("+smg+") PERSIST: ScrumTeam:"
-    			+ "\n | id:          " + model.getId()
-    			+ "\n | name:        " + model.getName()
-    			+ "\n | members:     " + model.getMembers()
-    			+ "\n | story count: " + model.getStoryCount()
-    			+ "\n | stories:     " + (model.getStories() != null?"null":"")
-    	);
-		if (model.getStories() != null) {
-	    	for (Story s : model.getStories()) {
-	    		System.out.println(
-	    		    " |  |_______________"
-	    		+ "\n |  | id: " + s.getId() 
-	    		+ "\n |  | title:       " + s.getTitle() 
-	    		+ "\n |  | description: " + s.getDescription() 
-	    		+ "\n |  | scrumTeam:   " + s.getScrumTeam()
-	    		);
-	    	}
+		try {
+			System.out.println(">>>>>> ("+smg+") PERSIST: ScrumTeam:"
+	    			+ "\n | id:          " + model.getId()
+	    			+ "\n | name:        " + model.getName()
+	    			+ "\n | members:     " + model.getMembers()
+	    			+ "\n | story count: " + model.getStoryCount()
+	    			+ "\n | stories:     " + (model.getStories() != null?"null":"")
+	    	);
+			if (model.getStories() != null) {
+		    	for (Story s : model.getStories()) {
+		    		System.out.println(
+		    		    " |  |_______________"
+		    		+ "\n |  | id: " + s.getId() 
+		    		+ "\n |  | title:       " + s.getTitle() 
+		    		+ "\n |  | description: " + s.getDescription() 
+		    		+ "\n |  | scrumTeam:   " + s.getScrumTeam()
+		    		);
+		    	}
+			}
+		} catch (Exception e) {
+			System.out.println(">>> ERROR >>> Can't LOG:");
+			e.printStackTrace();
 		}
 	}
 	

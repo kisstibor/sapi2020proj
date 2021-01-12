@@ -84,7 +84,7 @@ public class ScrumTeamController {
     }
     
     @RequestMapping(value = "/scrumteam/add", method = RequestMethod.POST)
-    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) ScrumTeamDTO dto, BindingResult result, RedirectAttributes attributes) throws NotFoundException {
+    public String add(@Valid @ModelAttribute(MODEL_ATTRIBUTE) ScrumTeamDTO dto, BindingResult result, RedirectAttributes attributes)  {
     	System.out.println(">>> REQUEST: /scrumteam/add  POST: " + dto.getName() + " " + dto.getMembers());
         if (result.hasErrors()) {
             return VIEW_ADD;
@@ -131,7 +131,14 @@ public class ScrumTeamController {
 			}
         }
         
-        ScrumTeam added2 = service.update(scrumTeam);
+        ScrumTeam added2;
+		try {
+			added2 = service.update(scrumTeam);
+		} catch (NotFoundException e) {
+			System.out.println(">>> ERROR Can't update: " + scrumTeam);
+			e.printStackTrace();
+			return VIEW_LIST;
+		}
         
         // Save ScrumTeam
         //ScrumTeam added = service.add(scrumTeam);// TO HERE

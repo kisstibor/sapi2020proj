@@ -1,0 +1,6 @@
+<dataset>
+    <story id="1" name="test title 1" members="mem1, mem2" version="0"/>
+    <story id="2" name="test title 2" members="mem3, mem4" version="0"/>
+    <story id="3" name="test title 3" members="mem5, mem6" version="0"/>
+</dataset>
+

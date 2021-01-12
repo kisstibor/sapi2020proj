@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -19,6 +17,7 @@ import ro.sapientia2015.story.model.Story;
 public class ScrumTeam {
 
 	public static final int MAX_LENGTH_NAME = 100;
+	public static final int MAX_LENGTH_MEMBERS = 500;
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +26,7 @@ public class ScrumTeam {
 	@Column(name = "name", nullable = false, length = MAX_LENGTH_NAME)
     private String name;
 	
-	@Column(name = "members")
+	@Column(name = "members", length = MAX_LENGTH_MEMBERS)
     private String members;
 	
 	//@JoinTable(name="scrumteam_and_stories", 
