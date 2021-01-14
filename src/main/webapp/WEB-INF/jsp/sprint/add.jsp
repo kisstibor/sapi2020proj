@@ -11,6 +11,7 @@
     <h1><spring:message code="label.story.add.page.title"/></h1>
     <div class="well page-content">
         <form:form action="/sprint/add" commandName="sprint" method="POST" enctype="utf8">
+            
             <div id="control-group-title" class="control-group">
                 <label for="story-title"><spring:message code="label.story.title"/>:</label>
 
@@ -19,6 +20,7 @@
                     <form:errors id="error-title" path="title" cssClass="help-inline"/>
                 </div>
             </div>
+            
             <div id="control-group-description" class="control-group">
                 <label for="story-description"><spring:message code="label.story.description"/>:</label>
 
@@ -26,12 +28,14 @@
                     <form:textarea id="story-description" path="description"/>
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
+            
             </div>
             <div class="action-buttons">
                 <a href="/" class="btn"><spring:message code="label.cancel"/></a>
                 <button id="add-story-button" type="submit" class="btn btn-primary"><spring:message
                         code="label.add.story.button"/></button>
             </div>
+            
         </form:form>
     </div>
 </body>

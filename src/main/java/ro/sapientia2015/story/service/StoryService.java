@@ -2,6 +2,7 @@ package ro.sapientia2015.story.service;
 
 import java.util.List;
 
+import ro.sapientia2015.scrumteam.model.ScrumTeam;
 import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
@@ -17,7 +18,8 @@ public interface StoryService {
      * @return  The added to-do entry.
      */
     public Story add(StoryDTO added);
-
+    public Story add(Story addedModel);
+    
     /**
      * Deletes a to-do entry.
      * @param id    The id of the deleted to-do entry.
@@ -47,4 +49,5 @@ public interface StoryService {
      * @throws NotFoundException    If no to-do entry is found with the given id.
      */
     public Story update(StoryDTO updated) throws NotFoundException;
+    public Story update(Story addedModel) throws NotFoundException;
 }

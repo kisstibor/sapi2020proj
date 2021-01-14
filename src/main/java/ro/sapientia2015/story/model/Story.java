@@ -3,6 +3,10 @@ package ro.sapientia2015.story.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
+import ro.sapientia2015.scrumteam.model.ScrumTeam;
 
 import javax.persistence.*;
 
@@ -33,6 +37,22 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    @Column(name = "progress")
+    private Integer progress;
+    
+    private String progressBar;
+    private String progressBarDone;
+    private String progressBarNotDone;
+    private final int BAR_LENGTH = 10;
+    
+    @JoinColumn(name="SCRUM_TEAM_ID")
+    @ManyToOne()
+//    @ManyToOne(cascade = javax.persistence.CascadeType.PERSIST)
+    //@ManyToOne(cascade = CascadeType.REMOVE)
+    //@ManyToOne(cascade = CascadeType.ALL)
+//    @Cascade(CascadeType.SAVE_UPDATE)
+    private ScrumTeam scrumTeam;
 
     @Version
     private long version;
@@ -68,6 +88,18 @@ public class Story {
     public long getVersion() {
         return version;
     }
+    
+    public Integer getProgress() {
+        return progress; 
+    }
+    
+    public ScrumTeam getScrumTeam() {
+    	return scrumTeam;
+    }
+    
+    public void setScrumTeam(ScrumTeam scrumTeam) {
+    	this.scrumTeam = scrumTeam;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -81,11 +113,44 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, Integer progress) {
         this.description = description;
         this.title = title;
+        this.progress = progress;
+    }
+    
+    public String getProgressBar() {
+    	String bar = getProgressBarDone();
+    	bar += getProgressBarNotDone();
+    	return bar;  
+    }
+    
+    public String getProgressBarDone() {
+    	String bar = "";
+    	int p = (int) Math.floor(progress / BAR_LENGTH);
+    	int i = 0;
+    	for(; i < p; i++) {
+    		bar += "█";
+    	}
+    	return bar;
+    }
+    
+    public String getProgressBarNotDone() {
+    	String bar = "";
+    	int i = (int) Math.floor(progress / BAR_LENGTH);
+    	for(; i < BAR_LENGTH; i++) {
+    		bar += "█";
+    	}
+    	return bar;
     }
 
+    public void update(String title, String description, Integer progress, ScrumTeam scrumTeam) {
+    	this.title = title;
+    	this.description = description;
+    	this.progress = progress;
+    	this.scrumTeam = scrumTeam;
+    }
+    
     public static class Builder {
 
         private Story built;
@@ -101,6 +166,16 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder scrumTeam(ScrumTeam scrumTeam) {
+            built.scrumTeam = scrumTeam;
+            return this;
+        }
+        
+        public Builder progress(Integer progress) {
+            built.progress = progress;
             return this;
         }
     }

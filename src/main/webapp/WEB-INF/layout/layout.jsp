@@ -31,7 +31,9 @@
 
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li><a href="/"><spring:message code="label.navigation.homepage.link"/></a></li>
+                            <li><a href="/"><spring:message code="label.navigation.homepage1.link"/></a></li>
+                            <li><a href="/scrumteam"><spring:message code="label.navigation.homepage2.link"/></a></li>
+                            <li><a href="/scrumofscrums"><spring:message code="label.navigation.homepage3.link"/></a></li>
                         </ul>
                     </div>
                 </div>
