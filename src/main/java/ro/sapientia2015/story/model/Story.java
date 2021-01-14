@@ -90,7 +90,7 @@ public class Story {
     }
     
     public Integer getProgress() {
-        return progress;
+        return progress; 
     }
     
     public ScrumTeam getScrumTeam() {

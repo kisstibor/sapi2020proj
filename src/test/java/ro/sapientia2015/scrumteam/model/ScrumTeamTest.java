@@ -2,7 +2,10 @@ package ro.sapientia2015.scrumteam.model;
 
 import org.junit.Test;
 
+import com.sun.tools.javac.util.List;
+
 import ro.sapientia2015.scrumteam.model.ScrumTeam;
+import ro.sapientia2015.story.model.Story;
 
 import static junit.framework.Assert.*;
 
@@ -27,7 +30,7 @@ public class ScrumTeamTest {
     }
 	
 	@Test
-    public void buildWithALLInformation() {
+    public void buildWithMoreInformation() {
 		ScrumTeam built = ScrumTeam.getBuilder(NAME)
 				.members(MEMBERS)
 				.build();

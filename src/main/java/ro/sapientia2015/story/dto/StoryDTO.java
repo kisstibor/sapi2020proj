@@ -12,6 +12,8 @@ import ro.sapientia2015.story.model.Story;
  */
 public class StoryDTO {
 
+	private final int MIN_PROGRESS_VALUE = 0;
+	private final int MAX_PROGRESS_VALUE = 100;
     private Long id;
 
     @Length(max = Story.MAX_LENGTH_DESCRIPTION)
@@ -57,7 +59,12 @@ public class StoryDTO {
 	}
 
 	public void setProgress(Integer progress) {
-		this.progress = progress;
+		this.progress = progress > MAX_PROGRESS_VALUE
+				? MAX_PROGRESS_VALUE
+				: progress < MIN_PROGRESS_VALUE
+						? MIN_PROGRESS_VALUE
+						: progress;
+		
 	}
 
 	@Override
