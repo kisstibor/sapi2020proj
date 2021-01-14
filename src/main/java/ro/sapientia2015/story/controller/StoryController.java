@@ -223,8 +223,9 @@ public class StoryController {
         StoryDTO dto = new StoryDTO();
 
         dto.setId(updated.getId());
-        dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        dto.setDescription(updated.getDescription());
+        dto.setProgress(updated.getProgress());
 
         return dto;
     }

@@ -113,9 +113,10 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, Integer progress) {
         this.description = description;
         this.title = title;
+        this.progress = progress;
     }
     
     public String getProgressBar() {

@@ -81,7 +81,7 @@ public class RepositoryStoryService implements StoryService {
     @Override
     public Story update(StoryDTO updated) throws NotFoundException {
         Story model = findById(updated.getId());
-        model.update(updated.getDescription(), updated.getTitle());
+        model.update(updated.getDescription(), updated.getTitle(), updated.getProgress());
 
         return model;
     }

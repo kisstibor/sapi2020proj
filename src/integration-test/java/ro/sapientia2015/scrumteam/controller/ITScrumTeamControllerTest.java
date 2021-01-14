@@ -99,13 +99,13 @@ public class ITScrumTeamControllerTest {
     @Test
     @ExpectedDatabase("scrumTeamData.xml")
     public void addWhenTitleAndDescriptionAreTooLong() throws Exception {
-        String title = ScrumTeamTestUtil.createStringWithLength(ScrumTeam.MAX_LENGTH_NAME + 1);
-        String description = ScrumTeamTestUtil.createStringWithLength(ScrumTeam.MAX_LENGTH_MEMBERS + 1);
+        String name = ScrumTeamTestUtil.createStringWithLength(ScrumTeam.MAX_LENGTH_NAME + 1);
+        String members = ScrumTeamTestUtil.createStringWithLength(ScrumTeam.MAX_LENGTH_MEMBERS + 1);
 
         mockMvc.perform(post("/scrumteam/add")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param(FORM_FIELD_MEMBERS, description)
-                .param(FORM_FIELD_NAME, title)
+                .param(FORM_FIELD_MEMBERS, members)
+                .param(FORM_FIELD_NAME, name)
                 .sessionAttr(ScrumTeamController.MODEL_ATTRIBUTE, new ScrumTeamDTO())
         )
                 .andExpect(status().isOk())
@@ -114,8 +114,8 @@ public class ITScrumTeamControllerTest {
                 .andExpect(model().attributeHasFieldErrors(ScrumTeamController.MODEL_ATTRIBUTE, "name"))
                 .andExpect(model().attributeHasFieldErrors(ScrumTeamController.MODEL_ATTRIBUTE, "members"))
                 .andExpect(model().attribute(ScrumTeamController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
-                .andExpect(model().attribute(ScrumTeamController.MODEL_ATTRIBUTE, hasProperty("members", is(description))))
-                .andExpect(model().attribute(ScrumTeamController.MODEL_ATTRIBUTE, hasProperty("name", is(title))));
+                .andExpect(model().attribute(ScrumTeamController.MODEL_ATTRIBUTE, hasProperty("members", is(members))))
+                .andExpect(model().attribute(ScrumTeamController.MODEL_ATTRIBUTE, hasProperty("name", is(name))));
     }
 
     @Test
@@ -232,7 +232,7 @@ public class ITScrumTeamControllerTest {
         )
                 .andExpect(status().isOk())
                 .andExpect(view().name(ScrumTeamController.VIEW_UPDATE))
-                .andExpect(forwardedUrl("/WEB-INF/jsp/story/update.jsp"))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/scrumteam/update.jsp"))
                 .andExpect(model().attributeHasFieldErrors(ScrumTeamController.MODEL_ATTRIBUTE, "name"))
                 .andExpect(model().attribute(ScrumTeamController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
                 .andExpect(model().attribute(ScrumTeamController.MODEL_ATTRIBUTE, hasProperty("members", isEmptyOrNullString())))

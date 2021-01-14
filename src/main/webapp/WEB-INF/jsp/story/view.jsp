@@ -16,7 +16,12 @@
             <p><c:out value="${story.description}"/></p>
         </div>
         <div>
-            <p><c:out value="Progress: ${story.progress}%"/></p>
+        	<c:if test="${not empty story.progress}">
+            	<p><c:out value="Progress: ${story.progress}%"/></p>
+            </c:if>
+            <c:if test="${empty story.progress}">
+            	(<spring:message code="label.story.view.page.notstarted"/>)
+            </c:if>
         </div>
         <div class="action-buttons">
             <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
