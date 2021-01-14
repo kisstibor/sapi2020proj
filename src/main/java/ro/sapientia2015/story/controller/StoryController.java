@@ -19,14 +19,12 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * @author Kiss Tibor
- */
+
 @Controller
 @SessionAttributes("story")
 public class StoryController {
 
-	private final boolean INSERT_DUMMY_DATA = false;
+	private final boolean INSERT_DUMMY_DATA = true;
 	
     protected static final String FEEDBACK_MESSAGE_KEY_ADDED = "feedback.message.story.added";
     protected static final String FEEDBACK_MESSAGE_KEY_UPDATED = "feedback.message.story.updated";
@@ -99,7 +97,7 @@ public class StoryController {
         // ADD DUMMY DATA
         if (INSERT_DUMMY_DATA) {
 	        if (models.size() == 0) {
-	        	StoryDTO s1 = new StoryDTO();
+	        	/*StoryDTO s1 = new StoryDTO();
 	        	StoryDTO s2 = new StoryDTO();
 	        	StoryDTO s3 = new StoryDTO();
 	        	StoryDTO s4 = new StoryDTO();
@@ -119,6 +117,68 @@ public class StoryController {
 	        	service.add(s2);
 	        	service.add(s3);
 	        	service.add(s4);
+	        	models = service.findAll();*/
+	        	
+	        	StoryDTO s = new StoryDTO();
+	        	s.setTitle("Story 1 - Nisl faucibus velit, in");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(100);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 2 - Duis porta pretium sapien ");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(100);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 3 - Enean sapien metus, molestie tempus massa in");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(99);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 4 - Mauris in ullamcorper felis");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(84);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 5 - Nullam massa est, volutpat vel pretium quis");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(55);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 6 - Mauris posuere fringilla interdum");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(33);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 7 - Mauris et sem gravida");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(16);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 8 - Integer vehicula");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(98);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 9 - Lorem ipsum dolor sit amet");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(35);
+	        	service.add(s);
+	        	
+	        	s = new StoryDTO();
+	        	s.setTitle("Story 10 - Nullam condimentum dolor ");
+	        	s.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus interdum lacus sed odio cursus rhoncus eu at enim. Aliquam semper, leo eu ornare tempus, elit nisl faucibus velit, in aliquam lorem odio ut nulla. Duis porta pretium sapien vel porttitor. Pellentesque finibus mauris id faucibus convallis. Nam vitae mauris ultrices, gravida erat a, laoreet nisi. Curabitur a quam viverra, tempus libero nec, porttitor ipsum. Nam ornare sit amet dui luctus pretium. ");
+	        	s.setProgress(48);
+	        	service.add(s);
+
 	        	models = service.findAll();
 	        }
         }

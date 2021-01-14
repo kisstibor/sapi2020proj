@@ -41,6 +41,11 @@ public class Story {
     @Column(name = "progress")
     private Integer progress;
     
+    private String progressBar;
+    private String progressBarDone;
+    private String progressBarNotDone;
+    private final int BAR_LENGTH = 10;
+    
     @JoinColumn(name="SCRUM_TEAM_ID")
     @ManyToOne()
 //    @ManyToOne(cascade = javax.persistence.CascadeType.PERSIST)
@@ -111,6 +116,31 @@ public class Story {
     public void update(String description, String title) {
         this.description = description;
         this.title = title;
+    }
+    
+    public String getProgressBar() {
+    	String bar = getProgressBarDone();
+    	bar += getProgressBarNotDone();
+    	return bar;  
+    }
+    
+    public String getProgressBarDone() {
+    	String bar = "";
+    	int p = (int) Math.floor(progress / BAR_LENGTH);
+    	int i = 0;
+    	for(; i < p; i++) {
+    		bar += "█";
+    	}
+    	return bar;
+    }
+    
+    public String getProgressBarNotDone() {
+    	String bar = "";
+    	int i = (int) Math.floor(progress / BAR_LENGTH);
+    	for(; i < BAR_LENGTH; i++) {
+    		bar += "█";
+    	}
+    	return bar;
     }
 
     public void update(String title, String description, Integer progress, ScrumTeam scrumTeam) {

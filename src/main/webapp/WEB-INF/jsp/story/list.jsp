@@ -21,7 +21,12 @@
                         <b>
                         <c:out value="${story.title}"/>
                         </b>
-                        <c:out value=" (${story.progress}%)"/>
+                        <c:if test="${not empty story.progress}">
+                        	<br>
+                        	<em style="color: green;"><c:out value="${story.progressBarDone}"/></em>
+                        	<em style="color: gray;"><c:out value="${story.progressBarNotDone}"/></em>
+                        	<c:out value=" ${story.progress}%"/>	
+                        </c:if>
                         </a>
                     </div>
                 </c:forEach>
