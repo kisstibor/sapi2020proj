@@ -31,9 +31,9 @@
 
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li><a href="/scrumsapientia"><spring:message code="label.navigation.homepage.link"/></a></li>
-                            <li><a href="/priorities"><spring:message code="label.navigation.priorities.link"/></a></li>
-                            <li><a href="/scrumsapientia/user"><spring:message code="label.navigation.users.link"/></a></li>
+                            <li><a href="/scrumsapientia/"><spring:message code="label.navigation.homepage.link"/></a></li>
+                            <li><a href="/scrumsapientia/priorities/"><spring:message code="label.navigation.priorities.link"/></a></li>
+                            <li><a href="/scrumsapientia/user/"><spring:message code="label.navigation.users.link"/></a></li>
                         </ul>
                     </div>
                 </div>
