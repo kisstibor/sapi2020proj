@@ -1,7 +1,4 @@
-/**
- * 
- */
-package ro.sapientia2020.task.model;
+package ro.sapientia2015.story.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,18 +14,15 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+
 /**
- * @author Palma Rozalia Osztian
- *
+ * @author Osztian Palma
  */
 @Entity
-@Table(name="task")
-public class Task {
-
-    public static final int MAX_LENGTH_DESCRIPTION = 500;
+@Table(name="user")
+public class User {
+	public static final int MAX_LENGTH_DESCRIPTION = 500;
     public static final int MAX_LENGTH_TITLE = 100;
-    public static final int MAX_LENGTH_LABEL = 100;
-    public static final int MAX_LENGTH_USER_TYPE = 100;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,19 +42,13 @@ public class Task {
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
     
-    @Column(name = "label", nullable = false, length = MAX_LENGTH_LABEL)
-    private String label;
+    @Column(name = "experience", nullable = false)
+    private Long experience;
 
-    @Column(name = "userType", length = MAX_LENGTH_USER_TYPE)
-    private String userType;
-    
-    @Column(name = "priority")
-    private String priority;
-    
     @Version
     private long version;
 
-    public Task() {
+    public User() {
 
     }
 
@@ -91,20 +79,12 @@ public class Task {
     public long getVersion() {
         return version;
     }
+    
+    public Long getExperience() {
+    	return experience;
+    }
 
-    public String getLabel() {
-		return label;
-	}
-
-	public String getUserType() {
-		return userType;
-	}
-
-	public String getPriority() {
-		return priority;
-	}
-
-	@PrePersist
+    @PrePersist
     public void prePersist() {
         DateTime now = DateTime.now();
         creationTime = now;
@@ -116,44 +96,32 @@ public class Task {
         modificationTime = DateTime.now();
     }
 
-    public void update(String title, String description, String priority, String userType, String label) {
+    public void update(String description, String title, Long experience) {
         this.description = description;
         this.title = title;
-        this.priority = priority;
-        this.userType = userType;
-        this.label = label;
+        this.experience = experience;
     }
 
     public static class Builder {
 
-        private Task builtTask;
+        private User built;
 
         public Builder(String title) {
-            builtTask = new Task();
-            builtTask.title = title;
+            built = new User();
+            built.title = title;
         }
 
-        public Task build() {
-            return builtTask;
+        public User build() {
+            return built;
         }
 
         public Builder description(String description) {
-            builtTask.description = description;
+            built.description = description;
             return this;
         }
         
-        public Builder label(String label) {
-            builtTask.label = label;
-            return this;
-        }
-        
-        public Builder priority (String priority) {
-            builtTask.priority = priority;
-            return this;
-        }
-        
-        public Builder userType (String userType) {
-            builtTask.userType = userType;
+        public Builder experience(Long experience) {
+            built.experience = experience;
             return this;
         }
     }
@@ -163,4 +131,3 @@ public class Task {
         return ToStringBuilder.reflectionToString(this);
     }
 }
-

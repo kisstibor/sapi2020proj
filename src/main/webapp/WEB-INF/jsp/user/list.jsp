@@ -7,19 +7,19 @@
     <title></title>
 </head>
 <body>
-    <h1><spring:message code="label.story.list.page.title"/></h1>
+    <h1><spring:message code="label.user.list.page.title"/></h1>
     <div>
-        <a href="/scrumsapientia/story/add" id="add-button" class="btn btn-primary"><spring:message code="label.add.story.link"/></a>
+        <a href="/user/add" id="add-button" class="btn btn-primary"><spring:message code="label.add.user.link"/></a>
     </div>
-    <div id="story-list" class="page-content">
+    <div id="user-list" class="page-content">
         <c:choose>
-            <c:when test="${empty stories}">
-                <p><spring:message code="label.story.list.empty"/></p>
+            <c:when test="${empty users}">
+                <p><spring:message code="label.user.list.empty"/></p>
             </c:when>
             <c:otherwise>
-                <c:forEach items="${ stories}" var="story">
+                <c:forEach items="${ users}" var="user">
                     <div class="well well-small">
-                        <a href="/scrumsapientia/story/${story.id}"><c:out value="${story.title}"/></a>
+                        <a href="/user/${user.id}"><c:out value="${user.title}"/></a>
                     </div>
                 </c:forEach>
             </c:otherwise>

@@ -1,34 +1,26 @@
-package ro.sapientia2020.task.dto;
+package ro.sapientia2015.story.dto;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import ro.sapientia2020.task.model.Task;
+import ro.sapientia2015.story.model.Story;
 
+public class UserDTO {
+	private Long id;
 
-public class TaskDTO {
-
-    private Long id;
-
-    @Length(max = Task.MAX_LENGTH_DESCRIPTION)
+    @Length(max = Story.MAX_LENGTH_DESCRIPTION)
     private String description;
 
     @NotEmpty
-    @Length(max = Task.MAX_LENGTH_TITLE)
+    @Length(max = Story.MAX_LENGTH_TITLE)
     private String title;
     
     @NotEmpty
-    @Length(max = Task.MAX_LENGTH_LABEL)
-    private String label;
+    private Long experience;
     
-   
-    private String priority;
-    
-    @Length(max = Task.MAX_LENGTH_USER_TYPE)
-    private String userType;
 
-    public TaskDTO() {
+    public UserDTO() {
 
     }
 
@@ -56,32 +48,17 @@ public class TaskDTO {
         this.title = title;
     }
 
-    public String getLabel() {
-		return label;
+    public Long getExperience() {
+		return experience;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public String getPriority() {
-		return priority;
-	}
-
-	public void setPrority(String priority) {
-		this.priority = priority;
-	}
-
-	public String getUserType() {
-		return userType;
-	}
-
-	public void setUserType(String userType) {
-		this.userType = userType;
+	public void setExperience(Long experience) {
+		this.experience = experience;
 	}
 
 	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
 }

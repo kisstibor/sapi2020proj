@@ -1,19 +1,20 @@
-package ro.sapientia2020.task.service;
+package ro.sapientia2015.story.service;
 
 import java.util.List;
 
-import ro.sapientia2020.task.exception.NotFoundException;
-import ro.sapientia2020.task.dto.TaskDTO;
-import ro.sapientia2020.task.model.Task;
+import ro.sapientia2015.story.exception.NotFoundException;
+import ro.sapientia2015.story.dto.UserDTO;
+import ro.sapientia2015.story.model.User;
 
-public interface TaskService {
 
-    /**
+
+public interface UserService {
+	/**
      * Adds a new to-do entry.
      * @param added The information of the added to-do entry.
      * @return  The added to-do entry.
      */
-    public Task add(TaskDTO added);
+    public User add(UserDTO added);
 
     /**
      * Deletes a to-do entry.
@@ -21,13 +22,13 @@ public interface TaskService {
      * @return  The deleted to-do entry.
      * @throws NotFoundException    if no to-do entry is found with the given id.
      */
-    public Task deleteById(Long id) throws NotFoundException;
+    public User deleteById(Long id) throws NotFoundException;
 
     /**
      * Returns a list of to-do entries.
      * @return
      */
-    public List<Task> findAll();
+    public List<User> findAll();
 
     /**
      * Finds a to-do entry.
@@ -35,7 +36,7 @@ public interface TaskService {
      * @return  The found to-entry.
      * @throws NotFoundException    if no to-do entry is found with the given id.
      */
-    public Task findById(Long id) throws NotFoundException;
+    public User findById(Long id) throws NotFoundException;
 
     /**
      * Updates the information of a to-do entry.
@@ -43,5 +44,5 @@ public interface TaskService {
      * @return  The updated to-do entry.
      * @throws NotFoundException    If no to-do entry is found with the given id.
      */
-    public Task update(TaskDTO updated) throws NotFoundException;
+    public User update(UserDTO updated) throws NotFoundException;
 }
