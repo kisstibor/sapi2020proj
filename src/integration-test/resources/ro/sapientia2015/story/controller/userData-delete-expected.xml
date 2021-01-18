@@ -1,0 +1,5 @@
+<dataset>
+    <user id="1" creation_time="2020-10-21 11:13:28" description="User1" modification_time="2020-10-21 11:13:28" title="IT specialist" experience="1" version="0"/>
+    <user id="2" creation_time="2020-10-21 11:13:28" description="User2" modification_time="2020-10-21 11:13:28" title="Software Engineer" experience="1" version="0"/>
+</dataset>
+
