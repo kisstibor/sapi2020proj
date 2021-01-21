@@ -73,7 +73,8 @@ public class StoryTest {
 
     private void pause(long timeInMillis) {
         try {
-            Thread.currentThread().sleep(timeInMillis);
+            Thread.currentThread();
+			Thread.sleep(timeInMillis);
         }
         catch (InterruptedException e) {
             //Do Nothing

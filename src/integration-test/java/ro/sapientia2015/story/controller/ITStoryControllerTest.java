@@ -25,6 +25,7 @@ import ro.sapientia2015.context.WebContextLoader;
 import ro.sapientia2015.story.StoryTestUtil;
 import ro.sapientia2015.story.controller.StoryController;
 import ro.sapientia2015.story.dto.StoryDTO;
+import ro.sapientia2015.story.dto.VacationDTO;
 import ro.sapientia2015.story.model.Story;
 
 import javax.annotation.Resource;
@@ -62,6 +63,8 @@ public class ITStoryControllerTest {
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
 
+    private static final String FORM_FIELD_VACATION = "vacation";
+
     @Resource
     private WebApplicationContext webApplicationContext;
 
@@ -72,6 +75,66 @@ public class ITStoryControllerTest {
         mockMvc = MockMvcBuilders.webApplicationContextSetup(webApplicationContext)
                 .build();
     }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void showAddTimelimitForm() throws Exception {
+    	Long vacationId = 1L;
+        mockMvc.perform(get("/story/vacation/add/"+vacationId))
+                .andExpect(status().isOk())
+                .andExpect(view().name(StoryController.VIEW_VACATION_ADD))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/story/vacation/add.jsp"))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(vacationId))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_VACATION, hasProperty("vacationId", is(vacationId))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_VACATION, hasProperty("id", nullValue())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_VACATION, hasProperty("vacationStartDate", isEmptyOrNullString())));           
+    }
+
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void showUpdateVacationForm() throws Exception {
+    	String id = "1";
+        mockMvc.perform(get("/story/timelimit/update/"+id))
+                .andExpect(status().isOk())
+                .andExpect(view().name(StoryController.VIEW_UPDATE_VACATION))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/story/vacation/update.jsp"))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", is(1L))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", is("Lorem ipsum"))))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", is("Foo"))))
+        		.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_VACATION, hasProperty("id", is(1L))))
+        		.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_VACATION, hasProperty("timelimit", is("2022-01-01"))))
+        		.andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE_VACATION, hasProperty("storyId", is(1L))));
+    }
+
+    @Test
+    @ExpectedDatabase(value="storyvacation-update-expected.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    public void updateTimelimit() throws Exception {
+        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+
+        mockMvc.perform(post("/story/vacation/update/{id}", 1L)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param(FORM_FIELD_VACATION, "2022-02-02")
+                .sessionAttr(StoryController.MODEL_ATTRIBUTE_VACATION, new VacationDTO())
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name(expectedRedirectViewPath))
+                .andExpect(model().attribute(StoryController.PARAMETER_ID, is("1")))
+                .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("StoryTimeLimit entry: 2022-02-02 was updated.")));
+    }
+
+    @Test
+    @ExpectedDatabase("storyvacation-delete-expected.xml")
+    public void deleteVacationById() throws Exception {
+        String expectedRedirectViewPath = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        mockMvc.perform(get("/story/vacation/delete/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(view().name(expectedRedirectViewPath))
+                .andExpect(model().attribute(StoryController.PARAMETER_ID, is("1")))
+                .andExpect(flash().attribute(StoryController.FLASH_MESSAGE_KEY_FEEDBACK, is("Vacation entry: 2022-01-01 was deleted.")));
+    }
+
+
+
 
     @Test
     @ExpectedDatabase("storyData.xml")
