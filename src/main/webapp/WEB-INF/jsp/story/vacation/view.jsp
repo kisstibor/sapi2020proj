@@ -23,20 +23,5 @@
              <a href="/scrumsapientia/story/vacation/delete/${id}" id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
         
     </div>
-    <script id="template-delete-story-confirmation-dialog" type="text/x-handlebars-template">
-        <div id="delete-story-confirmation-dialog" class="modal">
-            <div class="modal-header">
-                <button class="close" data-dismiss="modal">×</button>
-                <h3><spring:message code="label.story.delete.dialog.title"/></h3>
-            </div>
-            <div class="modal-body">
-                <p><spring:message code="label.story.delete.dialog.message"/></p>
-            </div>
-            <div class="modal-footer">
-                <a id="cancel-story-button" href="#" class="btn"><spring:message code="label.cancel"/></a>
-                <a id="delete-story-button" href="#" class="btn btn-primary"><spring:message code="label.delete.story.button"/></a>
-            </div>
-        </div>
-    </script>
 </body>
 </html>

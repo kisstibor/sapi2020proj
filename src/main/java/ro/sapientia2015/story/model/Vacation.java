@@ -33,15 +33,15 @@ public class Vacation {
     
     @PrePersist
     public void prePersist() {
-        DateTime now = DateTime.now();
-        vacationStartDate= now.toString();
-        vacationEndDate = now.toString();
+//        DateTime now = DateTime.now();
+//        vacationStartDate= now.toString();
+//        vacationEndDate = now.toString();
     }
 
     @PreUpdate
     public void preUpdate() {
-    	 vacationStartDate= DateTime.now().toString();
-         vacationEndDate = DateTime.now().toString();
+//    	 vacationStartDate= DateTime.now().toString();
+//         vacationEndDate = DateTime.now().toString();
     }
     
     public void update(String vacationStartDate, String vacationEndDate) {
