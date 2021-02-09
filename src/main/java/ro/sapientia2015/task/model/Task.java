@@ -1,23 +1,16 @@
-package ro.sapientia2015.story.model;
+package ro.sapientia2015.task.model;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import ro.sapientia2015.task.model.Task;
-
-import java.util.List;
+import ro.sapientia2015.story.model.Story;
 
 import javax.persistence.*;
 
-/**
- * @author Kiss Tibor
- */
 @Entity
-@Table(name="story")
-public class Story {
+@Table(name="task")
+public class Task {
 
     public static final int MAX_LENGTH_DESCRIPTION = 500;
     public static final int MAX_LENGTH_TITLE = 100;
@@ -25,6 +18,10 @@ public class Story {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    @JoinColumn(name="STORY_ID")
+    @ManyToOne()
+    private Story story;
 
     @Column(name = "creation_time", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -39,16 +36,11 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
-    
-    @Column(name = "tasks")
-	@OneToMany(mappedBy = "story")
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<Task> tasks;
 
     @Version
     private long version;
 
-    public Story() {
+    public Task() {
 
     }
 
@@ -58,6 +50,10 @@ public class Story {
 
     public Long getId() {
         return id;
+    }
+    
+    public Story getStory() {
+    	return story;
     }
 
     public DateTime getCreationTime() {
@@ -75,17 +71,9 @@ public class Story {
     public String getTitle() {
         return title;
     }
-    
-    public List<Task> getTasks() {
-    	return tasks;
-    }
 
     public long getVersion() {
         return version;
-    }
-    
-    public void addTask(Task task) {
-    	tasks.add(task);
     }
 
     @PrePersist
@@ -99,46 +87,22 @@ public class Story {
     public void preUpdate() {
         modificationTime = DateTime.now();
     }
-    
-	public void updateTask(Task task) {
-		if (tasks != null) {
-			for (Task t : tasks) {
-				if (task.getId() == t.getId()) {
-					tasks.remove(t);
-					tasks.add(task);
-					return;
-				}
-			}
-		}
-	}
 
     public void update(String description, String title) {
         this.description = description;
         this.title = title;
     }
-    
-    public void update(String description, String title, List<Task> tasks) {
-    	System.out.println(">>> UPDATE STORY:"
-    			+ "\n | title:          " + title
-    			+ "\n | desc:        " + description
-    			+ "\n | tasks size: " + tasks.size()
-    			//+ "\n | tasks:     " + (model.getTasks() != null?"":"null"
-    			);
-        this.description = description;
-        this.title = title;
-        this.tasks = tasks;
-    }
 
     public static class Builder {
 
-        private Story built;
+        private Task built;
 
         public Builder(String title) {
-            built = new Story();
+            built = new Task();
             built.title = title;
         }
 
-        public Story build() {
+        public Task build() {
             return built;
         }
 
@@ -147,12 +111,12 @@ public class Story {
             return this;
         }
         
-        public Builder tasks(List<Task> tasks) {
-            built.tasks = tasks;
-            return this;
+        public Builder story(Story story) {
+        	built.story = story;
+        	return this;
         }
     }
-
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

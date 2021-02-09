@@ -7,6 +7,7 @@ import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.repository.StoryRepository;
+import ro.sapientia2015.task.model.Task;
 
 import javax.annotation.Resource;
 
@@ -29,6 +30,12 @@ public class RepositoryStoryService implements StoryService {
                 .description(added.getDescription())
                 .build();
 
+        return repository.save(model);
+    }
+    
+    @Transactional
+    @Override
+    public Story add(Story model) {
         return repository.save(model);
     }
 
@@ -61,8 +68,41 @@ public class RepositoryStoryService implements StoryService {
     @Override
     public Story update(StoryDTO updated) throws NotFoundException {
         Story model = findById(updated.getId());
-        model.update(updated.getDescription(), updated.getTitle());
+        model.update(updated.getDescription(), updated.getTitle(), updated.getTasks());
 
         return model;
     }
+    
+    @Override
+	public Story update(Story model) throws NotFoundException {
+    	model.update(model.getDescription(),model.getTitle(), model.getTasks());
+    	log("ADDTASK", model);
+        return model;
+	}
+    
+    private void log(String smg, Story model) {
+		try {
+			System.out.println(">>>>>> ("+smg+") PERSIST: Story:"
+	    			+ "\n | id:          " + model.getId()
+	    			+ "\n | desc:        " + model.getDescription()
+	    			+ "\n | tasks size: " + model.getTasks().size()
+	    			+ "\n | tasks:     " + (model.getTasks() != null?"":"null")
+	    			//+ "\n | stories:     " + (model.getStories() != null?"null":"")
+	    	);
+			if (model.getTasks() != null) {
+		    	for (Task t : model.getTasks()) {
+		    		System.out.println(
+		    		    " |  |_______________"
+		    		+ "\n |  | id: " + t.getId() 
+		    		+ "\n |  | title:       " + t.getTitle() 
+		    		//+ "\n |  | description: " + s.getDescription() 
+		    		//+ "\n |  | scrumTeam:   " + s.getScrumTeam()
+		    		);
+		    	}
+			}
+		} catch (Exception e) {
+			System.out.println(">>> ERROR >>> Can't LOG:");
+			e.printStackTrace();
+		}
+	}
 }

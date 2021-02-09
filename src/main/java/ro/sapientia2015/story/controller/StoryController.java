@@ -12,6 +12,9 @@ import ro.sapientia2015.story.dto.StoryDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
 import ro.sapientia2015.story.model.Story;
 import ro.sapientia2015.story.service.StoryService;
+import ro.sapientia2015.task.dto.TaskDTO;
+import ro.sapientia2015.task.model.Task;
+import ro.sapientia2015.task.service.TaskService;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -48,16 +51,21 @@ public class StoryController {
 
     @Resource
     private StoryService service;
+    
+    @Resource
+    private TaskService taskService;
 
     @Resource
     private MessageSource messageSource;
 
     @RequestMapping(value = "/story/add", method = RequestMethod.GET)
     public String showAddForm(Model model) {
+    	System.out.println(">>> REQUEST: /story/add  GET");
         StoryDTO formObject = new StoryDTO();
         model.addAttribute(MODEL_ATTRIBUTE, formObject);
 
-        return VIEW_ADD;
+        //return VIEW_ADD;
+        return "story/add";
     }
 
     @RequestMapping(value = "/story/add", method = RequestMethod.POST)
@@ -82,6 +90,7 @@ public class StoryController {
 
     @RequestMapping(value = REQUEST_MAPPING_LIST, method = RequestMethod.GET)
     public String findAll(Model model) {
+    	System.out.println(">>> REQUEST: "+ REQUEST_MAPPING_LIST + " GET");
         List<Story> models = service.findAll();
         model.addAttribute(MODEL_ATTRIBUTE_LIST, models);
         return VIEW_LIST;
@@ -89,11 +98,51 @@ public class StoryController {
 
     @RequestMapping(value = REQUEST_MAPPING_VIEW, method = RequestMethod.GET)
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
+    	System.out.println(">>>Show Story Details with Tasks");
         Story found = service.findById(id);
+        List<Task> storyTasks = found.getTasks();
+        System.out.println(">>>(story/{storiId} - GET) Length of storyTasks: "+ storyTasks.size());
         model.addAttribute(MODEL_ATTRIBUTE, found);
+        model.addAttribute("tasks", storyTasks);
+        model.addAttribute("new_task", new TaskDTO());
         return VIEW_VIEW;
     }
 
+	//  /story/   1     /add-task
+	@RequestMapping(value = "/story/{storyId}/add_task", method = RequestMethod.POST)
+	public String add(@Valid @ModelAttribute("new_task") TaskDTO dto, BindingResult result, RedirectAttributes attributes, @PathVariable("storyId") Long storyId) throws NotFoundException {
+		System.out.println(">>> REQUEST: "+ "story/"+ storyId +"/add_task" + " POST" + "with @PathVariable: "+ storyId);
+		if (result.hasErrors()) {
+			return REQUEST_MAPPING_VIEW;
+		}
+		
+		Story updatableStory = service.findById(storyId);
+		
+		dto.setStory(updatableStory);
+		Task added = taskService.add(dto);
+		List<Task> tasks = taskService.findAll();
+		System.out.println(">>> Rigth after adding length of tasks : "+ tasks.size());
+		updatableStory.addTask(added);
+		//Story updatedStory = service.update(updatableStory);		
+		//Story updatedStory = service.update(updatedStoryDTO);
+	
+		Story updatedStory = service.findById(storyId);
+		List<Task> storyTasks = updatedStory.getTasks();
+		System.out.println(">>> Rigth after adding, storyTitle :" + updatedStory.getTitle() +  " length of storyTasks : "+ storyTasks.size());
+		addFeedbackMessage(attributes, "feedback.message.task.added", added.getTitle());
+		attributes.addAttribute(PARAMETER_ID, updatableStory.getId());
+		return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+	}
+	
+	@RequestMapping(value = "/task/delete/{id}", method = RequestMethod.GET)
+    public String deleteTaskById(@PathVariable("id") Long id, RedirectAttributes attributes) throws NotFoundException {
+		Story story = taskService.findById(id).getStory();
+		Task deleted = taskService.deleteById(id);
+        addFeedbackMessage(attributes, "feedback.message.task.deleted", deleted.getTitle());
+        attributes.addAttribute(PARAMETER_ID, story.getId());
+        return createRedirectViewPath(REQUEST_MAPPING_VIEW);
+    }
+	    
     @RequestMapping(value = "/story/update/{id}", method = RequestMethod.GET)
     public String showUpdateForm(@PathVariable("id") Long id, Model model) throws NotFoundException {
         Story updated = service.findById(id);
