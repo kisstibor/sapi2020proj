@@ -15,6 +15,9 @@ public class StoryDTO {
 
     @Length(max = Story.MAX_LENGTH_DESCRIPTION)
     private String description;
+    
+    @Length(max = Story.MAX_LENGTH_DESCRIPTION)
+    private String assigne;
 
     @NotEmpty
     @Length(max = Story.MAX_LENGTH_TITLE)
@@ -38,6 +41,14 @@ public class StoryDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public String getAssigne() {
+        return assigne;
+    }
+
+    public void setAssigne(String assigne) {
+        this.assigne = assigne;
     }
 
     public String getTitle() {

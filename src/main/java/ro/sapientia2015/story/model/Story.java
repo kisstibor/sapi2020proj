@@ -26,6 +26,9 @@ public class Story {
 
     @Column(name = "description", nullable = true, length = MAX_LENGTH_DESCRIPTION)
     private String description;
+    
+    @Column(name = "assigne", nullable = true, length = MAX_LENGTH_DESCRIPTION)
+    private String assigne;
 
     @Column(name = "modification_time", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -56,6 +59,10 @@ public class Story {
     public String getDescription() {
         return description;
     }
+    
+    public String getAssigne() {
+        return assigne;
+    }
 
     public DateTime getModificationTime() {
         return modificationTime;
@@ -81,8 +88,9 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, String assigne) {
         this.description = description;
+        this.assigne = assigne;
         this.title = title;
     }
 
@@ -101,6 +109,10 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        public Builder assigne(String assigne) {
+            built.assigne = assigne;
             return this;
         }
     }
