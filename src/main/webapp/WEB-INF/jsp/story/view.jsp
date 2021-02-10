@@ -13,7 +13,10 @@
     <div class="well page-content">
         <h2 id="story-title"><c:out value="${story.title}"/></h2>
         <div>
-            <p><c:out value="${story.description}"/></p>
+            <p><c:out value="Assignee: ${story.assigne}"/></p>
+        </div>
+        <div>
+            <p><c:out value="Description: ${story.description}"/></p>
         </div>
         <div class="action-buttons">
             <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
