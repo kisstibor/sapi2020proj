@@ -27,6 +27,7 @@ public class RepositoryStoryService implements StoryService {
 
         Story model = Story.getBuilder(added.getTitle())
                 .description(added.getDescription())
+                .duration(added.getDuration())
                 .build();
 
         return repository.save(model);
@@ -61,7 +62,7 @@ public class RepositoryStoryService implements StoryService {
     @Override
     public Story update(StoryDTO updated) throws NotFoundException {
         Story model = findById(updated.getId());
-        model.update(updated.getDescription(), updated.getTitle());
+        model.update(updated.getDescription(), updated.getTitle(),updated.getDuration());
 
         return model;
     }

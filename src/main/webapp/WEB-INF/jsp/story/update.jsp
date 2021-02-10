@@ -28,6 +28,14 @@
                     <form:errors id="error-description" path="description" cssClass="help-inline"/>
                 </div>
             </div>
+            <div id="control-group-duration" class="control-group">
+                <label for="story-duration"><spring:message code="label.story.duration"/>:</label>
+
+                <div class="controls">
+                    <form:input id="story-duration" path="duration"/>
+                    <form:errors id="error-duration" path="duration" cssClass="help-inline"/>
+                </div>
+            </div>
             <div class="action-buttons">
                 <a href="/story/${story.id}" class="btn"><spring:message code="label.cancel"/></a>
                 <button id="update-story-button" type="submit" class="btn btn-primary"><spring:message
