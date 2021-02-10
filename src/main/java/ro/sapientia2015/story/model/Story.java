@@ -33,6 +33,9 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    @Column(name = "duration", nullable = true)
+    private int duration;
 
     @Version
     private long version;
@@ -57,7 +60,15 @@ public class Story {
         return description;
     }
 
-    public DateTime getModificationTime() {
+    public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+
+	public DateTime getModificationTime() {
         return modificationTime;
     }
 
@@ -81,9 +92,10 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, int duration) {
         this.description = description;
         this.title = title;
+        this.duration = duration;
     }
 
     public static class Builder {
@@ -101,6 +113,11 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder duration(int duration) {
+            built.duration = duration;
             return this;
         }
     }
