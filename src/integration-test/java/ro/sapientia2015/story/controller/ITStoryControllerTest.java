@@ -61,6 +61,7 @@ public class ITStoryControllerTest {
     private static final String FORM_FIELD_DESCRIPTION = "description";
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
+    private static final int FORM_FIELD_DURATION = 2;
 
     @Resource
     private WebApplicationContext webApplicationContext;
@@ -71,6 +72,19 @@ public class ITStoryControllerTest {
     public void setUp() {
         mockMvc = MockMvcBuilders.webApplicationContextSetup(webApplicationContext)
                 .build();
+    }
+    
+    @Test
+    @ExpectedDatabase("storyData.xml")
+    public void showAddFormSecond() throws Exception {
+        mockMvc.perform(get("/story/add"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(StoryController.VIEW_ADD))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/story/add.jsp"))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("duration", is(0))));
     }
 
     @Test
@@ -84,6 +98,8 @@ public class ITStoryControllerTest {
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
     }
+    
+   
 
     @Test
     @ExpectedDatabase("storyData.xml")

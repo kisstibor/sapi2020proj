@@ -11,6 +11,7 @@ public class StoryTestUtil {
     public static final String DESCRIPTION = "description";
     public static final String DESCRIPTION_UPDATED = "updatedDescription";
     public static final String TITLE = "title";
+    public static final int DURATION = 2;
     public static final String TITLE_UPDATED = "updatedTitle";
 
     private static final String CHARACTER = "a";
@@ -24,6 +25,17 @@ public class StoryTestUtil {
 
         return dto;
     }
+    
+    public static StoryDTO createFormObject(Long id, String description, String title,int hours) {
+        StoryDTO dto = new StoryDTO();
+
+        dto.setId(id);
+        dto.setDescription(description);
+        dto.setTitle(title);
+        dto.setDuration(hours);
+
+        return dto;
+    }
 
     public static Story createModel(Long id, String description, String title) {
         Story model = Story.getBuilder(title)
@@ -34,7 +46,17 @@ public class StoryTestUtil {
 
         return model;
     }
+    
+    public static Story createModel(Long id, String description, String title, int hours) {
+        Story model = Story.getBuilder(title)
+                .description(description)
+                .duration(hours)
+                .build();
 
+        ReflectionTestUtils.setField(model, "id", id);
+
+        return model;
+    }
     public static String createRedirectViewPath(String path) {
         StringBuilder redirectViewPath = new StringBuilder();
         redirectViewPath.append("redirect:");
