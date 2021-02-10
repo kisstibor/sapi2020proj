@@ -52,10 +52,42 @@ public class RepositoryStoryServiceTest {
         assertEquals(dto.getDescription(), model.getDescription());
         assertEquals(dto.getTitle(), model.getTitle());
     }
+    
+    @Test
+    public void addWithAssigne() {
+        StoryDTO dto = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.ASSIGNE);
+
+        service.add(dto);
+
+        ArgumentCaptor<Story> storyArgument = ArgumentCaptor.forClass(Story.class);
+        verify(repositoryMock, times(1)).save(storyArgument.capture());
+        verifyNoMoreInteractions(repositoryMock);
+
+        Story model = storyArgument.getValue();
+
+        assertNull(model.getId());
+        assertEquals(dto.getDescription(), model.getDescription());
+        assertEquals(dto.getAssigne(), model.getAssigne());
+        assertEquals(dto.getTitle(), model.getTitle());
+    }
 
     @Test
     public void deleteById() throws NotFoundException {
         Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        when(repositoryMock.findOne(StoryTestUtil.ID)).thenReturn(model);
+
+        Story actual = service.deleteById(StoryTestUtil.ID);
+
+        verify(repositoryMock, times(1)).findOne(StoryTestUtil.ID);
+        verify(repositoryMock, times(1)).delete(model);
+        verifyNoMoreInteractions(repositoryMock);
+
+        assertEquals(model, actual);
+    }
+    
+    @Test
+    public void deleteByIdWidhAssigne() throws NotFoundException {
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.ASSIGNE);
         when(repositoryMock.findOne(StoryTestUtil.ID)).thenReturn(model);
 
         Story actual = service.deleteById(StoryTestUtil.ID);
@@ -93,6 +125,19 @@ public class RepositoryStoryServiceTest {
     @Test
     public void findById() throws NotFoundException {
         Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE);
+        when(repositoryMock.findOne(StoryTestUtil.ID)).thenReturn(model);
+
+        Story actual = service.findById(StoryTestUtil.ID);
+
+        verify(repositoryMock, times(1)).findOne(StoryTestUtil.ID);
+        verifyNoMoreInteractions(repositoryMock);
+
+        assertEquals(model, actual);
+    }
+    
+    @Test
+    public void findByIdWidhAssigne() throws NotFoundException {
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.ASSIGNE);
         when(repositoryMock.findOne(StoryTestUtil.ID)).thenReturn(model);
 
         Story actual = service.findById(StoryTestUtil.ID);

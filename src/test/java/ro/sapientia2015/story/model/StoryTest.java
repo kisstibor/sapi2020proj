@@ -83,6 +83,25 @@ public class StoryTest {
         assertEquals(0L, story.getVersion());
         assertTrue(story.getModificationTime().isAfter(story.getCreationTime()));
     }
+    
+    @Test
+    public void preUpdateWithAssigne() {
+        Story story = new Story();
+        story.prePersist();
+
+        pause(1000);
+
+        story.preUpdate();
+
+        assertNull(story.getId());
+        assertNotNull(story.getCreationTime());
+        assertNull(story.getDescription());
+        assertNull(story.getAssigne());
+        assertNotNull(story.getModificationTime());
+        assertNull(story.getTitle());
+        assertEquals(0L, story.getVersion());
+        assertTrue(story.getModificationTime().isAfter(story.getCreationTime()));
+    }
 
     private void pause(long timeInMillis) {
         try {
