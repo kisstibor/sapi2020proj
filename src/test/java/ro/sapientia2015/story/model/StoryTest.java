@@ -24,6 +24,19 @@ public class StoryTest {
         assertEquals(TITLE, built.getTitle());
         assertEquals(0L, built.getVersion());
     }
+    
+    @Test
+    public void buildWithTitleAndAsigne() {
+        Story built = Story.getBuilder(TITLE).assigne("geza").build();
+
+        assertNull(built.getId());
+        assertNull(built.getCreationTime());
+        assertNull(built.getDescription());
+        assertNull(built.getModificationTime());
+        assertEquals(TITLE, built.getTitle());
+        assertEquals("geza", built.getAssigne());
+        assertEquals(0L, built.getVersion());
+    }
 
     @Test
     public void buildWithAllInformation() {

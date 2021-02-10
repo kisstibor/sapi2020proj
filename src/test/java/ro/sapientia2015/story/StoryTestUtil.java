@@ -11,6 +11,7 @@ public class StoryTestUtil {
     public static final String DESCRIPTION = "description";
     public static final String DESCRIPTION_UPDATED = "updatedDescription";
     public static final String TITLE = "title";
+    public static final String ASSIGNE = "assigne";
     public static final String TITLE_UPDATED = "updatedTitle";
 
     private static final String CHARACTER = "a";
@@ -24,10 +25,32 @@ public class StoryTestUtil {
 
         return dto;
     }
+    
+    public static StoryDTO createFormObject(Long id, String description, String title, String assigne) {
+        StoryDTO dto = new StoryDTO();
+
+        dto.setId(id);
+        dto.setDescription(description);
+        dto.setAssigne(assigne);
+        dto.setTitle(title);
+
+        return dto;
+    }
 
     public static Story createModel(Long id, String description, String title) {
         Story model = Story.getBuilder(title)
                 .description(description)
+                .build();
+
+        ReflectionTestUtils.setField(model, "id", id);
+
+        return model;
+    }
+    
+    public static Story createModel(Long id, String description, String title, String assigne) {
+        Story model = Story.getBuilder(title)
+                .description(description)
+                .assigne(assigne)
                 .build();
 
         ReflectionTestUtils.setField(model, "id", id);
