@@ -1,17 +1,14 @@
 package ro.sapientia2015.story.model;
 
-import java.util.List;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
 
-
 @Entity
-@Table(name="sprint")
-public class Sprint {
+@Table(name="task")
+public class Task {
 
     public static final int MAX_LENGTH_DESCRIPTION = 500;
     public static final int MAX_LENGTH_TITLE = 100;
@@ -33,19 +30,14 @@ public class Sprint {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    @Column(name = "priority", nullable = false)
+    private String priority;
 
     @Version
     private long version;
 
-    @Column(name = "story")
-    @OneToMany
-    private List<Story> stories;
-
-    @Column(name = "task")
-    @OneToMany
-    private List<Task> tasks;
-    
-    public Sprint() {
+    public Task() {
 
     }
 
@@ -57,47 +49,7 @@ public class Sprint {
         return id;
     }
 
-    public List<Story> getStories() {
-		return stories;
-	}
-    
-    public List<Task> getTasks() {
-		return tasks;
-	}
-
-	public void setStories(List<Story> stories) {
-		this.stories = stories;
-	}
-	
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public void setCreationTime(DateTime creationTime) {
-		this.creationTime = creationTime;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setModificationTime(DateTime modificationTime) {
-		this.modificationTime = modificationTime;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	public DateTime getCreationTime() {
+    public DateTime getCreationTime() {
         return creationTime;
     }
 
@@ -111,6 +63,10 @@ public class Sprint {
 
     public String getTitle() {
         return title;
+    }
+    
+    public String getPriority() {
+        return priority;
     }
 
     public long getVersion() {
@@ -129,36 +85,32 @@ public class Sprint {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, String priority) {
         this.description = description;
         this.title = title;
+        this.priority = priority;
     }
 
     public static class Builder {
 
-        private Sprint built;
+        private Task built;
 
-        public Builder() {
-            built = new Sprint();
-        }
-        
-        public Builder setTitle(String title)
-        {
-        	this.built.title=title;
-        	return this;
-        }
-        
         public Builder(String title) {
-            built = new Sprint();
+            built = new Task();
             built.title = title;
         }
 
-        public Sprint build() {
+        public Task build() {
             return built;
         }
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder priority(String priority) {
+            built.priority = priority;
             return this;
         }
     }
@@ -167,4 +119,5 @@ public class Sprint {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
 }

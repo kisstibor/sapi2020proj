@@ -1,33 +1,26 @@
 package ro.sapientia2015.story.dto;
 
-import java.util.List;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import ro.sapientia2015.story.model.Sprint;
-import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.story.model.Task;
 
-/**
- * @author Kiss Tibor
- */
-public class SprintDTO {
+public class TaskDTO {
 
     private Long id;
 
-    @Length(max = Story.MAX_LENGTH_DESCRIPTION)
+    @Length(max = Task.MAX_LENGTH_DESCRIPTION)
     private String description;
 
-    private Sprint.Builder builder = new Sprint.Builder();
-    
     @NotEmpty
-    @Length(max = 20)
+    @Length(max = Task.MAX_LENGTH_TITLE)
     private String title;
 
-    private List<Story> stories;
+    @NotEmpty
+    private String priority;
     
-    public SprintDTO() {
+    public TaskDTO() {
 
     }
 
@@ -54,26 +47,17 @@ public class SprintDTO {
     public void setTitle(String title) {
         this.title = title;
     }
-
     
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
-	public List<Story> getStories() {
-		return stories;
-	}
-
-	public void setStories(List<Story> stories) {
-		this.stories = stories;
-	}
-
-	public Sprint.Builder getBuilder() {
-		return builder;
-	}
-
-	public void setBuilder(Sprint.Builder builder) {
-		this.builder = builder;
-	}
 }
