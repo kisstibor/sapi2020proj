@@ -7,11 +7,11 @@
     <title></title>
 </head>
 <body>
-    <h1><spring:message code="label.story.list.page.title"/></h1>
-    <div>
-        <a href="/scrumsapientia/story/add" id="add-button" class="btn btn-primary"><spring:message code="label.add.story.link"/></a>
-    </div>
+    <h1><spring:message code="label.scrum.page.title"/></h1>
+
+
     <div id="story-list" class="page-content">
+    <h2><spring:message code="label.story.list.page.title"/></h2>
         <c:choose>
             <c:when test="${empty stories}">
                 <p><spring:message code="label.story.list.empty"/></p>
@@ -20,6 +20,22 @@
                 <c:forEach items="${ stories}" var="story">
                     <div class="well well-small">
                         <a href="/scrumsapientia/story/${story.id}"><c:out value="${story.title}"/></a>
+                    </div>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+    </div>
+
+    <div id="bug-list" class="page-content">
+    <h2><spring:message code="label.bug.list.page.title"/></h2>
+        <c:choose>
+            <c:when test="${empty bugs}">
+                <p><spring:message code="label.bug.list.empty"/></p>
+            </c:when>
+            <c:otherwise>
+                <c:forEach items="${ bugs}" var="bug">
+                    <div class="well well-small">
+                        <a href="/scrumsapientia/bug/${bug.id}"><c:out value="${bug.title}"/></a>
                     </div>
                 </c:forEach>
             </c:otherwise>

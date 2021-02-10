@@ -19,6 +19,6 @@ $(function() {
 
     $("#view-holder").on("click", "#delete-story-button", function(e) {
         e.preventDefault();
-        window.location.href = "/story/delete/" + $("#story-id").text();
+        window.location.href = "/scrumsapientia/story/delete/" + $("#story-id").text();
     });
 });
