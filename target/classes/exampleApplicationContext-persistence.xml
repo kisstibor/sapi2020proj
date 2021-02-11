@@ -30,6 +30,7 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter"/>
         <property name="packagesToScan" value="ro.sapientia2015.story.model"/>
+        <property name="packagesToScan" value="ro.sapientia2015.task.model"/>
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
@@ -42,4 +43,5 @@
     </bean>
 
     <jpa:repositories base-package="ro.sapientia2015.story.repository"/>
+    <jpa:repositories base-package="ro.sapientia2015.task.repository"/>
 </beans>

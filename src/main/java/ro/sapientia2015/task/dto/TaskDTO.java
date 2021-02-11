@@ -1,30 +1,26 @@
-package ro.sapientia2015.story.dto;
-
-import java.util.List;
+package ro.sapientia2015.task.dto;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import ro.sapientia2015.task.model.Task;
-import ro.sapientia2015.story.model.Story;
 
-/**
- * @author Kiss Tibor
- */
-public class StoryDTO {
+import ro.sapientia2015.story.model.Story;
+import ro.sapientia2015.task.model.Task;
+
+public class TaskDTO {
 
     private Long id;
+    
+    private Story story;
 
-    @Length(max = Story.MAX_LENGTH_DESCRIPTION)
+    @Length(max = Task.MAX_LENGTH_DESCRIPTION)
     private String description;
 
     @NotEmpty
-    @Length(max = Story.MAX_LENGTH_TITLE)
+    @Length(max = Task.MAX_LENGTH_TITLE)
     private String title;
-    
-    private List<Task> tasks;
 
-    public StoryDTO() {
+    public TaskDTO() {
 
     }
 
@@ -35,6 +31,7 @@ public class StoryDTO {
     public void setId(Long id) {
         this.id = id;
     }
+    
 
     public String getDescription() {
         return description;
@@ -52,13 +49,13 @@ public class StoryDTO {
         this.title = title;
     }
     
-    public List<Task> getTasks() {
-		return tasks;
-	}
-
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
-	}
+    public Story getStory() {
+    	return story;
+    }
+    
+    public void setStory(Story story) {
+    	this.story = story;
+    }
 
     @Override
     public String toString() {
