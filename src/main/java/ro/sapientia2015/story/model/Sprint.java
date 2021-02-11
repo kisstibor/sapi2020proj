@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Kiss Tibor
@@ -17,6 +18,9 @@ public class Sprint {
 
     public static final int MAX_LENGTH_DESCRIPTION = 500;
     public static final int MAX_LENGTH_TITLE = 100;
+    public static final int MAX_LENGTH_COMMENT = 250;
+    public static final int MAX_LENGTH_TEAM = 20;
+    public static final int MAX_LENGTH_POINTS = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,6 +39,15 @@ public class Sprint {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    //@Column(name = 'comment', nullable = false, length = MAX_LENGTH_COMMENT)
+    private String comment;
+    
+    private String team;
+    
+    @NotNull
+    private int points;
+
 
     @Version
     private long version;
@@ -74,7 +87,19 @@ public class Sprint {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	
+	public void setTeam(String team) {
+		this.team = team;
+	}
+	
+	public void setPoints(int points) {
+		this.points = points;
+	}
+	
 	public void setModificationTime(DateTime modificationTime) {
 		this.modificationTime = modificationTime;
 	}
@@ -94,7 +119,19 @@ public class Sprint {
     public String getDescription() {
         return description;
     }
-
+    
+    public String getComment() {
+    	return comment;
+    }
+    
+    public String getTeam() {
+    	return team;
+    }
+    
+    public int getPoints() {
+    	return points;
+    }
+    
     public DateTime getModificationTime() {
         return modificationTime;
     }
@@ -119,9 +156,12 @@ public class Sprint {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, String comment, String team, int points) {
         this.description = description;
         this.title = title;
+        this.comment = comment;
+        this.team = team;
+        this.points = points;
     }
 
     public static class Builder {
@@ -149,6 +189,21 @@ public class Sprint {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder comment(String comment) {
+            built.comment = comment;
+            return this;
+        }
+        
+        public Builder team(String team) {
+            built.team = team;
+            return this;
+        }
+        
+        public Builder points(int points) {
+            built.points = points;
             return this;
         }
     }
