@@ -100,17 +100,17 @@ public class StoryController {
     public String findById(@PathVariable("id") Long id, Model model) throws NotFoundException {
     	System.out.println(">>>Show Story Details with Tasks");
         Story found = service.findById(id);
-        List<Task> storyTasks = found.getTasks();
-        System.out.println(">>>(story/{storiId} - GET) Length of storyTasks: "+ storyTasks.size());
+        //List<Task> storyTasks = found.getTasks();
+        //System.out.println(">>>(story/{storiId} - GET) Length of storyTasks: "+ storyTasks.size());
+        //model.addAttribute("tasks", storyTasks);
         model.addAttribute(MODEL_ATTRIBUTE, found);
-        model.addAttribute("tasks", storyTasks);
         model.addAttribute("new_task", new TaskDTO());
         return VIEW_VIEW;
     }
 
 	//  /story/   1     /add-task
 	@RequestMapping(value = "/story/{storyId}/add_task", method = RequestMethod.POST)
-	public String add(@Valid @ModelAttribute("new_task") TaskDTO dto, BindingResult result, RedirectAttributes attributes, @PathVariable("storyId") Long storyId) throws NotFoundException {
+	public String addTask(@Valid @ModelAttribute("new_task") TaskDTO dto, BindingResult result, RedirectAttributes attributes, @PathVariable("storyId") Long storyId) throws NotFoundException {
 		System.out.println(">>> REQUEST: "+ "story/"+ storyId +"/add_task" + " POST" + "with @PathVariable: "+ storyId);
 		if (result.hasErrors()) {
 			return REQUEST_MAPPING_VIEW;

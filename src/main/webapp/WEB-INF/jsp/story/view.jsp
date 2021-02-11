@@ -43,11 +43,11 @@
     
     <div id="task-list" class="page-content">
         <c:choose>
-            <c:when test="${empty tasks}">
+            <c:when test="${empty story.tasks}">
                 <p><spring:message code="label.task.list.empty"/></p>
             </c:when>
             <c:otherwise>
-                <c:forEach items="${tasks}" var="task">
+                <c:forEach items="${story.tasks}" var="task">
                 	<div id="task-id" class="hidden">${task.id}</div>
 	                <div class="well page-content">
 	                    <div class="well well-small">
