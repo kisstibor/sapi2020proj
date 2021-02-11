@@ -59,6 +59,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.v
 public class ITStoryControllerTest {
 
     private static final String FORM_FIELD_DESCRIPTION = "description";
+    private static final String FORM_FIELD_ASSIGNE = "assigne";
     private static final String FORM_FIELD_ID = "id";
     private static final String FORM_FIELD_TITLE = "title";
 
@@ -82,7 +83,8 @@ public class ITStoryControllerTest {
                 .andExpect(forwardedUrl("/WEB-INF/jsp/story/add.jsp"))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("id", nullValue())))
                 .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("description", isEmptyOrNullString())))
-                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())));
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("title", isEmptyOrNullString())))
+                .andExpect(model().attribute(StoryController.MODEL_ATTRIBUTE, hasProperty("assigne", isEmptyOrNullString() )));
     }
 
     @Test

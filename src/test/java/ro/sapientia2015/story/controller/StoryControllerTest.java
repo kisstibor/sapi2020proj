@@ -47,6 +47,7 @@ public class StoryControllerTest {
 
     private static final String FEEDBACK_MESSAGE = "feedbackMessage";
     private static final String FIELD_DESCRIPTION = "description";
+    private static final String FIELD_ASSIGNE = "assigne";
     private static final String FIELD_TITLE = "title";
 
     private StoryController controller;
@@ -84,6 +85,19 @@ public class StoryControllerTest {
         assertNull(formObject.getDescription());
         assertNull(formObject.getTitle());
     }
+    
+    @Test
+    public void showAddStoryAssigne() {
+        BindingAwareModelMap model = new BindingAwareModelMap();
+
+        String view = controller.showAddForm(model);
+
+        verifyZeroInteractions(messageSourceMock, serviceMock);
+        assertEquals(StoryController.VIEW_ADD, view);
+
+        StoryDTO formObject = (StoryDTO) model.asMap().get(StoryController.MODEL_ATTRIBUTE);
+        assertNull(formObject.getAssigne());
+    }
 
     @Test
     public void add() {
@@ -111,6 +125,34 @@ public class StoryControllerTest {
 
         assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
     }
+    
+    @Test
+    public void addWithAssigne() {
+        StoryDTO formObject = StoryTestUtil.createFormObject(null, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.ASSIGNE);
+
+        Story model = StoryTestUtil.createModel(StoryTestUtil.ID, StoryTestUtil.DESCRIPTION, StoryTestUtil.TITLE, StoryTestUtil.ASSIGNE);
+        when(serviceMock.add(formObject)).thenReturn(model);
+
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/story/add");
+        BindingResult result = bindAndValidate(mockRequest, formObject);
+
+        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+        initMessageSourceForFeedbackMessage(StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
+
+        String view = controller.add(formObject, result, attributes);
+
+        verify(serviceMock, times(1)).add(formObject);
+        verifyNoMoreInteractions(serviceMock);
+
+        String expectedView = StoryTestUtil.createRedirectViewPath(StoryController.REQUEST_MAPPING_VIEW);
+        assertEquals(expectedView, view);
+
+        assertEquals(Long.valueOf((String) attributes.get(StoryController.PARAMETER_ID)), model.getId());
+
+        assertFeedbackMessage(attributes, StoryController.FEEDBACK_MESSAGE_KEY_ADDED);
+    }
+
 
     @Test
     public void addEmptyStory() {

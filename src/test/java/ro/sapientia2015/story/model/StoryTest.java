@@ -24,6 +24,19 @@ public class StoryTest {
         assertEquals(TITLE, built.getTitle());
         assertEquals(0L, built.getVersion());
     }
+    
+    @Test
+    public void buildWithTitleAndAsigne() {
+        Story built = Story.getBuilder(TITLE).assigne("geza").build();
+
+        assertNull(built.getId());
+        assertNull(built.getCreationTime());
+        assertNull(built.getDescription());
+        assertNull(built.getModificationTime());
+        assertEquals(TITLE, built.getTitle());
+        assertEquals("geza", built.getAssigne());
+        assertEquals(0L, built.getVersion());
+    }
 
     @Test
     public void buildWithAllInformation() {
@@ -65,6 +78,25 @@ public class StoryTest {
         assertNull(story.getId());
         assertNotNull(story.getCreationTime());
         assertNull(story.getDescription());
+        assertNotNull(story.getModificationTime());
+        assertNull(story.getTitle());
+        assertEquals(0L, story.getVersion());
+        assertTrue(story.getModificationTime().isAfter(story.getCreationTime()));
+    }
+    
+    @Test
+    public void preUpdateWithAssigne() {
+        Story story = new Story();
+        story.prePersist();
+
+        pause(1000);
+
+        story.preUpdate();
+
+        assertNull(story.getId());
+        assertNotNull(story.getCreationTime());
+        assertNull(story.getDescription());
+        assertNull(story.getAssigne());
         assertNotNull(story.getModificationTime());
         assertNull(story.getTitle());
         assertEquals(0L, story.getVersion());

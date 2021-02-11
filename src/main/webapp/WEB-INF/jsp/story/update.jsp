@@ -20,6 +20,14 @@
                     <form:errors id="error-title" path="title" cssClass="help-inline"/>
                 </div>
             </div>
+             <div id="control-group-assigne" class="control-group">
+                <label for="story-assigne"><spring:message code="label.story.assigne"/>:</label>
+
+                <div class="controls">
+                    <form:textarea id="story-assigne" path="assigne"/>
+                    <form:errors id="error-assigne" path="assigne" cssClass="help-inline"/>
+                </div>
+            </div>
             <div id="control-group-description" class="control-group">
                 <label for="story-description"><spring:message code="label.story.description"/>:</label>
 
