@@ -5,6 +5,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Kiss Tibor
@@ -15,7 +16,10 @@ public class Story {
 
     public static final int MAX_LENGTH_DESCRIPTION = 500;
     public static final int MAX_LENGTH_TITLE = 100;
-
+    public static final int MAX_LENGTH_COMMENT = 250;
+    public static final int MAX_LENGTH_TEAM = 20;
+    public static final int MAX_LENGTH_POINTS = 1;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -33,6 +37,14 @@ public class Story {
 
     @Column(name = "title", nullable = false, length = MAX_LENGTH_TITLE)
     private String title;
+    
+    //@Column(name = 'comment', nullable = false, length = MAX_LENGTH_COMMENT)
+    private String comment;
+    
+    private String team;
+    
+    @NotNull
+    private int points;
 
     @Version
     private long version;
@@ -56,6 +68,14 @@ public class Story {
     public String getDescription() {
         return description;
     }
+    
+    public String getComment() {
+    	return comment;
+    }
+    
+    public String getTeam() {
+    	return team;
+    }
 
     public DateTime getModificationTime() {
         return modificationTime;
@@ -63,6 +83,10 @@ public class Story {
 
     public String getTitle() {
         return title;
+    }
+    
+    public int getPoints() {
+    	return points;
     }
 
     public long getVersion() {
@@ -81,9 +105,12 @@ public class Story {
         modificationTime = DateTime.now();
     }
 
-    public void update(String description, String title) {
+    public void update(String description, String title, String comment, String team, int points) {
         this.description = description;
         this.title = title;
+        this.comment = comment;
+        this.team = team;
+        this.points = points;
     }
 
     public static class Builder {
@@ -101,6 +128,21 @@ public class Story {
 
         public Builder description(String description) {
             built.description = description;
+            return this;
+        }
+        
+        public Builder comment(String comment) {
+            built.comment = comment;
+            return this;
+        }
+        
+        public Builder team(String team) {
+            built.team = team;
+            return this;
+        }
+        
+        public Builder points(int points) {
+            built.points = points;
             return this;
         }
     }

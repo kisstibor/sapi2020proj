@@ -119,9 +119,16 @@ public class SprintControllerTest {
 
         formObject.setTitle("title");
         formObject.setDescription("desc");
+        formObject.setComment("comment");
+        formObject.setTeam("team");
+        formObject.setPoints(5);
         
         Sprint model = Sprint.getBuilder("title")
-        		.description("desc").build();
+        		.description("desc")
+        		.comment("comment")
+        		.team("team")
+        		.points(5)
+        		.build();
         
         when(serviceMock.add(formObject)).thenReturn(model);
 
@@ -148,6 +155,9 @@ public class SprintControllerTest {
 
         formObject.setTitle("");
         formObject.setDescription("");
+        formObject.setComment("");
+        formObject.setTeam("");
+        formObject.setPoints(0);
        
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/sprint/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
@@ -166,6 +176,10 @@ public class SprintControllerTest {
 
         formObject.setTitle("TooLongTitleeeeeeeeeeeeee");
         formObject.setDescription("");
+        formObject.setComment("");
+        formObject.setTeam("");
+        formObject.setPoints(0);
+       
        
         MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/sprint/add");
         BindingResult result = bindAndValidate(mockRequest, formObject);
@@ -177,7 +191,27 @@ public class SprintControllerTest {
         assertEquals(SprintController.VIEW_ADD, view);
     }
     
-    
+    @Test
+    public void addWrongStoryPoints() {
+    	
+        SprintDTO formObject = new SprintDTO();
+
+        formObject.setTitle("");
+        formObject.setDescription("");
+        formObject.setComment("");
+        formObject.setTeam("");
+        formObject.setPoints(-1);
+       
+       
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest("POST", "/sprint/add");
+        BindingResult result = bindAndValidate(mockRequest, formObject);
+
+        RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+
+        String view = controller.add(formObject, result, attributes);
+
+        assertEquals(SprintController.VIEW_ADD, view);
+    }
     
     
 }

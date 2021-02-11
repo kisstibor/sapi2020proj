@@ -122,6 +122,9 @@ public class StoryController {
         dto.setId(updated.getId());
         dto.setDescription(updated.getDescription());
         dto.setTitle(updated.getTitle());
+        dto.setComment(updated.getComment());
+        dto.setTeam(updated.getTeam());
+        dto.setPoints(updated.getPoints());
 
         return dto;
     }

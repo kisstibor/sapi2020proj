@@ -27,6 +27,9 @@ public class RepositorySprintService implements SprintService {
 
         Sprint model = added.getBuilder().setTitle(added.getTitle())
                 .description(added.getDescription())
+                .comment(added.getComment())
+                .team(added.getTeam())
+                .points(added.getPoints())
                 .build();
 
         return repository.save(model);
@@ -61,7 +64,7 @@ public class RepositorySprintService implements SprintService {
     @Override
     public Sprint update(SprintDTO updated) throws NotFoundException {
         Sprint model = findById(updated.getId());
-        model.update(updated.getDescription(), updated.getTitle());
+        model.update(updated.getDescription(), updated.getTitle(), updated.getComment(), updated.getTeam(), updated.getPoints());
 
         return model;
     }

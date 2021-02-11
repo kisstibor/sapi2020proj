@@ -2,6 +2,8 @@ package ro.sapientia2015.story.dto;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -18,6 +20,15 @@ public class SprintDTO {
 
     @Length(max = Story.MAX_LENGTH_DESCRIPTION)
     private String description;
+    
+    @Length(max = Story.MAX_LENGTH_COMMENT)
+    private String comment;
+    
+    @Length(max = Story.MAX_LENGTH_TEAM)
+    private String team;
+    
+    @NotNull
+    private int points;
 
     private Sprint.Builder builder = new Sprint.Builder();
     
@@ -42,9 +53,26 @@ public class SprintDTO {
     public String getDescription() {
         return description;
     }
-
+    
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public String getTeam() {
+    	return team;
+    }
+    
+    public int getPoints() {
+    	return points;
+    }
+
+    
+    public String getComment() {
+        return comment;
+    }
+    
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public String getTitle() {
@@ -54,6 +82,14 @@ public class SprintDTO {
     public void setTitle(String title) {
         this.title = title;
     }
+    
+    public void setTeam(String team) {
+		this.team = team;
+	}
+	
+	public void setPoints(int points) {
+		this.points = points;
+	}
 
     
     @Override
