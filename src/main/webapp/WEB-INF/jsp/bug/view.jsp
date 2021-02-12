@@ -8,36 +8,21 @@
     <script type="text/javascript" src="/static/js/bug.view.js"></script>
 </head>
 <body>
-    <div id="bug-id" class="hidden">${task.id}</div>
+    <div id="bug-id" class="hidden">${bug.id}</div>
     <h1><spring:message code="label.bug.view.page.title"/></h1>
     <div class="well page-content">
         <h2 id="bug-title"><c:out value="${bug.title}"/></h2>
         <div>
-        	<table style="width: 100% " border="1">
-        		<tr>
-        			<th colspan="1">Title</th>
-        			<th colspan="1">Description</th>
-        			<th colspan="1">Status</th>
-        			<th>CreationTime</th>
-        			<th>ModificationTime</th>
-        			<th>Actions</th>
-        		</tr>
-        		<tr>
-        			<td colspan="1" align="center"><c:out value="${bug.title}"/></td>
-        			<td colspan="1" align="center"><c:out value="${bug.description}"/></td>
-        			<td colspan="1" align="center"><c:out value="${bug.status}"/></td>
-        			<td align="center"><c:out value="${bug.creationTime}"/></td>
-        			<td align="center"><c:out value="${bug.modificationTime}"/></td>
-        			<td align="center">
-        				<div class="action-buttons">
-        					<br><br>
-            				<a href="/scrumsapientia/bug/update/${bug.id}" class="btn btn-primary"><spring:message code="label.update.bug.link"/></a>
-            				<a id="delete-bug-link" class="btn btn-primary"><spring:message code="label.delete.bug.link"/></a>
-        				</div>
-        		</tr>
-        	</table>
+            <p>Description:&nbsp;<c:out value="${bug.description}"/></p>
+            <p>Status:&nbsp;<c:out value="${bug.status}"/></p>
+            <p>CreatedTime:&nbsp;<c:out value="${bug.creationTime}"/></p>
+            <p>ModificationTime:&nbsp;<c:out value="${bug.modificationTime}"/></p>
+            
         </div>
-        
+        <div class="action-buttons">
+            <a href="/scrumsapientia/bug/update/${bug.id}" class="btn btn-primary"><spring:message code="label.update.bug.link"/></a>
+            <a id="delete-bug-link" class="btn btn-primary"><spring:message code="label.delete.bug.link"/></a>
+        </div>
     </div>
     <script id="template-delete-bug-confirmation-dialog" type="text/x-handlebars-template">
         <div id="delete-bug-confirmation-dialog" class="modal">

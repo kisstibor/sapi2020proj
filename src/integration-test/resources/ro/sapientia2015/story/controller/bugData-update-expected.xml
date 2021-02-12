@@ -1,0 +1,4 @@
+<dataset>
+    <bug id="1"  description="Lorem ipsum" title="Bug6" status="TO_DO" version="1"/>
+    <bug id="2"  description="Lorem ipsum" title="Bug4" status="TO_DO" version="0"/>
+</dataset>
