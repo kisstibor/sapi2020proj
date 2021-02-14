@@ -1,31 +1,31 @@
 package ro.sapientia2015.story.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ro.sapientia2015.story.dto.SprintDTO;
+import ro.sapientia2015.story.dto.TaskDTO;
 import ro.sapientia2015.story.exception.NotFoundException;
-import ro.sapientia2015.story.model.Sprint;
-import ro.sapientia2015.story.repository.SprintRepository;
+import ro.sapientia2015.story.model.Task;
+import ro.sapientia2015.story.repository.TaskRepository;
+
+import javax.annotation.Resource;
+
+import java.util.List;
 
 /**
  * @author Kiss Tibor
  */
 @Service
-public class RepositorySprintService implements SprintService {
+public class RepositoryTaskService implements TaskService {
 
     @Resource
-    private SprintRepository repository;
+    private TaskRepository repository;
 
     @Transactional
     @Override
-    public Sprint add(SprintDTO added) {
-
-        Sprint model = added.getBuilder().setTitle(added.getTitle())
+    public Task add(TaskDTO added) {
+        Task model = Task.getBuilder(added.getTitle())
+        		.priority(added.getPriority())
                 .description(added.getDescription())
                 .build();
 
@@ -34,22 +34,22 @@ public class RepositorySprintService implements SprintService {
 
     @Transactional(rollbackFor = {NotFoundException.class})
     @Override
-    public Sprint deleteById(Long id) throws NotFoundException {
-        Sprint deleted = findById(id);
+    public Task deleteById(Long id) throws NotFoundException {
+        Task deleted = findById(id);
         repository.delete(deleted);
         return deleted;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<Sprint> findAll() {
+    public List<Task> findAll() {
        return repository.findAll();
     }
 
     @Transactional(readOnly = true, rollbackFor = {NotFoundException.class})
     @Override
-    public Sprint findById(Long id) throws NotFoundException {
-        Sprint found = repository.findOne(id);
+    public Task findById(Long id) throws NotFoundException {
+        Task found = repository.findOne(id);
         if (found == null) {
             throw new NotFoundException("No entry found with id: " + id);
         }
@@ -59,9 +59,9 @@ public class RepositorySprintService implements SprintService {
 
     @Transactional(rollbackFor = {NotFoundException.class})
     @Override
-    public Sprint update(SprintDTO updated) throws NotFoundException {
-        Sprint model = findById(updated.getId());
-        model.update(updated.getDescription(), updated.getTitle());
+    public Task update(TaskDTO updated) throws NotFoundException {
+        Task model = findById(updated.getId());
+        model.update(updated.getDescription(), updated.getTitle(), updated.getPriority());
 
         return model;
     }
