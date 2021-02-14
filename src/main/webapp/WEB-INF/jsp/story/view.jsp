@@ -16,7 +16,7 @@
             <p><c:out value="${story.description}"/></p>
         </div>
         <div class="action-buttons">
-            <a href="/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
+            <a href="/scrumsapientia/story/update/${story.id}" class="btn btn-primary"><spring:message code="label.update.story.link"/></a>
             <a id="delete-story-link" class="btn btn-primary"><spring:message code="label.delete.story.link"/></a>
         </div>
     </div>
@@ -31,7 +31,7 @@
             </div>
             <div class="modal-footer">
                 <a id="cancel-story-button" href="#" class="btn"><spring:message code="label.cancel"/></a>
-                <a id="delete-story-button" href="#" class="btn btn-primary"><spring:message code="label.delete.story.button"/></a>
+                <a id="delete-story-button" href="/scrumsapientia/story" class="btn btn-primary"><spring:message code="label.delete.story.button"/></a>
             </div>
         </div>
     </script>
